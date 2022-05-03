@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <trp.h>
+#include <sys/stat.h>
 
 /* Tha header that indicates the size of the expected messages. */
 #pragma pack(push, 1)
@@ -38,6 +39,8 @@ struct crypto cryp_rx;
 struct crypto cryp_tx;
 /* Logged flag. */
 extern int logged;
+/* Secure FileSystem identity token. */
+char fsid[LINE_MAX];
 /* Thread handler for signals. */
 static pthread_t oobth;
 
@@ -373,4 +376,59 @@ static void genkeepkey(void)
         return;
     }
     comm.shmobj->oobcount = 0;
+}
+
+int secfs_proc(const char *src)
+{
+    char path[PATH_MAX];
+    strcpy(path, src);
+    unsigned int fsopold = fsop;
+    fsop = 0;
+    if (strstr(path, FSMETA))
+        return -1;
+    if (fsop_ovrr) {
+        fsop_ovrr = 0;
+        return 0;
+    }
+    struct stat st = { 0 };
+    stat(path, &st);
+    if (!S_ISDIR(st.st_mode))
+        rmtrdir(path);
+    strcat(path, "/");
+    strcat(path, FSMETA);
+    strcat(path, FSMETARD_EXT);
+    if (access(path, F_OK))
+        return 0;
+    if (!fsopold)
+        return -1;
+    unsigned int perm = getfsidperm(path, fsid);
+    if (!perm)
+        perm = getfsidperm(path, FSOTHERUSR);
+    if ((perm & fsopold) != fsopold)
+        return -1;
+    return 0;
+}
+
+unsigned int getfsidperm(const char *path, const char *id)
+{
+    char line[LINE_MAX];
+    FILE *fs = fopen(path, "r");
+    if (!fs)
+        return 0;
+    char *pt;
+    int found = 0;
+    while (fgets(line, sizeof line, fs)) {
+        pt = strchr(line, FSPERM_TOK);
+        if (pt) {
+            *pt = '\0';
+            if (!strcmp(id, line)) {
+                found = 1;
+                break;
+            }
+        }
+    }
+    fclose(fs);
+    if (found)
+        return atoi(++pt);
+    return 0;
 }

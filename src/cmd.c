@@ -356,6 +356,16 @@ void cmd_parse(void)
             cmd_netmutacqtry();
     else if (!strcmp(cmd, CMD_NETMUTREL))
             cmd_netmutrel();
+    else if (!strcmp(cmd, CMD_SETFSID))
+            cmd_setfsid();
+    else if (!strcmp(cmd, CMD_SETFSPERM))
+            cmd_setfsperm();
+    else if (!strcmp(cmd, CMD_REMFSPERM))
+            cmd_remfsperm();
+    else if (!strcmp(cmd, CMD_GETFSPERM))
+            cmd_getfsperm();
+    else if (!strcmp(cmd, CMD_ISSECFS))
+            cmd_issecfs();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -366,6 +376,7 @@ void cmd_mkdir(void)
 {
     char *pt = comm.buf + strlen(CMD_MKDIR) + 1;
     char path[PATH_MAX] = "";
+    fsop = SECFS_MKDIR;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -391,6 +402,7 @@ void cmd_ls(void)
     char *pt = comm.buf + strlen(CMD_LS) + 1;
     char path[PATH_MAX] = "";
     char cpypath[PATH_MAX];
+    fsop = SECFS_LDIR;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -525,6 +537,7 @@ void cmd_sendfile(void)
         return;
     }
     char path[PATH_MAX] = "";
+    fsop = SECFS_RFILE;
     if (jaildir(pt + 1, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -547,6 +560,7 @@ void cmd_rcvfile(void)
         return;
     }
     char path[PATH_MAX] = "";
+    fsop = SECFS_WFILE;
     if (jaildir(pt + 1, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -620,6 +634,7 @@ void cmd_del(void)
 {
     char *pt = comm.buf + strlen(CMD_DEL) + 1;
     char path[PATH_MAX] = "";
+    fsop = SECFS_DFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -658,6 +673,7 @@ void cmd_rmdir(void)
 {
     char *pt = comm.buf + strlen(CMD_RMDIR) + 1;
     char path[PATH_MAX] = "";
+    fsop = SECFS_RMDIR;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -680,6 +696,7 @@ void cmd_lsr(void)
     char *pt = comm.buf + strlen(CMD_LSR) + 1;
     char path[PATH_MAX] = "";
     char cpypath[PATH_MAX];
+    fsop = SECFS_LRDIR;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -774,6 +791,7 @@ void cmd_copy(void)
     *ppt = '\0';
     strcpy(srcp, pt);
     char path[PATH_MAX] = "";
+    fsop = SECFS_RFILE;
     if (jaildir(srcp, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -789,6 +807,7 @@ void cmd_copy(void)
         return;
     }
     strcpy(srcp, path);
+    fsop = SECFS_WFILE;
     if (jaildir(dstp, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -828,6 +847,7 @@ void cmd_cpdir(void)
     *ppt = '\0';
     strcpy(srcp, pt);
     char path[PATH_MAX] = "";
+    fsop = SECFS_RFILE;
     if (jaildir(srcp, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -843,6 +863,7 @@ void cmd_cpdir(void)
         return;
     }
     strcpy(srcp, path);
+    fsop = SECFS_WFILE | SECFS_MKDIR;
     if (jaildir(dstp, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1106,6 +1127,7 @@ void cmd_touch(void)
 {
     char *pt = comm.buf + strlen(CMD_TOUCH) + 1;
     char file[PATH_MAX] = "";
+    fsop = SECFS_WFILE;
     if (jaildir(pt, file)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1198,6 +1220,7 @@ void cmd_fstat(void)
         cmd_fail(CMD_EPARAM);
         return;
     }
+    fsop = SECFS_STAT;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1247,6 +1270,7 @@ void cmd_fupd(void)
         cmd_fail(CMD_EPARAM);
         return;
     }
+    fsop = SECFS_FDUPD;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1290,6 +1314,7 @@ void cmd_renam(void)
     *ppt = '\0';
     strcpy(srcp, pt);
     char path[PATH_MAX] = "";
+    fsop = SECFS_RFILE;
     if (jaildir(srcp, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1308,6 +1333,7 @@ void cmd_renam(void)
         }
     }
     strcpy(srcp, path);
+    fsop = SECFS_WFILE;
     if (jaildir(dstp, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1413,6 +1439,7 @@ void cmd_put(void)
     char path[PATH_MAX];
     char *pt = comm.buf + strlen(CMD_PUT) + 1;
     *(pt + (comm.buflen - (strlen(CMD_PUT) + 1) - sizeof hpf - 1)) = '\0';
+    fsop = SECFS_WFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1481,6 +1508,7 @@ void cmd_get(void)
     char path[PATH_MAX];
     char *pt = comm.buf + strlen(CMD_GET) + 1;
     *(pt + (comm.buflen - (strlen(CMD_GET) + 1) - sizeof hpf - 1)) = '\0';
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1677,6 +1705,7 @@ void cmd_putcan(void)
     char path[PATH_MAX];
     char *pt = comm.buf + strlen(CMD_PUTCAN) + 1;
     *(pt + (comm.buflen - (strlen(CMD_PUTCAN) + 1) - sizeof hpfcan - 1)) = '\0';
+    fsop = SECFS_WFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1793,6 +1822,7 @@ void cmd_getcan(void)
     char path[PATH_MAX];
     char *pt = comm.buf + strlen(CMD_GETCAN) + 1;
     *(pt + (comm.buflen - (strlen(CMD_GETCAN) + 1) - sizeof hpfcan - 1)) = '\0';
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1961,6 +1991,7 @@ void cmd_chmod(void)
         return;
     }
     *ppt++ = '\0';
+    fsop = SECFS_UXPERM;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -1989,6 +2020,7 @@ void cmd_chown(void)
         return;
     }
     *ppt++ = '\0';
+    fsop = SECFS_UXPERM;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -2062,6 +2094,7 @@ void cmd_sha256(void)
         cmd_fail(CMD_EPARAM);
         return;
     }
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -2132,6 +2165,7 @@ void cmd_rmsecdir(void)
     strcpy(dstp, ppt + strlen(MULTIP_SEPS));
     *ppt = '\0';
     char path[PATH_MAX] = "";
+    fsop = SECFS_RMDIR;
     if (jaildir(dstp, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -2237,6 +2271,7 @@ void cmd_sdown(void)
     char *pt = comm.buf + strlen(CMD_SDOWN) + 1;
     int32_t hdr;
     char path[PATH_MAX];
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         hdr = -1;
         if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
@@ -2294,6 +2329,7 @@ void cmd_sup(void)
     int32_t hdr;
     char path[PATH_MAX];
     int err = 0;
+    fsop = SECFS_WFILE;
     if (jaildir(pt, path))
         err = 1;
     int fd;
@@ -2347,6 +2383,7 @@ void cmd_fsize(void)
     char *pt = comm.buf + strlen(CMD_FSIZE) + 1;
     char path[PATH_MAX];
     int64_t hdr;
+    fsop = SECFS_STAT;
     if (jaildir(pt, path)) {
         hdr = FSIZE_FAIL;
         if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
@@ -2383,6 +2420,7 @@ void cmd_fsizels(void)
     char path[PATH_MAX];
     char line[LINE_MAX];
     int64_t hdr;
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         hdr = FSIZELS_END;
         if (!isbigendian())
@@ -2409,6 +2447,7 @@ void cmd_fsizels(void)
         pt = strchr(line, '\n');
         if (pt)
             *pt = '\0';
+        fsop = SECFS_STAT;
         if (jaildir(line, path)) {
             hdr = FSIZE_FAIL;
             if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
@@ -2463,6 +2502,10 @@ void cmd_lsrv2(int mode)
         return;
     }
     *pt2 = '\0';
+    if (mode == LSRITER_NONR)
+        fsop = SECFS_LDIR;
+    else if (mode == LSRITER_R)
+        fsop = SECFS_LRDIR;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -2472,6 +2515,7 @@ void cmd_lsrv2(int mode)
         return;
     }
     pt2 += strlen(LSV2TOK_SEP);
+    fsop = SECFS_WFILE;
     if (jaildir(pt2, file)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -2510,6 +2554,7 @@ void cmd_ftype(void)
     char path[PATH_MAX];
     *path = '\0';
     char hdr = 0;
+    fsop = SECFS_STAT;
     if (jaildir(pt, path)) {
         hdr = FTYPE_FAIL;
         if (writebuf_ex(&hdr, sizeof hdr) == -1) {
@@ -2556,6 +2601,7 @@ void cmd_ftypels(void)
     char line[LINE_MAX];
     *path = '\0';
     char hdr = 0;
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         hdr = FTYPE_END;
         if (writebuf_ex(&hdr, sizeof hdr) == -1) {
@@ -2578,6 +2624,7 @@ void cmd_ftypels(void)
         pt = strchr(line, '\n');
         if (pt)
             *pt = '\0';
+        fsop = SECFS_STAT;
         if (jaildir(line, path)) {
             hdr = FTYPE_FAIL;
             if (writebuf_ex(&hdr, sizeof hdr) == -1) {
@@ -2631,6 +2678,7 @@ void cmd_fstatls(void)
     char line[LINE_MAX];
     *path = '\0';
     struct fstathdr hdr;
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         hdr.code = FSTATLS_END;
         if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
@@ -2653,6 +2701,7 @@ void cmd_fstatls(void)
         pt = strchr(line, '\n');
         if (pt)
             *pt = '\0';
+        fsop = SECFS_STAT;
         if (jaildir(line, path)) {
             memset(&hdr, 0, sizeof hdr);
             hdr.code = FSTATLS_FAIL;
@@ -2717,6 +2766,7 @@ void cmd_intread(void)
     char *pt = comm.buf + strlen(CMD_INTREAD) + 1;
     int32_t hdr;
     char path[PATH_MAX];
+    fsop = SECFS_RFILE;
     if (jaildir(pt, path)) {
         hdr = -1;
         if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
@@ -2822,6 +2872,7 @@ void cmd_intwrite(void)
         endcomm();
         return;
     }
+    fsop = SECFS_WFILE;
     if (jaildir(pt, path)) {
         hdr = -1;
         if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
@@ -3011,6 +3062,7 @@ void cmd_netmutacqtry(void)
     }
     *pt2++ = '\0';
     char path[PATH_MAX];
+    fsop = SECFS_RFILE | SECFS_WFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -3074,6 +3126,7 @@ void cmd_netmutrel(void)
     }
     *pt2++ = '\0';
     char path[PATH_MAX];
+    fsop = SECFS_RFILE | SECFS_WFILE;
     if (jaildir(pt, path)) {
         cmd_fail(CMD_EACCESS);
         return;
@@ -3119,5 +3172,308 @@ void cmd_netmutrel(void)
     ftruncate(fd, 0);
     crtlock(fd, UNLOCK);
     close(fd);
+    cmd_ok();
+}
+
+void cmd_setfsid()
+{
+    char *pt = comm.buf + strlen(CMD_SETFSID) + 1;
+    memset(fsid, 0, sizeof fsid);
+    strcpy(fsid, pt);
+    cmd_ok();
+}
+
+void cmd_setfsperm(void)
+{
+    char *pt = comm.buf + strlen(CMD_SETFSPERM) + 1;
+    char tok[LINE_MAX];
+    char path[PATH_MAX];
+    char *pt2 = strchr(pt, CMD_SEPCH);
+    if (!pt2) {
+        cmd_fail(CMD_EPARAM);
+        return;
+    }
+    *pt2++ = '\0';
+    strcpy(tok, pt);
+    pt = strchr(tok, FSPERM_TOK);
+    if (!pt) {
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    fsop_ovrr = 1;
+    if (jaildir(pt2, path)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    struct stat st = { 0 };
+    stat(path, &st);
+    if (!S_ISDIR(st.st_mode)) {
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    strcat(path, "/");
+    strcat(path, FSMETA);
+    char swpfile[PATH_MAX];
+    strcpy(swpfile, path);
+    strcat(swpfile, FSMETASWP_EXT);
+    char lckpath[PATH_MAX];
+    strcpy(lckpath, path);
+    strcat(lckpath, FSMETALCK_EXT);
+    int lck = open(lckpath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (!lck) {
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    crtlock(lck, BLK);
+    int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (fd == -1) {
+        close(lck);
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    close(fd);
+    if (cpfile(path, swpfile) == -1) {
+        close(lck);
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    FILE *fs = fopen(swpfile, "a+");
+    if (!fs) {
+        unlink(swpfile);
+        close(lck);
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    fseek(fs, 0, SEEK_END);
+    int64_t sz = ftell(fs);
+    fseek(fs, 0, SEEK_SET);
+    if (!sz) {
+        if (fputs(tok, fs) == EOF || fputs("\n", fs) == EOF) {
+            fclose(fs);
+            unlink(swpfile);
+            close(lck);
+            cmd_fail(CMD_ESETFSPERM);
+            return;
+        }
+    } else {
+        char line[LINE_MAX];
+        int found = 0;
+        while (fgets(line, sizeof line, fs)) {
+            pt = strchr(line, FSPERM_TOK);
+            if (pt)
+                *pt = '\0';
+            if (!strcmp(line, fsid)) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            fclose(fs);
+            unlink(swpfile);
+            close(lck);
+            cmd_fail(CMD_ESETFSPERM);
+            return;
+        } else {
+            unsigned int perm = atoi(++pt);
+            if (perm & SECFS_SETPERM) {
+                if (fputs(tok, fs) == EOF || fputs("\n", fs) == EOF) {
+                    fclose(fs);
+                    unlink(swpfile);
+                    close(lck);
+                    cmd_fail(CMD_ESETFSPERM);
+                    return;
+                }
+            } else {
+                fclose(fs);
+                unlink(swpfile);
+                close(lck);
+                cmd_fail(CMD_ESETFSPERM);
+                return;
+            }
+        }
+    }
+    fclose(fs);
+    if (rename(swpfile, path) == -1) {
+        unlink(swpfile);
+        close(lck);
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    char rdswp[PATH_MAX], rdfile[PATH_MAX];
+    strcpy(rdswp, path);
+    strcat(rdswp, FSMETASWP_EXT);
+    if (cpfile(path, rdswp) == -1) {
+        close(lck);
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    strcpy(rdfile, path);
+    strcat(rdfile, FSMETARD_EXT);
+    if (rename(rdswp, rdfile) == -1) {
+        unlink(rdswp);
+        close(lck);
+        cmd_fail(CMD_ESETFSPERM);
+        return;
+    }
+    close(lck);
+    cmd_ok();
+}
+
+void cmd_remfsperm(void)
+{
+    char *pt = comm.buf + strlen(CMD_REMFSPERM) + 1;
+    char tok[LINE_MAX];
+    char path[PATH_MAX];
+    char *pt2 = strchr(pt, CMD_SEPCH);
+    if (!pt2) {
+        cmd_fail(CMD_EPARAM);
+        return;
+    }
+    *pt2++ = '\0';
+    strcpy(tok, pt);
+    fsop_ovrr = 1;
+    if (jaildir(pt2, path)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    struct stat st = { 0 };
+    stat(path, &st);
+    if (!S_ISDIR(st.st_mode)) {
+        cmd_fail(CMD_EREMFSPERM);
+        return;
+    }
+    strcat(path, "/");
+    strcat(path, FSMETA);
+    char swpfile[PATH_MAX];
+    strcpy(swpfile, path);
+    strcat(swpfile, FSMETASWP_EXT);
+    char lckpath[PATH_MAX];
+    strcpy(lckpath, path);
+    strcat(lckpath, FSMETALCK_EXT);
+    int lck = open(lckpath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (!lck) {
+        cmd_fail(CMD_EREMFSPERM);
+        return;
+    }
+    crtlock(lck, BLK);
+    char fsmetard[PATH_MAX];
+    strcpy(fsmetard, path);
+    strcat(fsmetard, FSMETARD_EXT);
+    unsigned int perm = getfsidperm(fsmetard, fsid);
+    if (!(perm & SECFS_REMPERM)) {
+        close(lck);
+        cmd_fail(CMD_EREMFSPERM);
+        return;
+    }
+    FILE *fperm = fopen(path, "r");
+    FILE *fswap = fopen(swpfile, "w+");
+    if (!fperm || !fswap) {
+        fclose(fperm);
+        fclose(fswap);
+        close(lck);
+        cmd_fail(CMD_EREMFSPERM);
+        return;
+    }
+    char line[LINE_MAX];
+    while (fgets(line, sizeof line, fperm)) {
+        pt = strchr(line, FSPERM_TOK);
+        if (pt) {
+            *pt = '\0';
+            if (!strcmp(line, tok))
+                continue;
+        }
+        *pt = FSPERM_TOK;
+        if (fputs(line, fswap) == EOF) {
+            fclose(fperm);
+            fclose(fswap);
+            unlink(swpfile);
+            close(lck);
+            cmd_fail(CMD_EREMFSPERM);
+            return;
+        }
+    }
+    fclose(fperm);
+    fclose(fswap);
+    if (rename(swpfile, path) == -1) {
+        unlink(swpfile);
+        close(lck);
+        cmd_fail(CMD_EREMFSPERM);
+        return;
+    }
+    char rdfile[PATH_MAX];
+    if (cpfile(path, swpfile) == -1) {
+        close(lck);
+        cmd_fail(CMD_EREMFSPERM);
+        return;
+    }
+    strcpy(rdfile, path);
+    strcat(rdfile, FSMETARD_EXT);
+    if (rename(swpfile, rdfile) == -1) {
+        unlink(swpfile);
+        close(lck);
+        cmd_fail(CMD_EREMFSPERM);
+        return;
+    }
+    close(lck);
+    cmd_ok();
+}
+
+void cmd_getfsperm(void)
+{
+    char *pt = comm.buf + strlen(CMD_GETFSPERM) + 1;
+    char tok[LINE_MAX];
+    char path[PATH_MAX];
+    char *pt2 = strchr(pt, CMD_SEPCH);
+    if (!pt2) {
+        cmd_fail(CMD_EPARAM);
+        return;
+    }
+    *pt2++ = '\0';
+    strcpy(tok, pt);
+    fsop_ovrr = 1;
+    if (jaildir(pt2, path)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    struct stat st = { 0 };
+    stat(path, &st);
+    if (!S_ISDIR(st.st_mode)) {
+        cmd_fail(CMD_EGETFSPERM);
+        return;
+    }
+    char perm[INTDIGITS];
+    strcat(path, "/");
+    strcat(path, FSMETA);
+    strcat(path, FSMETARD_EXT);
+    sprintf(perm, "%u", getfsidperm(path, tok));
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, perm);
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
+}
+
+void cmd_issecfs(void)
+{
+    char *pt = comm.buf + strlen(CMD_ISSECFS) + 1;
+    char path[PATH_MAX];
+    fsop_ovrr = 1;
+    if (jaildir(pt, path)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    struct stat st = { 0 };
+    stat(path, &st);
+    if (!S_ISDIR(st.st_mode)) {
+        cmd_fail(CMD_ESRCNODIR);
+        return;
+    }
+    strcat(path, "/");
+    strcat(path, FSMETA);
+    strcat(path, FSMETARD_EXT);
+    if (access(path, F_OK)) {
+        cmd_fail(CMD_EISSECFS);
+        return;
+    }
     cmd_ok();
 }

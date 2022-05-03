@@ -165,6 +165,7 @@ static void xs1_cmdopen(void)
 {
     char *pt = comm.buf + strlen(XS1_OPEN) + 1;
     char file[PATH_MAX] = "";
+    fsop = SECFS_RFILE | SECFS_WFILE;
     if (jaildir(pt, file)) {
         cmd_fail(CMD_EACCESS);
         return;

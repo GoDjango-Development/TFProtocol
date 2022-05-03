@@ -122,7 +122,7 @@ char *itostr(long long v);
 /* Check whether a memory model is Big-endian. */
 int isbigendian(void);
 /* Lock a file, and creates it if not exist. */
-int crtlock(/*const char *path*/int fd, enum crtlock lck/*, int creat*/);
+int crtlock(int fd, enum crtlock lck);
 /* Write chunk of data to file (fd). */
 int64_t writechunk(int fd, char *buf, int64_t len);
 /* Read chunk of data from file (fd). */
@@ -144,5 +144,7 @@ int resolvhn(const char *host, char *ip, int v6, int timeout);
 void rmtrdir(char *str);
 /* List directory recursively or not and return it in a callback.*/
 int lsr_iter(const char *path, int rec, lsr_iter_callback callback);
+/* Copy file from source to destination. */
+int cpfile(const char *src, const char *dst);
 
 #endif

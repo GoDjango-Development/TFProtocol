@@ -116,5 +116,15 @@
 #define CMD_ENETLOCK "54 : Failed to acquire or release NETLOCK."
 /* Failed to acquire or release the network persistent mutex. */
 #define CMD_ENETMUTEX "55 : Failed to acquire or release NETMUT."
+/* Failed setting an alias. */
+#define CMD_ESETALIAS "56 : Failed setting an alias."
+/* Failed setting secure FileSystem security token. */
+#define CMD_ESETFSPERM "57: Failed setting secure FS permission."
+/* Failed removing secure FileSystem security token. */
+#define CMD_EREMFSPERM "58: Failed removing secure FS permission."
+/* Failed getting secure FileSystem current permission identity. */
+#define CMD_EGETFSPERM "59: Failed getting secure FS permission identity."
+/* The directory does not belongs to the secure filesystem. */
+#define CMD_EISSECFS "60: The directory does not belongs to secure FS."
 
 #endif

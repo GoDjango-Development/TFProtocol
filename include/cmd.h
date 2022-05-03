@@ -153,6 +153,16 @@
 #define CMD_NETMUTACQ_TRY "NETMUTACQ_TRY"
 /* Release a network persistent mutex in mode. */
 #define CMD_NETMUTREL "NETMUTREL"
+/* Set secure filesystem identity. */
+#define CMD_SETFSID "SETFSID" 
+/* Set secure FileSystem permission. */
+#define CMD_SETFSPERM "SETFSPERM"
+/* Remove secure FileSystem permission. */
+#define CMD_REMFSPERM "REMFSPERM"
+/* Get secure FileSystem permission for current identity. */
+#define CMD_GETFSPERM "GETFSPERM"
+/* Check if directory belongs to tfprotocol secure filesystem. */
+#define CMD_ISSECFS "ISSECFS"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -297,5 +307,15 @@ void cmd_netlocktry(void);
 void cmd_netmutacqtry(void);
 /* Release a network persistent mutex in mode. */
 void cmd_netmutrel(void);
+/* Set secure filesystem identity. */
+void cmd_setfsid(void);
+/* Set secure FileSystem permission. */
+void cmd_setfsperm(void);
+/* Remove secure FileSystem permission. */
+void cmd_remfsperm(void);
+/* Get secure FileSystem permission for current identity. */
+void cmd_getfsperm(void);
+/* Check if directory belongs to tfprotocol secure filesystem. */
+void cmd_issecfs(void);
 
 #endif

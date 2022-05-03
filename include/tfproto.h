@@ -18,11 +18,35 @@
 #define SRVID_LEN 40
 /* Daemonize flag. */
 #define MKDAEMON 1
+/* Secure FileSystem metadata file. */
+#define FSMETA ".securefs_metadata"
+/* Secure FileSystem metadata file extension for reading. */
+#define FSMETARD_EXT ".rd"
+/* Secure FileSystem metadata swap file extension. */
+#define FSMETASWP_EXT ".swp"
+/* Secure FileSystem permision token separator. */
+#define FSPERM_TOK ':'
+/* Secure FileSystem metadata lock file extension. */
+#define FSMETALCK_EXT ".lck"
+/* Secure FileSystem -others- identity. */
+#define FSOTHERUSR ""
+
+/* Secure FileSystem permission bits. */
+enum SECFS { 
+    SECFS_SETPERM = 1, SECFS_REMPERM = 2, SECFS_RFILE = 4, SECFS_WFILE = 8,
+    SECFS_LDIR = 16, SECFS_RMDIR = 32, SECFS_MKDIR = 64, SECFS_DFILE = 128,
+    SECFS_STAT = 256, SECFS_FDUPD = 512, SECFS_UXPERM = 1024, 
+    SECFS_LRDIR = 2048
+};
 
 /* Shared memory structure. */
 struct shm_obj {
     volatile uint32_t oobcount;
 };
+
+/* Secure FileSystem current operation. */
+unsigned int volatile fsop;
+volatile int fsop_ovrr;
 
 /* Contains needed members for communicating potentially used from severals
     modules in the program */
@@ -47,6 +71,8 @@ struct comm {
 extern struct crypto cryp_rx;
 extern struct crypto cryp_tx;
 extern struct crypto cryp_org;
+/* Secure FileSystem identity token. */
+extern char fsid[LINE_MAX];
 
 /* Initialize internal data and run mainloop function */
 void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz);
@@ -70,6 +96,9 @@ int64_t writebuf_ex(char *buf, int64_t len);
 int64_t readbuf_exfd(int fd, char *buf, int64_t len, int enc);
 /* This function is equivalent to writebuf but indicating the descriptor. */
 int64_t writebuf_exfd(int fd, char *buf, int64_t len, int enc);
-
+/* Secure FileSystem security operations. */
+int secfs_proc(const char *src);
+/* Get identity permission. */
+unsigned int getfsidperm(const char *path, const char *id);
 
 #endif

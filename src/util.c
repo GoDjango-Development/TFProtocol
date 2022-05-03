@@ -21,6 +21,7 @@
 
 #define SECDIR_TOK ".sd/"
 #define RDNULLBUF 64 * 1024
+#define CPFILEBUF 64 * 1024
 
 /* Temp file internal structure */
 struct tmp {
@@ -61,7 +62,12 @@ int jaildir(const char *src, char *dst)
         c++;
     }
     *dst = *src;
-    if (strstr(dstcpy, pdir))
+    if (strstr(dstcpy, pdir)) {
+        fsop = 0;
+        fsop_ovrr = 0;
+        return -1;
+    }
+    if (secfs_proc(dstcpy) == -1)
         return -1;
     return chkpath(tfproto.dbdir);
 }
@@ -433,13 +439,8 @@ int isbigendian(void)
         return 1;
 }
 
-int crtlock(/*const char *path*/ int fd, enum crtlock lck/*, int creat*/)
+int crtlock(int fd, enum crtlock lck)
 {
-    /*int fd;
-    if (creat)
-        fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    else
-        fd = open(path, O_RDWR);*/
     struct flock lock;
     lock.l_whence = SEEK_SET;
     lock.l_start = 0;
@@ -714,5 +715,35 @@ int lsr_iter(const char *path, int rec, lsr_iter_callback callback)
             rmtrdir(pathcp);
     } while (lvl > -1);
     free(dir);
+    return 0;
+}
+
+int cpfile(const char *src, const char *dst)
+{
+    char buf[CPFILEBUF];
+    int fd_src = open(src, O_RDONLY);
+    int fd_dst = open(dst, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+    if (fd_src == -1 || fd_dst == -1) {
+        close(fd_src);
+        close(fd_dst);
+        return -1;
+    }
+    int rb;
+    int wb;
+    while (rb = readchunk(fd_src, buf, sizeof buf)) {
+        if (rb == -1) {
+            close(fd_src);
+            close(fd_dst);
+            unlink(dst);
+            return -1;
+        }
+        wb = writechunk(fd_dst, buf, rb);
+        if (rb != wb) {
+            close(fd_src);
+            close(fd_dst);
+            unlink(dst);
+            return -1;
+        }
+    }
     return 0;
 }

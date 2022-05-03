@@ -47,6 +47,8 @@
 #define TRP_IPV6TOK "trp_ipv6 "
 /* Initial token to declare a line as a comment. */
 #define COMMENT '#'
+/* DBDIR secure namespace token. */
+#define DBDIR_SECTOK "_sec"
 
 struct tfproto tfproto;
 static char *buf;

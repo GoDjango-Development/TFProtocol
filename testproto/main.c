@@ -126,8 +126,8 @@ RETRY_CONNECT:;
   //  inet_pton(AF_INET, "10.0.0.2", &addr.sin_addr);
   //  inet_pton(AF_INET, "192.168.0.101", &addr.sin_addr);
 
-//inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
-  inet_pton(AF_INET, "45.79.37.243", &addr.sin_addr);
+inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+  //inet_pton(AF_INET, "45.79.37.243", &addr.sin_addr);
 //    inet_pton(AF_INET, "209.222.17.119", &addr.sin_addr);
 //     inet_pton(AF_INET, "10.0.0.1", &addr.sin_addr);
    int flags = fcntl(sock, F_GETFL, 0);
@@ -298,6 +298,8 @@ RETRY_CONNECT:;
             cmd_fstatls();
             continue;
         }
+        if (strstr(buf, "getfsperm "))
+            goto KEEP_GOING;
         if (strstr(buf, "ftypels ")) {
             wrs(buf, strlen(buf));
             cmd_ftypels();
@@ -489,6 +491,7 @@ RETRY_CONNECT:;
              sndfile();
              continue;
          }
+KEEP_GOING:
          //rd=write(sock, buf, strlen(buf));
          wrs(buf, strlen(buf));
          //sleep(3);
