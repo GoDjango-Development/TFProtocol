@@ -470,6 +470,8 @@ void cmd_ls(void)
                 strcat(path, "\n");
             }
         }
+        if (strstr(path, FSMETA))
+                scdir = 1;
         if (!scdir)
             writetmp(tmp, path);
         prec++, i++;
@@ -769,6 +771,8 @@ void cmd_lsr(void)
                     scdir = 1;
             }
         }
+        if (strstr(path, FSMETA))
+            scdir = 1;
         if (!scdir)
             writetmp(tmp, path);
         prec++, i++;
@@ -2540,6 +2544,8 @@ static void lsr_callback(const char *filename, int isdir)
 {
     char stdpath[PATH_MAX];
     normpath(filename, stdpath);
+    if (strstr(stdpath, FSMETA))
+        return;
     if (isdir)
         strcat(stdpath, "/");
     if (!strstr(stdpath, SDEXT)) {
