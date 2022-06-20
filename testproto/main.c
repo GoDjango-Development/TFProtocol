@@ -202,25 +202,16 @@ inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
        
 
        /* tfprotocol public testing server public key */
-/*const char pubkey[] = "-----BEGIN PUBLIC KEY-----\n"
-"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlhjLEFcJQBkXlyP46utJ\n"
-"JTrcE2v8KFXVwjAjJ5aiHuNmUBzo9pYLSLqr4ZDbmsmrEBlyZvL2O7wYqjqw3UnR\n"
-"dQCxhxfWeNSV3uXKEDDJQdkpbUpSvmNFXL0JZHDX1HHQ/LNPzEj+bv2jFyq2H+ic\n"
-"WNjv0LWeI5iIpip2H3U55POiog822CRglNjcARWfbh0mWlAs3hHIbac9Ar2DK3gn\n"
-"uqRPPIYMbUYcify/gJrm50Gls1v+zaH+mcMB7VqSvDzskOm34NoL2KNtjZTZnM6k\n"
-"x0j5+s8dfqPXcgmO/YyOr002ijLUPE/PPV5zsIyObze/Z/ONGtO5Bd9ZhnpZCEEO\n"
-"zQIDAQAB\n"
-"-----END PUBLIC KEY-----\n";*/
 
  const char pubkey[] = "-----BEGIN PUBLIC KEY-----\n"
-"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq2K/X7ZSKlrMBIrSY9G/\n"
-"LLB+0injPCX17U7vb8XedQbjBT2AJ+qxmT4VLR1EWnvdUdvxaX9kRahI4hlSnfWl\n"
-"IddPfJRPH97Rk0OlMEQBclhD4WL88T8o4lVu0nuo8UAjqY0As6g6ZCG1s/Wfr64N\n"
-"aSvFr8NAYIaTQ6PbKxiypTythsSAkp5eAMkaje/ZAhkY1h0zMz09eg17veED8dIb\n"
-"R5sc7j05ndDOGucqY4+u9F/CZQNyOysKcFYjtYz/pStBPYY8CcU82SwW0Y2tbzy2\n"
-"j30ADzroySlQw+VjcffrGJao9qea1GWGwGMv4d4baMxrZeid2uB7NMUdljW8owWa\n"
-"VwIDAQAB\n"
-"-----END PUBLIC KEY-----\n";
+	"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuPfTLredGcSSpZCxavfU\n"
+	"dElpcZm0Kls5JhtR08cBlYMD6KKLNQIMugR0WQ5VOufUznmX2xJ70BCoZXE+7ty4\n"
+	"U1WeWSkkxPi/REGO1CKTHOMx+YpDV87L2+qyCryPc5w13ZFNIHZBg6Je9IrfnwW8\n"
+	"iNOriFv2omXtKT9/GwnHgZ+tt+zH7OshE9wcL9yILrOtHUdQQrmaZxO/XBFXnXwW\n"
+	"Ls6bYrzwPflT49hQsgvXkftXgHKInF/UyjFr14z80r4iNlU2lWqqfYCL47uWpb7d\n"
+	"WEBxSmONk9dssVnKE6RKK0A9wgQ744zcJBZiHPhSRiloSX5Y24q466l8vf/DGJ6v\n"
+	"1QIDAQAB\n"
+	"-----END PUBLIC KEY-----\n";
 
    
         deckey = malloc(sizeof "this is a session key");
