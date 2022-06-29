@@ -126,5 +126,7 @@
 #define CMD_EGETFSPERM "59: Failed getting secure FS permission identity."
 /* The directory does not belongs to the secure filesystem. */
 #define CMD_EISSECFS "60: The directory does not belongs to secure FS."
+/* Unable to use the Folder Locking System. */
+#define EPROTO_ELOCKSYS "61: Unable to use Folder Locking System."
 
 #endif

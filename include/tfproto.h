@@ -45,8 +45,8 @@ struct shm_obj {
 };
 
 /* Secure FileSystem current operation. */
-unsigned int volatile fsop;
-volatile int fsop_ovrr;
+extern unsigned int volatile fsop;
+extern volatile int fsop_ovrr;
 
 /* Contains needed members for communicating potentially used from severals
     modules in the program */

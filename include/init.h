@@ -60,6 +60,8 @@ struct tfproto {
     int trp_tp;
     /* Transparent Proxy. */
     char trp[TRPLEN];
+    /* LOCKSYS flag. */
+    int locksys;
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */

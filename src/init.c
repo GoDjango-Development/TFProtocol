@@ -49,6 +49,8 @@
 #define COMMENT '#'
 /* DBDIR secure namespace token. */
 #define DBDIR_SECTOK "_sec"
+/* LOCKSYS flag. */
+#define LOCKSYS "locksys"
 
 struct tfproto tfproto;
 static char *buf;
@@ -170,6 +172,9 @@ int init(const char *conf)
     pt = strstr(buf, INJAIL);
     if (pt)
         tfproto.injail = 1;
+    pt = strstr(buf, LOCKSYS);
+    if (pt)
+        tfproto.locksys = 1;
     pt = strstr(buf, TLB);
     i = 0;
     if (pt) {

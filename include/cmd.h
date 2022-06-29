@@ -163,6 +163,8 @@
 #define CMD_GETFSPERM "GETFSPERM"
 /* Check if directory belongs to tfprotocol secure filesystem. */
 #define CMD_ISSECFS "ISSECFS"
+/* Folder lock system enforcement. */
+#define CMD_LOCKSYS "LOCKSYS"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -317,5 +319,7 @@ void cmd_remfsperm(void);
 void cmd_getfsperm(void);
 /* Check if directory belongs to tfprotocol secure filesystem. */
 void cmd_issecfs(void);
+/* Folder lock system enforcement. */
+void cmd_locksys(void);
 
 #endif

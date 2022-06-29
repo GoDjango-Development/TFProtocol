@@ -240,6 +240,15 @@ void cmd_parse(void)
             return;
         }
     }
+    if (tfproto.locksys) {
+        if (!strcmp(cmd, CMD_LOCKSYS)) {
+            cmd_locksys();
+            return;
+        } else {
+            cmd_fail(EPROTO_ELOCKSYS);
+            return;
+        }
+    }
     if (!strcmp(cmd, CMD_ECHO))
         cmd_echo();
     else if (!strcmp(cmd, CMD_MKDIR))
@@ -3481,5 +3490,27 @@ void cmd_issecfs(void)
         cmd_fail(CMD_EISSECFS);
         return;
     }
+    cmd_ok();
+}
+
+void cmd_locksys(void)
+{
+    char *pt = comm.buf + strlen(CMD_LOCKSYS) + 1;
+    char hash[LINE_MAX];
+    strcpy(hash, tfproto.dbdir);
+    strcat(hash, "/");
+    strcat(hash, pt);
+    if (access(tfproto.dbdir, F_OK)) {
+        cmd_fail(CMD_EFILENOENT);
+        return;
+    }
+    struct stat st = { 0 };
+    stat(hash, &st);
+    if (!S_ISDIR(st.st_mode)) {
+        cmd_fail(CMD_ENOTDIR);
+        return;
+    }
+    strcpy(tfproto.dbdir, hash);
+    tfproto.locksys = 0;
     cmd_ok();
 }

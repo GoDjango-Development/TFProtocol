@@ -106,6 +106,11 @@ ip or dns.
 
 This parameter is optional and tells the tfprotocol server to compell users to
 call INJAIL command. 
+There must be a file in the injailed directory called jail.key
+
+jail.key file syntax:
+
+jail_token
 
 
     ::::How the optional parameters works::::

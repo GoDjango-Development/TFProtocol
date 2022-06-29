@@ -43,6 +43,8 @@ extern int logged;
 char fsid[LINE_MAX];
 /* Thread handler for signals. */
 static pthread_t oobth;
+extern unsigned int volatile fsop;
+extern volatile int fsop_ovrr;
 
 /* Validate protocol version. non-zero return for ok. */
 static int chkproto(void);
