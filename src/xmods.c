@@ -23,6 +23,8 @@
 #define CMD_XS_POSTGRESQL "XS_POSTGRESQL"
 /* Command to enter the eXtended subsystem Gateway. */
 #define CMD_XS_GATEWAY "XS_GATEWAY"
+/* Command to enter the Remote Procedure Call Proxy subsystem. */
+#define CMD_XS_RPCPROXY "XS_RPCPROXY"
 
 #ifdef XS1_API
 #include <xs1/xs1.h>
@@ -55,6 +57,11 @@
 #ifdef XS_GATEWAY
 #include "xs_gateway/xs_gateway.h"
 #endif
+
+#ifdef XS_RPCPROXY
+#include "xs_rpcproxy/xs_rpcproxy.h"
+#endif
+
 
 void run_xmods(const char *cmd)
 {
@@ -115,6 +122,13 @@ void run_xmods(const char *cmd)
 #ifdef XS_GATEWAY
     if (strstr(cmd, CMD_XS_GATEWAY)) {
         xs_gateway();
+        return;
+    }
+#endif
+#ifdef XS_RPCPROXY
+    if (strstr(cmd, CMD_XS_RPCPROXY)) {
+        cmd_ok();
+        xs_rpcproxy();
         return;
     }
 #endif

@@ -62,6 +62,8 @@ struct tfproto {
     char trp[TRPLEN];
     /* LOCKSYS flag. */
     int locksys;
+    /* Remote Procedure Call Proxy ACL file. */
+    char rpcproxy[PATH_MAX];
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */

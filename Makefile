@@ -11,7 +11,7 @@ obj = release/obj/main.o release/obj/net.o release/obj/init.o release/obj/log.o 
 	release/obj/xs_ime.o release/obj/xs_imeopc1.o release/obj/udp_keep.o \
 	release/obj/xs_ntmex.o release/obj/xs_sqlite.o release/obj/xs_ace.o \
 	release/obj/xs_mysql.o release/obj/xs_postgresql.o \
-	release/obj/xs_gateway.o release/obj/trp.o
+	release/obj/xs_gateway.o release/obj/trp.o release/obj/xs_rpcproxy.o
 
 CCX = gcc -o
 CC = gcc -c
@@ -90,6 +90,9 @@ release/obj/xs_gateway.o: src/xs_gateway/xs_gateway.c include/xs_gateway/xs_gate
 
 release/obj/trp.o: src/trp.c include/trp.h
 	$(CC) src/trp.c -o release/obj/trp.o $(cflags)
+
+release/obj/xs_rpcproxy.o: src/xs_rpcproxy/xs_rpcproxy.c include/xs_rpcproxy/xs_rpcproxy.h
+	$(CC) src/xs_rpcproxy/xs_rpcproxy.c -o release/obj/xs_rpcproxy.o $(cflags)
 		
 # Debug profile
 
@@ -100,7 +103,7 @@ dbg = debug/obj/main.o debug/obj/net.o debug/obj/init.o debug/obj/log.o \
 	debug/obj/xs_ime.o debug/obj/xs_imeopc1.o debug/obj/udp_keep.o \
 	debug/obj/xs_ntmex.o debug/obj/xs_sqlite.o debug/obj/xs_ace.o \
 	debug/obj/xs_mysql.o debug/obj/xs_postgresql.o debug/obj/xs_gateway.o \
-	debug/obj/trp.o
+	debug/obj/trp.o debug/obj/xs_rpcproxy.o
 
 CCGX = gcc -g -DDEBUG -o
 CCG = gcc -g -DDEBUG -c
@@ -179,7 +182,9 @@ debug/obj/xs_gateway.o: src/xs_gateway/xs_gateway.c include/xs_gateway/xs_gatewa
 
 debug/obj/trp.o: src/trp.c include/trp.h
 	$(CCG) src/trp.c -o debug/obj/trp.o $(cflags) 
-		
+
+debug/obj/xs_rpcproxy.o: src/xs_rpcproxy/xs_rpcproxy.c include/xs_rpcproxy/xs_rpcproxy.h
+	$(CCG) src/xs_rpcproxy/xs_rpcproxy.c -o debug/obj/xs_rpcproxy.o $(cflags) 		
 #Others rules
 
 prepare:

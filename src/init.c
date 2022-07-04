@@ -51,6 +51,8 @@
 #define DBDIR_SECTOK "_sec"
 /* LOCKSYS flag. */
 #define LOCKSYS "locksys"
+/* Remote Procedure Call Proxy. */
+#define RPCPROXY "rpcproxy"
 
 struct tfproto tfproto;
 static char *buf;
@@ -154,6 +156,13 @@ int init(const char *conf)
         i = 0;
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
             tfproto.userdb[i++] = *pt++;
+    }
+    pt = strstr(buf, RPCPROXY);
+    if (pt) {
+        pt += strlen(RPCPROXY);
+        i = 0;
+        while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
+            tfproto.rpcproxy[i++] = *pt++;
     }
     pt = strstr(buf, XSNTMEX);
     if (pt) {

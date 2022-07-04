@@ -20,6 +20,8 @@
 #define XS_POSTGRESQL_MODULE
 /* Undefine this macro to remove the XS_GATEWAY subsystem. */
 #define XS_GATEWAY
+/* Undefine this macro to remove the  XS_RPCPROXY subsystem. */
+#define XS_RPCPROXY
 
 void run_xmods(const char *cmd);
 
