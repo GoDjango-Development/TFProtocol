@@ -52,7 +52,7 @@
 /* LOCKSYS flag. */
 #define LOCKSYS "locksys"
 /* Remote Procedure Call Proxy. */
-#define RPCPROXY "rpcproxy"
+#define RPCPROXY "rpcproxy "
 
 struct tfproto tfproto;
 static char *buf;

@@ -18,6 +18,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <wait.h>
 
 #define SECDIR_TOK ".sd/"
 #define RDNULLBUF 64 * 1024
@@ -746,4 +747,14 @@ int cpfile(const char *src, const char *dst)
         }
     }
     return 0;
+}
+
+int sec_waitpid(int pid)
+{
+    int rs; 
+    int32_t es = 0;
+    do
+        rs = waitpid(pid, &es, 0);
+    while (rs == -1 && errno == EINTR);
+    return es;
 }

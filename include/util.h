@@ -52,6 +52,8 @@
 #define LSRITER_NONR 0
 /* LSR_ITER recursive mode. */
 #define LSRITER_R 1
+/* Short length string. */
+#define SHORTSTR 255
 
 /* FApi operation codes. */
 enum fapiopc { FAPI_READ, FAPI_WRITE, FAPI_OVERWRITE};
@@ -146,5 +148,7 @@ void rmtrdir(char *str);
 int lsr_iter(const char *path, int rec, lsr_iter_callback callback);
 /* Copy file from source to destination. */
 int cpfile(const char *src, const char *dst);
+/* Securely wait for process exit status. */
+int sec_waitpid(int pid);
 
 #endif

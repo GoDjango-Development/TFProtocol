@@ -13,7 +13,6 @@
 #include <init.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <wait.h>
 #include <tfproto.h>
 #include <sys/stat.h>
 #include <util.h>
@@ -68,8 +67,6 @@ static void *runbuf_wrth(void *prms);
 static void *runbuf_rdth(void *prms);
 /* Send module exit status. */
 static int sendes(int32_t es);
-/* Securely wait for process exit status. */
-static int sec_waitpid(int pid);
 /* Check access control list file. */
 static int chkacl(const char *binpath);
 /* Check access control list file for xs_ace_run command. */
@@ -782,16 +779,6 @@ void xs_ace_setwdir(void)
     strcpy(wdir, pt);
     chdir(tmpwd);
     cmd_ok();
-}
-
-static int sec_waitpid(int pid)
-{
-    int rs; 
-    int32_t es = 0;
-    do
-        rs = waitpid(pid, &es, 0);
-    while (rs == -1 && errno == EINTR);
-    return es;
 }
 
 static int chkacl(const char *binpath)
