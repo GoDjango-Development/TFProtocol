@@ -105,11 +105,21 @@ static int runrpc(const char *hash)
     int rs; 
     rs = pipe(pdin);
     rs += pipe(pdout);
-    if (rs != 0)
+    if (rs != 0) {
+        close(pdin[0]);
+        close(pdin[1]);
+        close(pdout[0]);
+        close(pdout[1]);
         return -1;
+    }
     pid = fork();
-    if (pid == -1)
+    if (pid == -1) {
+        close(pdin[0]);
+        close(pdin[1]);
+        close(pdout[0]);
+        close(pdout[1]);
         return -1;
+    }
     else if (!pid) {
         close(pdin[0]);
         close(pdout[1]);
