@@ -165,7 +165,7 @@ static int putstream_can(int fd, char *buf, int64_t bufsz, int *del,
 static int getstream_can(int fd, char *buf, int64_t bufsz, 
     const uint64_t canpt);
 /* LSR_ITER callback. */
-static void lsr_callback(const char *filename, int isdir);
+static void lsr_callback(const char *root, const char *filename, int isdir);
 /* NETLOCK/NETLOCK_TRY switch helper function. */
 static void netlock_switch(int s);
 /* NETLOCK Timeout watchdog thread. */
@@ -2533,12 +2533,25 @@ void cmd_lsrv2(int mode)
         cmd_fail(CMD_EACCESS);
         return;
     }
+    struct stat st = { 0 };
+    if (stat(path, &st) == -1) {
+        cmd_fail(CMD_ELSRV2);
+        return;
+    }
+    if (!S_ISDIR(st.st_mode)) {
+        cmd_fail(CMD_ESRCNODIR);
+        return;
+    }
+    if (path[strlen(path) - 1] != '/')
+        strcat(path, "/");
+    char root[PATH_MAX];
+    normpath(path, root);
     fs = fopen(file, "w+");
     if (!fs) {
         cmd_fail(CMD_EACCESS);
         return;
     }
-    int rc = lsr_iter(path, mode, lsr_callback);
+    int rc = lsr_iter(root, mode, lsr_callback);
     if (rc) {
         fclose(fs);
         unlink(file);
@@ -2549,17 +2562,18 @@ void cmd_lsrv2(int mode)
     cmd_ok();
 }
 
-static void lsr_callback(const char *filename, int isdir)
+static void lsr_callback(const char *root, const char *filename, int isdir)
 {
     char stdpath[PATH_MAX];
     normpath(filename, stdpath);
     if (strstr(stdpath, FSMETA))
         return;
+    char *pt = stdpath + strlen(root); 
     if (isdir)
         strcat(stdpath, "/");
-    if (!strstr(stdpath, SDEXT)) {
+    if (!strstr(pt, SDEXT)) {
         strcat(stdpath, "\n");
-        fputs(stdpath + strlen(tfproto.dbdir), fs);
+        fputs(pt, fs);
     }
 }
 
@@ -2790,7 +2804,7 @@ void cmd_intread(void)
         }
         return;
     }
-    int fd = open(path, O_RDONLY);
+    int fd = open(path, O_RDWR);
     if (fd == -1 || crtlock(fd, BLK) == -1) {
         hdr = -1;
         if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
@@ -2897,7 +2911,7 @@ void cmd_intwrite(void)
         free(bytes);
         return;
     }
-    int fd = open(path, O_WRONLY);
+    int fd = open(path, O_RDWR);
     if (fd == -1 || crtlock(fd, BLK) == -1) {
         hdr = -1;
         if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {

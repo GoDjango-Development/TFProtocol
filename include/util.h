@@ -66,7 +66,8 @@ typedef struct tmp *Tmp;
 /* File Api pointer type to obscure structure */
 typedef struct fapi *Fapi;
 /* lsr_iter callback prototype. */
-typedef void (*lsr_iter_callback)(const char *filename, int isdir);
+typedef void (*lsr_iter_callback)(const char * root, const char *filename, 
+    int isdir);
 
 /* Jail actions in tf daemon working directory. Return -1 for failed 
     status and 0 for success. */

@@ -671,7 +671,7 @@ int lsr_iter(const char *path, int rec, lsr_iter_callback callback)
                         strcat(pathcp, "/");
                     strcat(pathcp, den->d_name);
                     if (callback)
-                        callback(pathcp, 1);
+                        callback(path, pathcp, 1);
                     lvl++;
                     if (lvl == dirmax) {
                         int ndirmax = dirmax + diralloc;
@@ -698,7 +698,7 @@ int lsr_iter(const char *path, int rec, lsr_iter_callback callback)
                         strcat(filename, "/");
                     strcat(filename, den->d_name);
                     if (callback)
-                        callback(filename, 1);
+                        callback(path, filename, 1);
                 }
             } else if (den->d_type != DT_DIR) {
                 strcpy(filename, pathcp);
@@ -706,7 +706,7 @@ int lsr_iter(const char *path, int rec, lsr_iter_callback callback)
                     strcat(filename, "/");
                 strcat(filename, den->d_name);
                 if (callback)
-                    callback(filename, 0);
+                    callback(path, filename, 0);
             }
         }
         closedir(*(dir + lvl));
