@@ -2568,10 +2568,10 @@ static void lsr_callback(const char *root, const char *filename, int isdir)
     normpath(filename, stdpath);
     if (strstr(stdpath, FSMETA))
         return;
-    char *pt = stdpath + strlen(root); 
+    char *pt = stdpath + strlen(tfproto.dbdir); 
     if (isdir)
         strcat(stdpath, "/");
-    if (!strstr(pt, SDEXT)) {
+    if (!strstr(stdpath + strlen(root), SDEXT)) {
         strcat(stdpath, "\n");
         fputs(pt, fs);
     }
