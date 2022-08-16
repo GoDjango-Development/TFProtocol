@@ -7,7 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#define EEXEC 128
+#define EEXEC 127
 
 int32_t hdr;
 static int pdout[2];

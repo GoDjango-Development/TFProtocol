@@ -3074,7 +3074,7 @@ static void *netlock_wdg(void *prms)
         while (rest = sleep(netlck->tmout))
             sleep(rest);
         if (comm.act == act)
-            exit(0);
+            exit(EXIT_SUCCESS);
         else
             act = comm.act;
     }

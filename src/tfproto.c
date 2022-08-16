@@ -79,7 +79,7 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
     int r = pthread_create(&oobth, NULL, oobthread, NULL);
     if (r != 0) {
         wrlog(ELOGOOBTHREAD, LGC_CRITICAL);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     if (tfproto.trp_tp != TRP_NONE)
         trp();
@@ -87,7 +87,7 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
     initcrypto(&cryp_rx);
     mainloop();
     cleanup();
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
 
 int chkproto(void)

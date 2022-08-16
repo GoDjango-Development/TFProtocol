@@ -69,7 +69,7 @@ static void rcvdgram(void)
     for (; c < THREADCOUNT; c++)
         pthread_create(&threads[c], NULL, thworker, NULL);
     pthread_barrier_wait(&barrier);
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
 
 static void *thworker(void *prms)

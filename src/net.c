@@ -41,7 +41,7 @@ void startnet(void)
     srvsock = socket(AF_INET6, SOCK_STREAM, 0);
     if (srvsock == -1) {
         wrlog(ELOGDCSOCK, LGC_CRITICAL);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 #ifdef DEBUG
     int optval = 1;
@@ -50,12 +50,12 @@ void startnet(void)
     int st = bind(srvsock, (struct sockaddr *) &addr, sizeof addr);
     if (st == -1) {
         wrlog(ELOGDBSOCK, LGC_CRITICAL);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     st = listen(srvsock, SOMAXCONN);
     if (st == -1) {
         wrlog(ELOGDLSOCK, LGC_CRITICAL);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     struct sockaddr_in6 rmaddr;
     socklen_t rmaddrsz = 0;
@@ -84,7 +84,7 @@ void startnet(void)
         do
             sockcomm = accept(srvsock, (struct sockaddr *) &rmaddr, &rmaddrsz);
         while (sockcomm == -1 && errno == EINTR);
-        if (st == -1) {
+        if (sockcomm == -1) {
             wrlog(ELOGDASOCK, LGC_WARNING);
             continue;
         }
@@ -98,9 +98,9 @@ void startnet(void)
                 begincomm(sockcomm, &rmaddr, &rmaddrsz);
                 /* A bit extra protection for terminating child process in
                     case of error. */
-                exit(0);
+                exit(EXIT_SUCCESS);
             }
-            exit(0);
+            exit(EXIT_SUCCESS);
         }
         close(sockcomm);
         waitpid(pid, NULL, 0);
@@ -132,6 +132,6 @@ static void setkeepalive(int so)
     r += setsockopt(so, IPPROTO_TCP, TCP_USER_TIMEOUT, &optval, sizeof optval);
     if (r) {
         wrlog(ELOGKEEPALIVE, LGC_CRITICAL);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 }

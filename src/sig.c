@@ -24,5 +24,5 @@ void sigint(int signo)
     cleanup();
     endnet();
     wrlog(SLOGSIGINT, LGC_INFO);
-    exit(0);
+    exit(EXIT_SUCCESS);
 }

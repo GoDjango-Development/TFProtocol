@@ -24,17 +24,17 @@ int main(int argc, char **argv)
 {
     if (argc < 2) {
         wrlog(ELOGDARG, LGC_CRITICAL);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     int rc = init(*(argv + 1));
     if (rc) {
         wrlog(ELOGDINIT, LGC_CRITICAL);
-        exit(rc);
+        exit(EXIT_FAILURE);
     }
     wrlog(SLOGDINIT, LGC_INFO);
     if (access(tfproto.dbdir, F_OK | R_OK | W_OK | X_OK)) {
         wrlog(ELOGDDIR, LGC_CRITICAL);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     sigset_t mask;
     sigfillset(&mask);
@@ -58,10 +58,10 @@ static void mkdaemon(void)
 {
     pid_t pid = fork();
     if (pid)
-        exit(0);
+        exit(EXIT_SUCCESS);
     else if (pid == -1) {
         wrlog(ELOGDFORK, LGC_CRITICAL);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     setsid();
     int fdmax = sysconf(_SC_OPEN_MAX);
@@ -76,9 +76,9 @@ static void mkdaemon(void)
     chdir(tfproto.dbdir);
     pid = fork();
     if (pid)
-        exit(0);
+        exit(EXIT_SUCCESS);
     else if (pid == -1) {
         wrlog(ELOGDFORK, LGC_CRITICAL);
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
 }

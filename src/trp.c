@@ -47,7 +47,7 @@ void trp(void)
         addr.sin_port = htons(atoi(tfproto.port));
         inet_pton(AF_INET, ip, &addr.sin_addr);        
         if (connecttm((struct sockaddr *) &addr) != 0)
-            exit(0);
+            exit(EXIT_SUCCESS);
     } else if (iptype == IPTYPE_V6) {
         struct sockaddr_in6 addr6;
         comm.sock_prox = socket(AF_INET6, SOCK_STREAM, 0);
@@ -55,7 +55,7 @@ void trp(void)
         addr6.sin6_port = htons(atoi(tfproto.port));
         inet_pton(AF_INET6, ip, &addr6.sin6_addr);
         if (connecttm((struct sockaddr *) &addr6) != 0)
-            exit(0);
+            exit(EXIT_SUCCESS);
     }
     pthread_t rt, wt;
     rc = pthread_create(&rt, NULL, rdth, NULL);
@@ -63,7 +63,7 @@ void trp(void)
     pthread_join(rt, NULL);
     pthread_join(wt, NULL);
     if (rc)
-        exit(0);
+        exit(EXIT_SUCCESS);
 }
 
 static int connecttm(struct sockaddr *addr)
@@ -100,7 +100,7 @@ static void *rdth(void *prms)
     int rc;
     comm.rxbuf_prox = malloc(COMMBUFLEN);
     if (!comm.rxbuf_prox)
-        exit(0);
+        exit(EXIT_SUCCESS);
     while ((rd = read(comm.sock, comm.rxbuf_prox, COMMBUFLEN)) > 0) {
         wr = 0;
         while (rd > 0) {
@@ -111,7 +111,7 @@ static void *rdth(void *prms)
             wr += rc;
         }
     }
-    exit(0);
+    exit(EXIT_SUCCESS);
     return NULL;
 }
 
@@ -124,7 +124,7 @@ static void *wrth(void *prms)
     int rc;
     comm.txbuf_prox = malloc(COMMBUFLEN);
     if (!comm.txbuf_prox)
-        exit(0);
+        exit(EXIT_SUCCESS);
     while ((rd = read(comm.sock_prox, comm.txbuf_prox, COMMBUFLEN)) > 0) {
         wr = 0;
         while (rd > 0) {
@@ -135,6 +135,6 @@ static void *wrth(void *prms)
             wr += rc;
         }
     }
-    exit(0);
+    exit(EXIT_SUCCESS);
     return NULL;
 }
