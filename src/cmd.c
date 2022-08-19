@@ -394,7 +394,7 @@ void cmd_mkdir(void)
         cmd_fail(CMD_ELOCKED);
         return;
     }
-    int rv = mkdir(path, S_IRWXU);
+    int rv = mkdir(path, DEFDIR_PERM);
     if (rv == -1)
         if (errno == EEXIST) {
             cmd_fail(CMD_EDIREXIST);
@@ -698,7 +698,7 @@ void cmd_rmdir(void)
         return;
     }
     if (access(tfproto.dbdir, F_OK) == -1)
-        mkdir(tfproto.dbdir, S_IRWXU);
+        mkdir(tfproto.dbdir, DEFDIR_PERM);
     cmd_ok();
 }
 
@@ -1153,7 +1153,7 @@ void cmd_touch(void)
         cmd_fail(CMD_EFILEXIST);
         return;
     }
-    int fd = open(file, O_RDWR | O_CREAT, S_IRWXU);
+    int fd = open(file, O_RDWR | O_CREAT, DEFFILE_PERM);
     if (!fd) {
         cmd_fail(CMD_ETOUCH);
         return;
@@ -1463,7 +1463,7 @@ void cmd_put(void)
         return;
     }
     memcpy((char *) &hpf, pt + 1, sizeof hpf);
-    int fd = open(path, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+    int fd = open(path, O_WRONLY | O_CREAT, DEFFILE_PERM);
     if (fd == -1) {
         cmd_fail(CMD_EHPFFD);
         return;
@@ -1729,7 +1729,7 @@ void cmd_putcan(void)
         return;
     }
     memcpy((char *) &hpfcan, pt + 1, sizeof hpfcan);
-    int fd = open(path, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+    int fd = open(path, O_WRONLY | O_CREAT, DEFFILE_PERM);
     if (fd == -1) {
         cmd_fail(CMD_EHPFFD);
         return;
@@ -2348,7 +2348,7 @@ void cmd_sup(void)
     int fd;
     int rc;
     if (!err) {
-        fd = open(path, O_WRONLY | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR);
+        fd = open(path, O_WRONLY | O_TRUNC | O_CREAT, DEFFILE_PERM);
         if (fd == -1) {
             fd = open(NULLFILE, O_WRONLY);
             err = 1;
@@ -3248,13 +3248,13 @@ void cmd_setfsperm(void)
     char lckpath[PATH_MAX];
     strcpy(lckpath, path);
     strcat(lckpath, FSMETALCK_EXT);
-    int lck = open(lckpath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    int lck = open(lckpath, O_RDWR | O_CREAT, DEFFILE_PERM);
     if (!lck) {
         cmd_fail(CMD_ESETFSPERM);
         return;
     }
     crtlock(lck, BLK);
-    int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    int fd = open(path, O_RDWR | O_CREAT, DEFFILE_PERM);
     if (fd == -1) {
         close(lck);
         cmd_fail(CMD_ESETFSPERM);
@@ -3379,7 +3379,7 @@ void cmd_remfsperm(void)
     char lckpath[PATH_MAX];
     strcpy(lckpath, path);
     strcat(lckpath, FSMETALCK_EXT);
-    int lck = open(lckpath, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    int lck = open(lckpath, O_RDWR | O_CREAT, DEFFILE_PERM);
     if (!lck) {
         cmd_fail(CMD_EREMFSPERM);
         return;

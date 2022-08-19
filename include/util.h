@@ -54,6 +54,10 @@
 #define LSRITER_R 1
 /* Short length string. */
 #define SHORTSTR 255
+/* Default creation file permission: 0644. */
+#define DEFFILE_PERM S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH
+/* Default creation directory permission: 0755. */
+#define DEFDIR_PERM S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
 
 /* FApi operation codes. */
 enum fapiopc { FAPI_READ, FAPI_WRITE, FAPI_OVERWRITE};

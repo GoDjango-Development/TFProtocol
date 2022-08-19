@@ -160,7 +160,7 @@ static void mainloop(void)
         return;
     }
     struct passwd *usr = getpwnam(tfproto.defusr);
-    if (usr && !setuid(usr->pw_uid))
+    if (usr && !setgid(usr->pw_gid) && !setuid(usr->pw_uid))
         logged = 1;
     while (loop)
         cmdifce();

@@ -155,7 +155,7 @@ Fapi fapinit(const char *path, void *buf, enum fapiopc code)
             efapi = CMD_EFILEXIST;
             return NULL;
         }
-        api->fd = open(path, O_WRONLY | O_CREAT, S_IREAD | S_IWRITE);
+        api->fd = open(path, O_WRONLY | O_CREAT, DEFFILE_PERM);
         if (api->fd == -1) {
             if (errno == EACCES)
                 efapi = CMD_EACCESS;
@@ -171,7 +171,7 @@ Fapi fapinit(const char *path, void *buf, enum fapiopc code)
             efapi = CMD_EISDIR;
             return NULL;
         }
-        api->fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IREAD | S_IWRITE);
+        api->fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, DEFFILE_PERM);
         if (api->fd == -1) {
             if (errno == EACCES)
                 efapi = CMD_EACCESS;
@@ -723,7 +723,7 @@ int cpfile(const char *src, const char *dst)
 {
     char buf[CPFILEBUF];
     int fd_src = open(src, O_RDONLY);
-    int fd_dst = open(dst, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+    int fd_dst = open(dst, O_WRONLY | O_CREAT | O_TRUNC, DEFFILE_PERM);
     if (fd_src == -1 || fd_dst == -1) {
         close(fd_src);
         close(fd_dst);
