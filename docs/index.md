@@ -1,42 +1,37 @@
-# Django Payments
-Django Payments is a wrapper around many payment methods for django...
-## How to use
-Configure your settings as follows:
+## Welcome to GitHub Pages
 
-```py settings.py
-def amount_generator_example(request: HttpRequest, *caller_view_args, **caller_view_kwargs):
-    return request.session.get("cart_object", {}).get("total", 0)
-def access_token_generator_example(request: HttpRequest, *caller_view_args, **caller_view_kwargs):
-    return caller_view_kwargs.get("user").get("access_token", "access_token$sandbox$youraccesstoken")
+You can use the [editor on GitHub](https://github.com/GoDjango-Development/tfprotocol/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
 
-INSTALLED_PLUGINS = {
-    PLUGIN_NAME: {
-        "version": "1.0.0",
-        "agreement": "Agreement from settings",
-        "amount": amount_generator_example, # Also could be a lambda
-        "access_token": access_token_generator_example, # Also could be a lambda
-        "context": {
-            "urls_kwargs": {
-                "var_identifier": lambda context: {
-                    "url_var_for_reverser": "any data you want"
-                }
-            }
-        }
-    }
-}
+Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+
+### Markdown
+
+Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+
+```markdown
+Syntax highlighted code block
+
+# Header 1
+## Header 2
+### Header 3
+
+- Bulleted
+- List
+
+1. Numbered
+2. List
+
+**Bold** and _Italic_ and `Code` text
+
+[Link](url) and ![Image](src)
 ```
-* version: This is just for later use not really important right now.
-* agreement: Is shown in the PayPal form when paying. 
-* amount: The dynamic amount to pay. It must be a callable. # Required
-* access_token: The User PayPal account Access Token. It must be a callable.  # Required
-* context: A dict containing all context data to be used in the ecosystem, it supports:
-    * urls_kwargs: A dict container an key/value with kwargs to be used in intern django.urls.reverse calls, the value it is a 
-    function that accept at least an argument of type django.template.context.Context, this allows user to determine some things
-    about the current template and in response give a custom url kwarg 
 
-In the template use as follows:
-```py template.html
+For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
 
-{% include 'paypal_buttons.html' with total="0.2" auth_token="access_token$sandbox$youraccesstoken" context_id="same_that_in_your_settings" %}
+### Jekyll Themes
 
-```
+Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/GoDjango-Development/django_payments/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+
+### Support or Contact
+
+Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
