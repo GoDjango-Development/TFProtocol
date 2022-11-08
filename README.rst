@@ -230,6 +230,23 @@ The directory in which the daemon will be in-jailed must contain a file called
 jail.key and inside of it must exist the token passed as parameter for injail
 command.
 
+    - locksys
+
+If present, LOCKSYS command should be called before any other, except: END; LOGIN; 
+KEEPALIVE; PROCKEY; INJAIL, to specify a directory in which TFProtocol must lock
+the client. This is called Folder Locking System.
+
+    - rpcproxy /var/tfdb/rpcproxy
+    
+This file will contain the hash/binary pairs that XS_RPCPROXY subsystem is able
+to execute.
+
+Syntax for the rpcproxy file
+
+SHA256 /usr/bin/python /home/user/mypython.py
+SHA256 /usr/bin/binary
+
+
 ----
     Mantainers
 ----
