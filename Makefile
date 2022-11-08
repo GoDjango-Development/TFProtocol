@@ -16,7 +16,7 @@ obj = release/obj/main.o release/obj/net.o release/obj/init.o release/obj/log.o 
 CCX = gcc -o
 CC = gcc -c
 
-release: $(obj) 
+release: $(obj)
 	$(CCX) release/tfd $(obj) $(ldflags) $(libs)
 
 release/obj/main.o: src/main.c
@@ -108,7 +108,7 @@ dbg = debug/obj/main.o debug/obj/net.o debug/obj/init.o debug/obj/log.o \
 CCGX = gcc -g -DDEBUG -o
 CCG = gcc -g -DDEBUG -c
 	
-debug: $(dbg) 
+debug: $(dbg)
 	$(CCGX) debug/tfd $(dbg) $(ldflags) $(libs)
 
 debug/obj/main.o: src/main.c
@@ -189,6 +189,9 @@ debug/obj/xs_rpcproxy.o: src/xs_rpcproxy/xs_rpcproxy.c include/xs_rpcproxy/xs_rp
 
 prepare:
 	mkdir -p debug release debug/obj release/obj
+
+help:
+	echo "usage: \nmake prepare -> Make all preparation before making the release or the debug binary\nmake release -> Make the release binary to be used in production\nmake debug -> Make the debug binary which have verbose output usefull for development environment\nmake clean -> Make the cleanup erasing all binaries"
 
 clean:
 	rm -R -f $(obj) $(dbg) release/obj/* debug/obj/* release/tfd debug/tfd

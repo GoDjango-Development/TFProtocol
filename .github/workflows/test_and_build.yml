@@ -1,0 +1,25 @@
+name: tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -name: Install dependencies
+       run: |
+         apt-get install openssl python3 libmariadb-dev libpq-dev libsqlite3-dev -y
+      -name: Make the project
+       run: |
+         make prepare
+         make release
+      -name: Deploy the project
+       uses: skx/github-action-publish-binaries@master
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+       with:
+         args: 'release/tfd'

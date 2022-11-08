@@ -1,2 +1,9 @@
 testproto/
+debug/
 conf/test
+.vscode
+tfproto
+.gitsecret/keys/random_seed
+!*.secret
+tfprotocol.code-workspace
+release/*

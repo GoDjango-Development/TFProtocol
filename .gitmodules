@@ -1,0 +1,6 @@
+[submodule "clients/python"]
+	path = clients/python
+	url = https://github.com/GoDjango-Development/tfprotocol_client_py
+[submodule "clients/java"]
+	path = clients/java
+	url = https://github.com/godjango-development/TFProtocolClientJava
