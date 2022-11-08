@@ -10,13 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
     - name: Install dependencies
       run: |
         sudo apt-get install openssl python3 libmariadb-dev libpq-dev libsqlite3-dev -y
     - name: Make the project
       run: |
-        pwd
-        ls
         make prepare
         make release
     - name: Deploy the project
