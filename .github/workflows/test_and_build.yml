@@ -14,7 +14,7 @@ jobs:
       uses: actions/checkout@v3
     - name: Install dependencies
       run: |
-        sudo apt-get install openssl python3 libmariadb-dev libpq-dev libsqlite3-dev -y
+        sudo apt-get install openssl python3 libmariadb-dev libpq-dev libsqlite3-dev libmysqlclient-dev -y
     - name: Make the project
       run: |
         make prepare
