@@ -23,7 +23,7 @@ RUN mkdir /root/.tfprotocol/
 # Copy the configuration to the container
 COPY conf/example.conf /root/.tfprotocol/release.conf
 # Install openssl and generate the RSA keypair
-RUN apt-get update && apt-get install openssl python3 libmariadb-dev libpq-dev libsqlite3-dev libmysqlclient-dev -y 
+RUN apt-get update && apt-get install openssl python3 libmariadb-dev libpq-dev libsqlite3-dev -y 
 RUN openssl genrsa -out /root/.tfprotocol/private.pem 2048
 RUN openssl rsa -in /root/.tfprotocol/private.pem -pubout -out /root/.tfprotocol/public.pem
 EXPOSE ${PORT}
