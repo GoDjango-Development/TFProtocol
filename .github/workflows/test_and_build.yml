@@ -20,7 +20,7 @@ jobs:
         make prepare
         make release
     - name: Deploy the project
-    - uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v3
       with:
         name: tfprotocol
         path: release/tfd
