@@ -16,6 +16,7 @@ jobs:
     - name: Make the project
       run: |
         pwd
+        ls
         make prepare
         make release
     - name: Deploy the project
