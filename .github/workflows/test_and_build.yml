@@ -24,3 +24,10 @@ jobs:
       with:
         name: tfprotocol
         path: release/tfd
+    - name: Release the project
+      uses: google-github-actions/release-please-action@v3
+      with:
+        path: release/tfd
+        signoff: esteban@godjango.dev
+        release-type: simple
+        package-name: tfprotocol

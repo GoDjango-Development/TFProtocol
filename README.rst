@@ -1,3 +1,6 @@
+[![build](https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml/badge.svg)](https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml)
+
+
 Executing modes:
 
     - Debug mode
