@@ -11,20 +11,20 @@ def generate():
     privkey_file = open(os.path.join(conf_folder, "private.pem"), "r")
     pubkey_file = open(os.path.join(conf_folder, "public.pem"), "r")
     try:
-        with open(release_file, "x") as file:
+        with open(release_file, "w") as file:
             conf_path = file.name
             file.write("""
 proto %s
 hash %s
 dbdir %s
 port %s
-privkey %s
+privkey {%s}
 xsntmex %s
 userdb %s
 xsace %s
 defusr %s
 tlb %s
-pubkey %s
+pubkey {%s}
 %s securefs
 %s locksys
 rpcproxy %s
@@ -51,4 +51,4 @@ rpcproxy %s
 
 if __name__ == "__main__":
     generate()
-    #os.system("/usr/local/bin/tfd %s"%conf_path)
+    os.system("/usr/local/bin/tfd %s"%conf_path)
