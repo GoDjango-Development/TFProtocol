@@ -1,7 +1,7 @@
 #include <core.h>
 #include <sys/resource.h>
 
-#define STACK_SIZE 64 * 1024 * 1024
+#define STACK_SIZE 16 * 1024 * 1024
 
 int setstacksize(void)
 {
