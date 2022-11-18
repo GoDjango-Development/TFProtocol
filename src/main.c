@@ -14,6 +14,9 @@
 #include <tfproto.h>
 #include <udp_keep.h>
 #include <string.h>
+#include <core.h>
+
+#include <sys/resource.h>
 
 #define MINARGS 2
 
@@ -34,6 +37,10 @@ int main(int argc, char **argv)
     wrlog(SLOGDINIT, LGC_INFO);
     if (access(tfproto.dbdir, F_OK | R_OK | W_OK | X_OK)) {
         wrlog(ELOGDDIR, LGC_CRITICAL);
+        exit(EXIT_FAILURE);
+    }
+    if (setstacksize()) {
+        wrlog(ELOGSTACKSIZE, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
     sigset_t mask;

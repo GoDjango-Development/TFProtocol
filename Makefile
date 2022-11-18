@@ -11,7 +11,8 @@ obj = release/obj/main.o release/obj/net.o release/obj/init.o release/obj/log.o 
 	release/obj/xs_ime.o release/obj/xs_imeopc1.o release/obj/udp_keep.o \
 	release/obj/xs_ntmex.o release/obj/xs_sqlite.o release/obj/xs_ace.o \
 	release/obj/xs_mysql.o release/obj/xs_postgresql.o \
-	release/obj/xs_gateway.o release/obj/trp.o release/obj/xs_rpcproxy.o
+	release/obj/xs_gateway.o release/obj/trp.o release/obj/xs_rpcproxy.o \
+	release/obj/core.o
 
 CCX = gcc -o
 CC = gcc -c
@@ -94,6 +95,9 @@ release/obj/trp.o: src/trp.c include/trp.h
 release/obj/xs_rpcproxy.o: src/xs_rpcproxy/xs_rpcproxy.c include/xs_rpcproxy/xs_rpcproxy.h
 	$(CC) src/xs_rpcproxy/xs_rpcproxy.c -o release/obj/xs_rpcproxy.o $(cflags)
 		
+release/obj/core.o: src/core.c include/core.h
+	$(CC) src/core.c -o release/obj/core.o $(cflags)
+
 # Debug profile
 
 dbg = debug/obj/main.o debug/obj/net.o debug/obj/init.o debug/obj/log.o \
@@ -103,7 +107,7 @@ dbg = debug/obj/main.o debug/obj/net.o debug/obj/init.o debug/obj/log.o \
 	debug/obj/xs_ime.o debug/obj/xs_imeopc1.o debug/obj/udp_keep.o \
 	debug/obj/xs_ntmex.o debug/obj/xs_sqlite.o debug/obj/xs_ace.o \
 	debug/obj/xs_mysql.o debug/obj/xs_postgresql.o debug/obj/xs_gateway.o \
-	debug/obj/trp.o debug/obj/xs_rpcproxy.o
+	debug/obj/trp.o debug/obj/xs_rpcproxy.o debug/obj/core.o
 
 CCGX = gcc -g -DDEBUG -o
 CCG = gcc -g -DDEBUG -c
@@ -185,6 +189,10 @@ debug/obj/trp.o: src/trp.c include/trp.h
 
 debug/obj/xs_rpcproxy.o: src/xs_rpcproxy/xs_rpcproxy.c include/xs_rpcproxy/xs_rpcproxy.h
 	$(CCG) src/xs_rpcproxy/xs_rpcproxy.c -o debug/obj/xs_rpcproxy.o $(cflags) 		
+
+debug/obj/core.o: src/core.c include/core.h
+	$(CCG) src/core.c -o debug/obj/core.o $(cflags)	
+	
 #Others rules
 
 prepare:

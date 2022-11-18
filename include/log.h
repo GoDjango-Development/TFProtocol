@@ -21,6 +21,7 @@
 #define ELOGDBSOCKUDP "TF Protocol daemon failed to bind UDP socket."
 #define ELOGDCSOCKDGRAM "TF Protocol daemon failed to create DATAGRAM socket."
 #define ELOGINITFLAGS "TF Protocol daemon invalid flags."
+#define ELOGSTACKSIZE "TF Protocol daemon failed to set stack size."
 
 /* Enum to indicate the category of the log action */
 enum logcat { LGC_CRITICAL, LGC_INFO, LGC_WARNING };
