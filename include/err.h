@@ -128,5 +128,8 @@
 #define CMD_EISSECFS "60: The directory does not belongs to secure FS."
 /* Unable to use the Folder Locking System. */
 #define EPROTO_ELOCKSYS "61: Unable to use Folder Locking System."
+/* TestAndSet failed to create the file. This is equivalent to False in the
+    classic TestAndSet processor instruction. */
+#define CMD_ETASFS "62: Unable to create the requested file."
 
 #endif

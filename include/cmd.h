@@ -165,6 +165,8 @@
 #define CMD_ISSECFS "ISSECFS"
 /* Folder lock system enforcement. */
 #define CMD_LOCKSYS "LOCKSYS"
+/* Test and Set instruction, implemented through the filesystem. */
+#define CMD_TASFS "TASFS"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -321,5 +323,7 @@ void cmd_getfsperm(void);
 void cmd_issecfs(void);
 /* Folder lock system enforcement. */
 void cmd_locksys(void);
+/* Test and Set instruction, atomically implemented through the filesystem. */
+void cmd_tasfs(void);
 
 #endif
