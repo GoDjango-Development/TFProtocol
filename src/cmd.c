@@ -375,6 +375,8 @@ void cmd_parse(void)
             cmd_getfsperm();
     else if (!strcmp(cmd, CMD_ISSECFS))
             cmd_issecfs();
+    else if (!strcmp(cmd, CMD_TASFS))
+            cmd_tasfs();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3526,5 +3528,27 @@ void cmd_locksys(void)
     }
     strcpy(tfproto.dbdir, hash);
     tfproto.locksys = 0;
+    cmd_ok();
+}
+
+void cmd_tasfs(void)
+{
+    char *pt = comm.buf + strlen(CMD_TASFS) + 1;
+    char file[PATH_MAX] = "";
+    fsop = SECFS_WFILE;
+    if (jaildir(pt, file)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    if (!trylck(file, lcknam, 1)) {
+        cmd_fail(CMD_ELOCKED);
+        return;
+    }
+    int fd = open(file, O_RDWR | O_CREAT | O_EXCL, DEFFILE_PERM);
+    if (fd == -1) {
+        cmd_fail(CMD_ETASFS);
+        return;
+    }
+    close(fd);
     cmd_ok();
 }
