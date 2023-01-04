@@ -246,6 +246,18 @@ Syntax for the rpcproxy file
 SHA256 /usr/bin/python /home/user/mypython.py
 SHA256 /usr/bin/binary
 
+    - nprocmax -1
+
+This parameter is optional and if is present the TFProtocol daemon will try to
+set the MAX USER PROCESSES (how many time may do FORK()) to the specified
+number. Negative value means infinite. Zero (0) means the default system
+configuration for the effective user id of the daemon. A number between 1 and
+MINPROCN macro will become in MINPROCN value. A number equal or less than
+MINPROCN will become that number. Be aware that the OS can enforce some settings
+that makes this number useless. This option in Solaris will no have effect.
+In Linux if this number is above kernel.threads-max and/or kernel.pid_max the
+number become kernel.threads-max implicitly.
+
 
 ----
     Mantainers
