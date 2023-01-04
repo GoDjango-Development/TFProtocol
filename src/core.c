@@ -1,7 +1,7 @@
 #include <core.h>
 
 #define STACK_SIZE 16 * 1024 * 1024
-#define MINNPROC 2048
+#define MINNPROC 256
 
 int setstacksize(void)
 {
