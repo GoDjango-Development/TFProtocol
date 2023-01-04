@@ -8,6 +8,7 @@
 #include <init.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <core.h>
 
 /* Protocol version text in the config file. */
 #define PROTOVER "proto "
@@ -53,6 +54,8 @@
 #define LOCKSYS "locksys"
 /* Remote Procedure Call Proxy. */
 #define RPCPROXY "rpcproxy "
+/* Number of maximun child processes. */
+#define NPROCMAX "nprocmax "
 
 struct tfproto tfproto;
 static char *buf;
@@ -191,6 +194,15 @@ int init(const char *conf)
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
             tfproto.tlb[i++] = *pt++;
     }
+    pt = strstr(buf, NPROCMAX);
+    if (pt) {
+        i = 0;
+        pt += strlen(NPROCMAX);
+        while (*pt != '\n' && *pt != '\0' && i < LINE_MAX - 1)
+            ln[i++] = *pt++;
+        ln[i] = '\0';
+        tfproto.nprocmax = atoll(ln);
+    }
     pt = strstr(buf, PUBKEY);
     if (pt) {
         i = 0;
@@ -215,6 +227,7 @@ int init(const char *conf)
             tfproto.trp[i++] = *pt++;
     freeres(fs, buf);
     stddbpath();
+    setmaxchilds(tfproto.nprocmax);
     return 0;
 }
 
