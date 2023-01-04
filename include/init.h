@@ -64,6 +64,8 @@ struct tfproto {
     int locksys;
     /* Remote Procedure Call Proxy ACL file. */
     char rpcproxy[PATH_MAX];
+    /* Maximun number of child processes. */
+    int64_t nprocmax;
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */
