@@ -131,5 +131,7 @@
 /* TestAndSet failed to create the file. This is equivalent to False in the
     classic TestAndSet processor instruction. */
 #define CMD_ETASFS "62: Unable to create the requested file."
+/* Failed to create a directory recursively. */
+#define CMD_ERMKDIR "63: Failed to create directory recursively."
 
 #endif

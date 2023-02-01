@@ -377,6 +377,8 @@ void cmd_parse(void)
             cmd_issecfs();
     else if (!strcmp(cmd, CMD_TASFS))
             cmd_tasfs();
+    else if (!strcmp(cmd, CMD_RMKDIR))
+            cmd_rmkdir();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3550,5 +3552,34 @@ void cmd_tasfs(void)
         return;
     }
     close(fd);
+    cmd_ok();
+}
+
+void cmd_rmkdir(void)
+{
+    char *pt = comm.buf + strlen(CMD_RMKDIR) + 1;
+    char path[PATH_MAX] = "";
+    fsop = SECFS_MKDIR;
+    if (jaildir(pt, path)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    if (!trylck(path, lcknam, 1)) {
+        cmd_fail(CMD_ELOCKED);
+        return;
+    }
+    pt = strtok(path, "/");
+    char dir[PATH_MAX];
+    strcpy(dir, "/");
+    while (pt) {
+        strcat(dir, "/");
+        strcat(dir, pt);
+        mkdir(dir, DEFDIR_PERM);
+        pt = strtok(NULL, "/");
+    }
+    if (access(dir, F_OK)) {
+        cmd_fail(CMD_ERMKDIR);
+        return;
+    }
     cmd_ok();
 }
