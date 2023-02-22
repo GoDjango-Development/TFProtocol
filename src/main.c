@@ -1,4 +1,4 @@
-/*  programmer: luis miguel
+ /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
 #include <stdio.h>
