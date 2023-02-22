@@ -1,0 +1,383 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>TFProtocol :dog: &#8212; TFProtocol  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CHANGELOG" href="CHANGELOG.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="tfprotocol-dog">
+<h1>TFProtocol :dog:<a class="headerlink" href="#tfprotocol-dog" title="Permalink to this heading">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml"><img alt="https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml/badge.svg" src="https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://svgshare.com/i/Zhy.sv"><img alt="https://svgshare.com/i/Zhy.svg" src="https://svgshare.com/i/Zhy.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/graphs/commit-activity"><img alt="https://img.shields.io/badge/Maintained%3F-yes-green.svg" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/blob/master/LICENSE"><img alt="https://img.shields.io/github/license/GoDjango-Development/TFProtocol.svg" src="https://img.shields.io/github/license/GoDjango-Development/TFProtocol.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/releases/"><img alt="https://img.shields.io/github/release/GoDjango-Development/TFProtocol.svg" src="https://img.shields.io/github/release/GoDjango-Development/TFProtocol.svg" /></a>
+<a class="reference external image-reference" href="https://img.shields.io/github/release/GoDjango-Development/TFProtocol/issues/"><img alt="https://img.shields.io/github/issues/GoDjango-Development/TFProtocol.svg" src="https://img.shields.io/github/issues/GoDjango-Development/TFProtocol.svg" /></a>
+<a class="reference external image-reference" href="https://https://docker.com/"><img alt="https://badgen.net/badge/icon/docker?icon=docker&amp;label" src="https://badgen.net/badge/icon/docker?icon=docker&amp;label" /></a>
+<a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/"><img alt="https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github" src="https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github" /></a>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">CHANGELOG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">BSD 3-Clause License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clients/python/README.html">TFProtocol Client Implemented in Python :snake:</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="clients/python/README.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clients/python/README.html#installation-floppy-disk">Installation :floppy_disk:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clients/python/README.html#a-simple-example-memo">A Simple Example :memo:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clients/python/README.html#for-contributors-wrench">For Contributors :wrench:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="clients/python/README.html#development-environment-installation-computer">Development Environment Installation :computer:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clients/python/README.html#project-structure-open-file-folder">Project Structure :open_file_folder:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clients/python/README.html#publishing-rocket">Publishing :rocket:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="what-is-tfprotocol">
+<h2>What is TFProtocol:<a class="headerlink" href="#what-is-tfprotocol" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>Tfprotocol is a communcation protocol to execute data in remote servers like ssh, its main difference are, tfprotocol is statefull, lightweight, multithread and multiprocess
+have support for android and desktop as well.</p>
+</div></blockquote>
+</section>
+<section id="how-to-use">
+<h2>How to use<a class="headerlink" href="#how-to-use" title="Permalink to this heading">¶</a></h2>
+<p><cite>Docker</cite>: When using docker you must first notice that we use some environment to customize your docker running application, here is a list of all docker enviornment variables and its respectives description:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PORT: The port in which tfprotocol will be running (default: 10345)</p></li>
+<li><p>HASH: A hash that works for identificate the server instance (default: testhash)</p></li>
+<li><p>PROTO: The version of tfprotocol to be used (default: 0.0)</p></li>
+<li><p>DBDIR: The path to the tfprotocol db folder, which means the root of the tfprotocol program, where all files are stored and no command can go out of that folder (default: /var/tfdb)</p></li>
+<li><p>XSNTMEX: The path to the XSNTMEX subsystem host folder (default: /var/tfdb/xsntmex/)</p></li>
+<li><p>USERDB: The path to the user db, NOTE: More information will be given later. (default: /var/tfdb/lsr/)</p></li>
+<li><p>XSACE: The path to the XSACE substystem (default: /var/tfdb/xsace/)</p></li>
+<li><p>DEFUSER: The default user toUnexpected be used by the protocol (default: root)</p></li>
+<li><p>TLB: The path to the TLB substystem (default: /var/tfdb/tlb/)</p></li>
+<li><p>SECUREFS: If the protocol should use a secure filesystem or not (default: true)</p></li>
+<li><p>RPCPROXY: The path to the rpcproxy substystem (default: /var/tfdb/rpcproxy)</p></li>
+</ul>
+<p>Command to run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -e <span class="nv">PORT</span><span class="o">=</span><span class="m">10345</span> -e <span class="nv">HASH</span><span class="o">=</span>testhash ... -p <span class="m">10345</span>:10345 -d etherbeing/tfprotocol
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Docker Compose</span><span class="p">:</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.6&quot;</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">services</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">tfprotocol</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">etherbeing/tfprotocol</span><span class="w"></span>
+<span class="w">            </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span><span class="w"></span>
+<span class="w">            </span><span class="nt">environment</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT=10345</span><span class="w"></span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DEBUG=false</span><span class="w"> </span><span class="c1"># use this if you want to say how each command interact with the server, do not use this in production</span><span class="w"></span>
+<span class="w">            </span><span class="nt">ports</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10345:10345</span><span class="w"></span>
+<span class="w">            </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfdb:/var/tfdb</span><span class="w"></span>
+<span class="w">            </span><span class="nt">networks</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfprotocol</span><span class="w"></span>
+<span class="w">            </span><span class="nt">secrets</span><span class="p">:</span><span class="w"></span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfprotocol_keys</span><span class="w"></span>
+
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">tfdb</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w"></span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">tfprotocol</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span><span class="w"></span>
+<span class="w">    </span><span class="nt">secrets</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">tfprotocol_keys</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="nt">file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mycustom/path/to/mycustom/keys</span><span class="w"></span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="executing-modes">
+<h2>Executing modes:<a class="headerlink" href="#executing-modes" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>Debug mode</p></li>
+<li><p>Debug mode (udp only)</p></li>
+<li><p>Release mode (interactive)</p></li>
+<li><p>Release mode (daemon: canonical)</p></li>
+</ul>
+</div></blockquote>
+<section id="debug-mode">
+<h3>Debug mode<a class="headerlink" href="#debug-mode" title="Permalink to this heading">¶</a></h3>
+<p>debug/tfd debug/file.conf</p>
+<p>this runs tfprotocol binary in interactive mode (you may press ctrl+c to stop
+it)</p>
+</section>
+<section id="debug-mode-udp">
+<h3>Debug mode udp<a class="headerlink" href="#debug-mode-udp" title="Permalink to this heading">¶</a></h3>
+<p>debug/tfd debug/file.conf udp_debug</p>
+<p>this runs tfprotocol binary in interactive mode but it only runs the udp server.</p>
+</section>
+<section id="release-mode-interactive">
+<h3>Release mode (interactive)<a class="headerlink" href="#release-mode-interactive" title="Permalink to this heading">¶</a></h3>
+<p>release/tfd release/file.conf</p>
+<p>this runs tfprotocol binary in interactive mode (you may press ctrl+c to stop
+it)</p>
+</section>
+<section id="release-mode-daemon-canonical">
+<h3>Release mode (daemon: canonical)<a class="headerlink" href="#release-mode-daemon-canonical" title="Permalink to this heading">¶</a></h3>
+<p>release/tfd release/file.conf x</p>
+<p>this runs tfprotocol binary as intended for production environment. It does a
+double fork and stay running in background.</p>
+</section>
+</section>
+<section id="tfprotocol-configuration-file">
+<h2>TFProtocol Configuration file.<a class="headerlink" href="#tfprotocol-configuration-file" title="Permalink to this heading">¶</a></h2>
+<p>Any line that starts with the # character will be taken as comment and will be
+omitted.</p>
+<p><cite>proto 0.0</cite></p>
+<p>This parameter is required and sets the version of the deployed protocol. It
+could be any string.</p>
+<p><cite>hash testhash</cite></p>
+<p>This parameter is required and sets a token that can be any string, this
+provides another access control level to clients.</p>
+<p><cite>dbdir /var/tfdb/</cite></p>
+<p>This parameter is required and sets the directory in which TFprotocol and most
+of its extended subsystems will be locked.</p>
+<p><cite>port 10345</cite></p>
+<p>This parameter is required and sets the port in which TFProtocol will listen for
+upd and tcp incoming connections.</p>
+<p><cite>privkey {the rsa private key}</cite></p>
+<p>This parameter is required and encloses in braces the rsa server private key.</p>
+<p><cite>xsntmex /var/tfdb/xsntmex</cite></p>
+<p>This parameter is optional and establish the file of access tokens for the NTMEX
+extended subsystem.</p>
+<p><cite>userdb /var/tfdb/lsr</cite></p>
+<p>This parameter is optional and sets user database file in which TFProtocol will
+look for LOGIN command autentication.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>xsace /var/tfdb/xsace</p></li>
+</ul>
+</div></blockquote>
+<p>This parameter is optional and sets the ACE extended subsystem access tokens
+file.</p>
+<p><cite>defusr user</cite></p>
+<p>This parameter is optional and sets the default system user -user id- in which
+TFProtocol will run while communicates with clients. If this option is not set
+then the client have to autenticate through the LOGIN command as soon as is
+connected to TFProtocol.</p>
+<p><cite>tlb /var/tfdb/tlb</cite></p>
+<p>This parameter is optional and establish the file of for the Transfer Load
+Balance servers. This file will be used both for the TCP and UDP TLB.</p>
+<p><cite>pubkey {rsa server public key}</cite></p>
+<p><cite>pubkey</cite></p>
+<p>This parameter is optional and sets the rsa server public key. It will be used
+when the Transparent Proxy is in place which requires that the destination
+server has the same rsa private/public key pairs.</p>
+<p><cite>trp_dns; trp_ipv4; trp_ipv6`</cite></p>
+<p>This parameter is optional and sets the Transparanet Proxy destination
+ip or dns.</p>
+<p><cite>injail</cite></p>
+<p>This parameter is optional and tells the tfprotocol server to compell users to
+call INJAIL command.
+There must be a file in the injailed directory called jail.key</p>
+<p>jail.key file syntax:</p>
+<ul class="simple">
+<li><p>jail_token</p></li>
+</ul>
+<p>How the optional parameters works</p>
+<p><cite>xsntmex /var/tfdb/xsntmex</cite></p>
+<p>xsntmex file syntax:
+(only line per access token.)</p>
+<ul class="simple">
+<li><p>token1</p></li>
+<li><p>token2</p></li>
+</ul>
+<p>in the same directory of xsntmex file for each line of token should be a file
+ending by .acl like below:</p>
+<ul class="simple">
+<li><p>xsntmex.token1.acl</p></li>
+<li><p>xsntmex.token2.acl</p></li>
+</ul>
+<p>each one of the acl file must have the allowed shared object path as follow:</p>
+<ul class="simple">
+<li><p>/usr/lib/libc.so</p></li>
+<li><p>/usr/lib/libx.so</p></li>
+</ul>
+<p>if the xsntmex.token1.acl file does not exist, then any shared object for that
+security token can be loaded under NTMEX substystem.</p>
+<p><cite>userdb /var/tfdb/lsr</cite></p>
+<p>userdb file syntax:
+(one line per user/password)</p>
+<ul class="simple">
+<li><p>username password</p></li>
+</ul>
+<p>the username must by a real unix system user while password is not.</p>
+<p><cite>xsace /var/tfdb/xsace</cite></p>
+<p>xsace file syntax:
+(one line per access token.)</p>
+<ul class="simple">
+<li><p>token1</p></li>
+<li><p>token2</p></li>
+</ul>
+<p>in the same directory of xsace file for each line of token can be a file
+ending by .acl like below:</p>
+<ul class="simple">
+<li><p>xsace.token1.acl</p></li>
+<li><p>xsace.token2.acl</p></li>
+</ul>
+<p>each one of the acl file must have the allowed binary to be executed:</p>
+<p>example 1:</p>
+<ul class="simple">
+<li><p>/bin/ls /bin/ls /</p></li>
+</ul>
+<p>The /bin/ls binary can only be executed with two parameters, the first one:
+/bin/ls, the second one: /</p>
+<p>example 2:</p>
+<ul class="simple">
+<li><p>*/bin/ls</p></li>
+</ul>
+<p>The /bin/ls binary can only be executed with any parameters.</p>
+<p>if the xsace.token1.acl file does not exist, then any program for that security
+token can be executed under ACE substystem.</p>
+<p><cite>tlb /var/tfdb/tlb</cite></p>
+<p>Syntax for the TLB file</p>
+<ul class="simple">
+<li><p>ipv4: 127.0.0.1</p></li>
+<li><p>ipv6: ::1</p></li>
+</ul>
+<p><cite>trp</cite></p>
+<p>examples:</p>
+<ul class="simple">
+<li><p>trp_ipv4 127.0.0.1</p></li>
+<li><p>trp_ipv6 ::1</p></li>
+<li><p>trp_dns domain.com</p></li>
+</ul>
+<p><cite>ijnail</cite></p>
+<p>The directory in which the daemon will be in-jailed must contain a file called
+jail.key and inside of it must exist the token passed as parameter for injail
+command.</p>
+<p><cite>locksys</cite></p>
+<p>If present, LOCKSYS command should be called before any other, except: END; LOGIN;
+KEEPALIVE; PROCKEY; INJAIL, to specify a directory in which TFProtocol must lock
+the client. This is called Folder Locking System.</p>
+<p><cite>rpcproxy /var/tfdb/rpcproxy</cite></p>
+<p>This file will contain the hash/binary pairs that XS_RPCPROXY subsystem is able
+to execute.</p>
+<p>Syntax for the rpcproxy file</p>
+<p>SHA256 /usr/bin/python /home/user/mypython.py
+SHA256 /usr/bin/binary</p>
+<p><cite>nprocmax -1</cite></p>
+<p>This parameter is optional and if is present the TFProtocol daemon will try to
+set the MAX USER PROCESSES (how many time may do FORK()) to the specified
+number. Negative value means infinite. Zero (0) means the default system
+configuration for the effective user id of the daemon. A number between 1 and
+MINPROCN macro will become in MINPROCN value. A number equal or less than
+MINPROCN will become that number. Be aware that the OS can enforce some settings
+that makes this number useless. This option in Solaris will no have effect.
+In Linux if this number is above kernel.threads-max and/or kernel.pid_max the
+number become kernel.threads-max implicitly.</p>
+</section>
+<section id="mantainers">
+<h2>Mantainers<a class="headerlink" href="#mantainers" title="Permalink to this heading">¶</a></h2>
+<a class="reference external image-reference" href="mailto://esteban&#37;&#52;&#48;godjango&#46;dev"><img alt="https://img&#46;shields&#46;io/badge/maintainer-n4b3ts3-blue" src="https://img&#46;shields&#46;io/badge/maintainer-n4b3ts3-blue" /></a>
+<a class="reference external image-reference" href="mailto://luismiguel&#37;&#52;&#48;godjango&#46;dev"><img alt="https://img&#46;shields&#46;io/badge/maintainer-lmdelbahia-blue" src="https://img&#46;shields&#46;io/badge/maintainer-lmdelbahia-blue" /></a>
+<hr class="docutils" />
+<a class="reference external image-reference" href="https://GitHub.com/GoDjango-Development/issues/"><img alt="https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg" src="https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg" /></a>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">TFProtocol</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">CHANGELOG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LICENSE.html">BSD 3-Clause License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clients/python/README.html">TFProtocol Client Implemented in Python :snake:</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="CHANGELOG.html" title="next chapter">CHANGELOG</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/README.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
