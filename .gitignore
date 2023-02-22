@@ -5,6 +5,7 @@ conf/test
 tfproto
 .gitsecret/keys/random_seed
 !*.secret
+**.secret
 tfprotocol.code-workspace
 release/*
 conf/private.pem
