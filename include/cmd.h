@@ -167,6 +167,8 @@
 #define CMD_LOCKSYS "LOCKSYS"
 /* Test and Set instruction, implemented through the filesystem. */
 #define CMD_TASFS "TASFS"
+/* Makes a new directory recursively. */
+#define CMD_RMKDIR "RMKDIR"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -325,5 +327,7 @@ void cmd_issecfs(void);
 void cmd_locksys(void);
 /* Test and Set instruction, atomically implemented through the filesystem. */
 void cmd_tasfs(void);
+/* Makes a new directory recursively. */
+void cmd_rmkdir(void);
 
 #endif
