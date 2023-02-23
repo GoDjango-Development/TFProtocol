@@ -3,7 +3,8 @@
 #include "./net/client.h"
 
 int main(){
-    int sock = tf_connect("localhost", 10345);
-    shutdown(sock, 1);
+    tfprotocol.header_size = 4;
+    int result = tf_connect("127.0.0.1", 10345);
+    shutdown(tfprotocol.socket, 1);
     return 0;
 }
