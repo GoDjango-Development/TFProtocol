@@ -7,7 +7,7 @@ services:
         restart: unless-stopped
         environment: 
             - PORT=10345
-            - DEBUG=false
+            - DEBUG=true
         ports: 
             - 10345:10345
         volumes: 
