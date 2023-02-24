@@ -8,15 +8,21 @@ pipeline{
         }
         
         stage("Test"){
-            steps{}
+            steps{
+                sh "echo Test"
+            }
         }
 
         stage("Release"){
-            steps{}
+            steps{
+                sh "echo Release"
+            }
         }
 
         stage("Deploy"){
-            steps{}
+            steps{
+                sh "Deployment"
+            }
         }
     }
 }
