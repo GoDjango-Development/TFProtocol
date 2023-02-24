@@ -2,8 +2,8 @@
 TFProtocol :dog: 
 ================================================
 
-.. image:: https://jenkins.godjango.dev/job/Tfprotocol/badge/icon?job=job%2FTfprotocol%252Fmain
-    :target: https://jenkins.godjango.dev/job/Tfprotocol/badge/icon?job=job%2FTfprotocol%252Fmain
+.. image:: https://jenkins.godjango.dev/buildStatus/icon?job=Tfprotocol
+    :target: https://jenkins.godjango.dev/job/Tfprotocol/
 
 .. image:: https://svgshare.com/i/Zhy.svg
     :target: https://svgshare.com/i/Zhy.sv

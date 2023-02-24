@@ -10,6 +10,9 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -33,7 +36,7 @@
             
   <section id="tfprotocol-dog">
 <h1>TFProtocol :dog:<a class="headerlink" href="#tfprotocol-dog" title="Permalink to this heading">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml"><img alt="https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml/badge.svg" src="https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://jenkins.godjango.dev/job/Tfprotocol/"><img alt="https://jenkins.godjango.dev/buildStatus/icon?job=Tfprotocol" src="https://jenkins.godjango.dev/buildStatus/icon?job=Tfprotocol" /></a>
 <a class="reference external image-reference" href="https://svgshare.com/i/Zhy.sv"><img alt="https://svgshare.com/i/Zhy.svg" src="https://svgshare.com/i/Zhy.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/graphs/commit-activity"><img alt="https://img.shields.io/badge/Maintained%3F-yes-green.svg" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/GoDjango-Development/TFProtocol/blob/master/LICENSE"><img alt="https://img.shields.io/github/license/GoDjango-Development/TFProtocol.svg" src="https://img.shields.io/github/license/GoDjango-Development/TFProtocol.svg" /></a>
@@ -84,38 +87,38 @@ have support for android and desktop as well.</p>
 <li><p>RPCPROXY: The path to the rpcproxy substystem (default: /var/tfdb/rpcproxy)</p></li>
 </ul>
 <p>Command to run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run -e <span class="nv">PORT</span><span class="o">=</span><span class="m">10345</span> -e <span class="nv">HASH</span><span class="o">=</span>testhash ... -p <span class="m">10345</span>:10345 -d etherbeing/tfprotocol
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-e<span class="w"> </span><span class="nv">PORT</span><span class="o">=</span><span class="m">10345</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">HASH</span><span class="o">=</span>testhash<span class="w"> </span>...<span class="w"> </span>-p<span class="w"> </span><span class="m">10345</span>:10345<span class="w"> </span>-d<span class="w"> </span>etherbeing/tfprotocol
 </pre></div>
 </div>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Docker Compose</span><span class="p">:</span><span class="w"></span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Docker Compose</span><span class="p">:</span>
 
-<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.6&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;3.6&quot;</span>
 
-<span class="w">    </span><span class="nt">services</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">tfprotocol</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">etherbeing/tfprotocol</span><span class="w"></span>
-<span class="w">            </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span><span class="w"></span>
-<span class="w">            </span><span class="nt">environment</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT=10345</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DEBUG=false</span><span class="w"> </span><span class="c1"># use this if you want to say how each command interact with the server, do not use this in production</span><span class="w"></span>
-<span class="w">            </span><span class="nt">ports</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10345:10345</span><span class="w"></span>
-<span class="w">            </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfdb:/var/tfdb</span><span class="w"></span>
-<span class="w">            </span><span class="nt">networks</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfprotocol</span><span class="w"></span>
-<span class="w">            </span><span class="nt">secrets</span><span class="p">:</span><span class="w"></span>
-<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfprotocol_keys</span><span class="w"></span>
+<span class="w">    </span><span class="nt">services</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">tfprotocol</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">etherbeing/tfprotocol</span>
+<span class="w">            </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">            </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PORT=10345</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DEBUG=false</span><span class="w"> </span><span class="c1"># use this if you want to say how each command interact with the server, do not use this in production</span>
+<span class="w">            </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10345:10345</span>
+<span class="w">            </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfdb:/var/tfdb</span>
+<span class="w">            </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfprotocol</span>
+<span class="w">            </span><span class="nt">secrets</span><span class="p">:</span>
+<span class="w">                </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tfprotocol_keys</span>
 
-<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">tfdb</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span><span class="w"></span>
-<span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">tfprotocol</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span><span class="w"></span>
-<span class="w">    </span><span class="nt">secrets</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">tfprotocol_keys</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mycustom/path/to/mycustom/keys</span><span class="w"></span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">tfdb</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">tfprotocol</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge</span>
+<span class="w">    </span><span class="nt">secrets</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">tfprotocol_keys</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/mycustom/path/to/mycustom/keys</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -368,7 +371,7 @@ number become kernel.threads-max implicitly.</p>
       &copy;.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
