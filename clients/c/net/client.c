@@ -1,13 +1,21 @@
 struct{
+    unsigned short header_size;
     int socket;
     char* session_key;
-    int header_size;
 } tfprotocol;
 
+typedef struct{
+    int status_code;
+    long size;
+    char* status;
+    char* payload;
+} tf_package;
+/*
 typedef struct {
     int header;
     char* body;
-} tf_package;
+} tf_package;*/
+
 
 int is_bigendian(){
     int value = 1; 
@@ -19,30 +27,55 @@ int is_bigendian(){
 }
 
 /* Convert a tfprotocol into a TF Package*/
-void build_package(char* data, tf_package* package){
-    package->header = strlen(data);
-    package->body = data;
+void build_package(char* data, long size, tf_package* package){
+    if (size == -1){
+        package->size = sizeof(data);
+        package->payload = data;
+    }else{
+        package->size = size;
+        // TODO: Dynamic Status Code resolver
+        package->payload = data;
+
+        package->status_code = 0;
+        package->status = "OK";
+    }
+}
+short is_package_ok(tf_package package){
+    if (strcmp(package.payload, "OK")==0){
+        printf("Everything is OK");
+    }
+    return package.status_code == 0;
 }
 
-
 int tf_send(tf_package package){
-    int header = package.header; // For saving the variable as its possible that later the swapbo modify this value...
+    int header = package.size; // For saving the variable as its possible that later the swapbo modify this value...
     if(!is_bigendian()){
-        swapbo32(package.header);
+        if(tfprotocol.header_size==SHORT_HEADER) 
+            package.size = package.size<<32; // As the value type is long we need to make it ready for swap like it was a 4 bytes int
+        swapbo64(package.size);
     }
-    int res = send(tfprotocol.socket, &package.header, sizeof(package.header), 0);
-    res = send(tfprotocol.socket, package.body, header, 0);
+    int res = send(tfprotocol.socket, &package.size, tfprotocol.header_size, 0);
+    res = send(tfprotocol.socket, package.payload, header, 0);
     return 0;
 }
 
 int tf_receive(tf_package package){
-    int res = recv(tfprotocol.socket, package.body, tfprotocol.header_size, 0); // Right now package.body is the header
-    int header = *((int*)package.body);
+    package.payload = (char*)malloc(tfprotocol.header_size); // LOL If the memory is not dynamic for some reason below doesnt work.
+    int res = recv(tfprotocol.socket, package.payload, tfprotocol.header_size, 0); // Right now package.body is the header
+    int header = *((long*)package.payload);
     if(!is_bigendian()){
+        if(tfprotocol.header_size==SHORT_HEADER) 
+            package.size = package.size<<32; // As the value type is long we need to make it ready for swap like it was a 4 bytes int
         swapbo32(header);
     }
+    package.payload = (char*)realloc(package.payload, header);
+    res = recv(tfprotocol.socket, package.payload, header, 0);
     printf("%d\n", header);
-    res = recv(tfprotocol.socket, package.body, header, 0);
+    printf("%s\n", package.payload);
+    tf_package pkg;
+    build_package(package.payload, header, &pkg);
+    is_package_ok(pkg);
+    free(package.payload); // FIXME: This should keep data until its end
     return 0;
 }
 
@@ -82,7 +115,7 @@ int tf_connect(char *addr, uint16_t port){
     }
 
     tf_package pkg_send;
-    build_package("0.0", &pkg_send);
+    build_package("0.0", -1, &pkg_send);
     tf_send(pkg_send);
     tf_package pkg_recv;
     tf_receive(pkg_recv);

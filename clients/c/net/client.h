@@ -1,6 +1,7 @@
 #ifndef TFCLIENT
 #define TFCLIENT
-
+#define LONG_HEADER 8
+#define SHORT_HEADER 4
 /* Swap byte order of 32 bit integer: Big-to-Little or Little-to-Big endian. */
 #define swapbo32(value) value = (value >> 24 & 0xFF) | (value >> 16 & 0xFF) << \
     8 | (value >> 8 & 0xFF) << 16 | (value & 0xFF) << 24;
@@ -19,6 +20,7 @@
 #include <netdb.h>
 #include <string.h>
 #include "client.c"
+
 
 enum TF_CODES{
     OK, // It is usually 0 and means everything is OK

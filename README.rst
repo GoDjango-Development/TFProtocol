@@ -2,8 +2,8 @@
 TFProtocol :dog: 
 ================================================
 
-.. image:: https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml/badge.svg
-    :target: https://github.com/GoDjango-Development/TFProtocol/actions/workflows/test_and_build.yml
+.. image:: https://jenkins.godjango.dev/job/Tfprotocol/badge/icon
+    :target: https://github.com/GoDjango-Development/TFProtocol/
 
 .. image:: https://svgshare.com/i/Zhy.svg
     :target: https://svgshare.com/i/Zhy.sv
