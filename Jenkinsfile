@@ -1,9 +1,9 @@
 pipeline{
     agent any
+    environment {
+        GPG_PASSPHRASE = credentials('GPG_PASSPHRASE')
+    }
     stages{
-        environment {
-            GPG_PASSPHRASE = credentials('GPG_PASSPHRASE')
-        }
         stage("Build"){
             steps{
                 sh "make clean"
