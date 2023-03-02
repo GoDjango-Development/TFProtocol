@@ -4,8 +4,8 @@ pipeline{
         stage("Build"){
             steps{
                 sh "make clean"
-                sh "make debug"
-                sh "make release"
+                sh "mkdir -p debug/obj && make debug"
+                sh "mkdir -p debug/obj && make release"
                 sh "git submodule update --init --recursive" // Initialize and download clients submodules for testing purposes
                 sh "git secret reveal"
                 sh "mvn clean -f clients/java" // After this is done we are already ready to run the tests with java client
