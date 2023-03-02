@@ -11,4 +11,3 @@ conf/private.pem
 conf/public.pem
 tests/container/keys.pem
 keys.pem
-**.pem
