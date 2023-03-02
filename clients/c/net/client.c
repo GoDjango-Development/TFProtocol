@@ -1,21 +1,13 @@
+#include "client.h"
+#include <stdio.h>
+#include <string.h>
+
 struct{
     unsigned short header_size;
     int socket;
     char* session_key;
+    void* garbage;
 } tfprotocol;
-
-typedef struct{
-    int status_code;
-    long size;
-    char* status;
-    char* payload;
-} tf_package;
-/*
-typedef struct {
-    int header;
-    char* body;
-} tf_package;*/
-
 
 int is_bigendian(){
     int value = 1; 
@@ -33,16 +25,34 @@ void build_package(char* data, long size, tf_package* package){
         package->payload = data;
     }else{
         package->size = size;
+        package->status = "OK";
+        package->payload = "OK Mundo";
+        package->status_code = 0;
+        char* final_index = strchr(package->payload, ' ');
+        if (final_index == NULL) {
+            printf("NULL\n");
+            package->status = package->payload;
+        }
+        else{
+            char temp[10];
+            int t = (final_index - package->payload);
+            printf("%s", package->payload);
+            char* ta = strndup(package->payload, t);
+            temp[t] = '\0';
+            printf("%c %c %c \n", temp[0], temp[1], temp[2]);
+            printf("%d", t);
+            package->status = (char*)temp;
+        }
+
+        printf("This? %s \n", package->status);
         // TODO: Dynamic Status Code resolver
         package->payload = data;
 
-        package->status_code = 0;
-        package->status = "OK";
     }
 }
 short is_package_ok(tf_package package){
     if (strcmp(package.payload, "OK")==0){
-        printf("Everything is OK");
+        printf("Everything is OK\n");
     }
     return package.status_code == 0;
 }

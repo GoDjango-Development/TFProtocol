@@ -19,7 +19,6 @@
 #include <errno.h>
 #include <netdb.h>
 #include <string.h>
-#include "client.c"
 
 
 enum TF_CODES{
@@ -32,6 +31,14 @@ enum TF_CODES{
     PK_PERM_DENIED, // File Private/Public Key Permision Denied to read the file and load it to the connector
     CONF_PERM_DENIED // Configuration File Permission Denied
 };
+
+
+typedef struct{
+    int status_code;
+    long size;
+    char* status;
+    char* payload;
+} tf_package;
 
 int tf_send(tf_package package);
 
