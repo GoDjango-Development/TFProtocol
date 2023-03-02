@@ -174,7 +174,7 @@ static void cmdifce(void)
     cmd_parse();
 }
 
-static int chkhash(void)hdrsetsz
+static int chkhash(void)
 {
     if (readbuf(comm.buf, sizeof comm.buf) == -1)
         return 0;
@@ -235,7 +235,7 @@ static int32_t hdrgetsz(struct tfhdr *hdr)
 
 static int64_t sndbuf(int fd, char *buf, int64_t len, int enc)
 {
-#ifdef DEBUGreadbuf_ex
+#ifdef DEBUG
     static int64_t dc = 0;
     int c = 0;
     printf("\n\t\tSend Counter %lld\n", (long long) dc);
