@@ -1,0 +1,28 @@
+version: "3.6"
+
+services:
+    tfprotocol:
+        image: etherbeing/tfprotocol
+        container_name: tfprotocol
+        restart: unless-stopped
+        environment: 
+            - PORT=10345
+            - DEBUG=true
+        ports: 
+            - 10345:10345
+        volumes: 
+            - tfdb:/var/tfdb
+        networks:
+            - tfprotocol
+        secrets:
+            - tfprotocol_keys
+
+volumes:
+    tfdb:
+        driver: local
+networks:
+    tfprotocol:
+        driver: bridge
+secrets:
+    tfprotocol_keys:
+        file: keys.pem
