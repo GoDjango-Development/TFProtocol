@@ -1,8 +1,9 @@
 pipeline{
     agent any
     environment {
+        PAT = credentials('7dc8d99f-f299-4fe1-81a9-e705551dadd8')
         GPG_PASSPHRASE = credentials('GPG_PASSPHRASE')
-        GPG_PASSPHRASE = credentials('GPG_KEY_ID')
+        PROJECT_REGEX = "tfprotocol"
     }
     stages{
         stage("Build"){
