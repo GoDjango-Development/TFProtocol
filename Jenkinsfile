@@ -2,6 +2,7 @@ pipeline{
     agent any
     environment {
         GPG_PASSPHRASE = credentials('GPG_PASSPHRASE')
+        GPG_PASSPHRASE = credentials('GPG_KEY_ID')
     }
     stages{
         stage("Build"){
@@ -27,8 +28,7 @@ pipeline{
         stage("Release"){
             steps{
                 sh "docker build -t etherbeing/tfprotocol ." // Builds the docker container as described in the docker file.
-                sh "github_deploy.sh release/tfd <<< '${KEY_ID}\
-                ${KEY_VALUE}' " // Deploy the tfd file to github releases
+                sh 'git deploy release/tfd' // Deploy the tfd file to github releases
             }
         }
 
