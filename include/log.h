@@ -26,6 +26,8 @@
 /* Enum to indicate the category of the log action */
 enum logcat { LGC_CRITICAL, LGC_INFO, LGC_WARNING };
 
+extern int dmode;
+
 /* This function write to syslog */
 void wrlog(const char *msg, enum logcat cat);
 

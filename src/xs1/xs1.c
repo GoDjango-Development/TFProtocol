@@ -259,8 +259,7 @@ static int xs1_chkidx(const char *pt)
     if (!strcmp(num, ""))
         return -1;
     int32_t idx = atoll(num);
-    if (idx < 0 || idx >= ds.count || !(ds.fds + idx) || 
-        *(ds.fds + idx) == -1)
+    if (idx < 0 || idx >= ds.count || *(ds.fds + idx) == -1)
         return -1;
     return idx;
 }
@@ -529,7 +528,7 @@ static void xs1_cmdreadv2(void)
 
 static int xs1_chkidx_int64(int64_t idx)
 {
-     if (idx < 0 || idx >= ds.count || !(ds.fds + idx) || *(ds.fds + idx) == -1)
+     if (idx < 0 || idx >= ds.count || *(ds.fds + idx) == -1)
         return -1;
     return idx;
 }
