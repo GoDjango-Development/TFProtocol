@@ -26,4 +26,4 @@ networks:
 
 secrets:
     tfprotocol_keys:
-        file: conf/production/keys.pem
+        file: ./conf/production/keys.pem
