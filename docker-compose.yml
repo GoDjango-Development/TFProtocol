@@ -6,10 +6,10 @@ services:
         container_name: tfprotocol
         restart: unless-stopped
         environment: 
-            - PORT=10350
+            - PORT=10345
             - DEBUG=false
         ports: 
-            - 10350:10350
+            - 10345:10345
         volumes: 
             - tfdb:/var/tfdb
         networks:
@@ -26,4 +26,4 @@ networks:
 
 secrets:
     tfprotocol_keys:
-        file: keys.pem
+        file: conf/production/keys.pem
