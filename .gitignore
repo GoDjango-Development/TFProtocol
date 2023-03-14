@@ -16,3 +16,4 @@ conf/production/public.pem
 conf/production/keys.pem
 conf/production/private.pem
 keys.pem
+docker-compose.yml
