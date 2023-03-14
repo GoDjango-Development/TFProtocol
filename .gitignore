@@ -13,3 +13,6 @@ tests/container/keys.pem
 keys.pemconf/production/private.pem
 conf/production/prod.conf
 conf/production/public.pem
+conf/production/keys.pem
+conf/production/private.pem
+keys.pem
