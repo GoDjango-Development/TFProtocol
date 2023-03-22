@@ -1,7 +1,9 @@
 pipeline{
     agent any
     environment {
+        PAT = credentials('7dc8d99f-f299-4fe1-81a9-e705551dadd8')
         GPG_PASSPHRASE = credentials('GPG_PASSPHRASE')
+        PROJECT_REGEX = "tfprotocol"
     }
     stages{
         stage("Build"){
@@ -27,8 +29,7 @@ pipeline{
         stage("Release"){
             steps{
                 sh "docker build -t etherbeing/tfprotocol ." // Builds the docker container as described in the docker file.
-                sh "github_deploy.sh release/tfd <<< '${KEY_ID}\
-                ${KEY_VALUE}' " // Deploy the tfd file to github releases
+                sh 'git deploy release/tfd' // Deploy the tfd file to github releases
             }
         }
 
