@@ -91,8 +91,11 @@ void startnet(void)
 #ifndef DEBUG
         pid_t pid = fork();
         if (!pid) {
+            if (pipe(zfd) == -1)
+                exit(EXIT_FAILURE);
             pid = fork();
             if (!pid) {
+                close(zfd[1]);
                 close(srvsock);
                 setkeepalive(sockcomm);
                 begincomm(sockcomm, &rmaddr, &rmaddrsz);
@@ -100,6 +103,7 @@ void startnet(void)
                     case of error. */
                 exit(EXIT_SUCCESS);
             }
+            close(zfd[0]);
             exit(EXIT_SUCCESS);
         }
         close(sockcomm);
@@ -134,4 +138,10 @@ static void setkeepalive(int so)
         wrlog(ELOGKEEPALIVE, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
+}
+
+void avoidz(void)
+{
+    char byte;
+    read(zfd[0], &byte, 1);
 }
