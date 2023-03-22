@@ -15,7 +15,7 @@
 #define SLOGDINIT "TF Protocol daemon initialized successfully."
 #define SLOGDRUNNING "TF Protocol daemon running successfully."
 #define SLOGDSRVS "TF Protocol daemon start to listen for connections."
-#define SLOGSIGINT "TF Protocol daemon exiting due SIGINT receive."
+#define SLOGSIGINT "TF Protocol daemon exiting due to SIGINT received."
 #define ELOGKEEPALIVE "TF Protocol daemon falied to set TCP keepalive timeouts."
 #define ELOGOOBTHREAD "TF Protocol daemon failed to initialize OOB thread."
 #define ELOGDBSOCKUDP "TF Protocol daemon failed to bind UDP socket."
