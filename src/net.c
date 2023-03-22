@@ -91,21 +91,27 @@ void startnet(void)
 #ifndef DEBUG
         pid_t pid = fork();
         if (!pid) {
-            if (pipe(zfd) == -1)
-                exit(EXIT_FAILURE);
+            if (pipe(zfd) == -1) {
+                wrlog(EZOMBIECREAT, LGC_WARNING);
+                zfd[0] = -1;
+            }
             pid = fork();
             if (!pid) {
-                close(zfd[1]);
+                if (zfd[0] != -1)
+                    close(zfd[1]);
                 close(srvsock);
                 setkeepalive(sockcomm);
                 begincomm(sockcomm, &rmaddr, &rmaddrsz);
                 /* A bit extra protection for terminating child process in
                     case of error. */
                 exit(EXIT_SUCCESS);
-            }
-            close(zfd[0]);
+            } else (pid == -1)
+                wrlog(ELOGDFORK, LGC_WARNING);
+            if (zfd[0] != -1)
+                close(zfd[0]);
             exit(EXIT_SUCCESS);
-        }
+        } else (pid == -1)
+            wrlog(ELOGDFORK, LGC_WARNING);
         close(sockcomm);
         waitpid(pid, NULL, 0);
 #else
@@ -143,5 +149,6 @@ static void setkeepalive(int so)
 void avoidz(void)
 {
     char byte;
-    read(zfd[0], &byte, 1);
+    if (zfd[0] != -1)
+        read(zfd[0], &byte, 1);
 }
