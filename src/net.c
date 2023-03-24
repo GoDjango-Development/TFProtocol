@@ -155,5 +155,5 @@ void avoidz(void)
 {
     char byte;
     if (zfd[0] != -1)
-        read(zfd[0], &byte, 1);
+        read(zfd[0], &byte, sizeof byte);
 }
