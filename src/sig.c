@@ -50,6 +50,7 @@ void rlwait(char *const *argv, pid_t pid)
     while (1) {
         sigwait(&waitmask, &signop);
         if (signop == SIGUSR1) {
+            /* Avoid zombies. */
             waitpid(pid, NULL, 0);
             execv(*argv, argv);
         }

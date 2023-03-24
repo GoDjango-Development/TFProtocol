@@ -51,19 +51,19 @@ int main(int argc, char **argv)
     pthread_sigmask(SIG_SETMASK, &mask, NULL);
     chdir(tfproto.dbdir);
 #ifndef DEBUG
+    if (argc >= 3)
+        mkdaemon();
     pid_t pid = fork();
     if (pid) {
         /* Reload configuration server instance. */
         rlwait(argv, pid);
-        exit(EXIT_SUCCESS);
+    } else if (pid == -1) {
+        wrlog(ELOGDFORK, LGC_CRITICAL);
+        exit(EXIT_FAILURE);
     }
     setsighandler(SIGUSR1, sigusr1);
     sigdelset(&mask, SIGUSR1);
     pthread_sigmask(SIG_SETMASK, &mask, NULL);
-#endif
-#ifndef DEBUG
-    if (argc >= 3)
-        mkdaemon();
 #else
     if (argc >= 3 && !strcmp(*(argv + 2), UDPARGVNAM))
         udp_debug = 1;
