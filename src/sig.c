@@ -13,9 +13,9 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <wait.h>
 
 sigset_t mask;
-int rlflag;
 
 void setsighandler(int signo, void (*handler)(int))
 {
@@ -36,32 +36,22 @@ void sigint(int signo)
 
 void sigusr1(int signo)
 {
-    if (!rlflag) {
-        endnet();
-        wrlog(SLOGSIGUSR1, LGC_INFO);
-        exit(EXIT_SUCCESS);
-    }
+    endnet();
+    wrlog(SLOGSIGUSR1, LGC_INFO);
+    exit(EXIT_SUCCESS);
 }
 
-void rlwait(char *const *argv)
+void rlwait(char *const *argv, pid_t pid)
 {
     int signop;
-    sigaddset(&mask, SIGUSR1);
-    pthread_sigmask(SIG_SETMASK, &mask, NULL);
     sigset_t waitmask;
     sigemptyset(&waitmask);
     sigaddset(&waitmask, SIGUSR1);
     while (1) {
         sigwait(&waitmask, &signop);
         if (signop == SIGUSR1) {
-            pid_t pid = fork();
-            if (!pid)
-                execv(*argv, argv);
-            else if (pid == -1) {
-                wrlog(ELOGDFORK, LGC_CRITICAL);
-                exit(EXIT_FAILURE);
-            }
-            exit(EXIT_SUCCESS);
+            waitpid(pid, NULL, 0);
+            execv(*argv, argv);
         }
     }
 }

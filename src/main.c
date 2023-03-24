@@ -47,11 +47,20 @@ int main(int argc, char **argv)
     }
     sigfillset(&mask);
     sigdelset(&mask, SIGINT);
+    setsighandler(SIGINT, sigint);
+    pthread_sigmask(SIG_SETMASK, &mask, NULL);
+    chdir(tfproto.dbdir);
+#ifndef DEBUG
+    pid_t pid = fork();
+    if (pid) {
+        /* Reload configuration server instance. */
+        rlwait(argv, pid);
+        exit(EXIT_SUCCESS);
+    }
+    setsighandler(SIGUSR1, sigusr1);
     sigdelset(&mask, SIGUSR1);
     pthread_sigmask(SIG_SETMASK, &mask, NULL);
-    setsighandler(SIGINT, sigint);
-    setsighandler(SIGUSR1, sigusr1);
-    chdir(tfproto.dbdir);
+#endif
 #ifndef DEBUG
     if (argc >= 3)
         mkdaemon();
@@ -60,16 +69,6 @@ int main(int argc, char **argv)
         udp_debug = 1;
 #endif
     wrlog(SLOGDRUNNING, LGC_INFO);
-#ifndef DEBUG
-    pid_t pid = fork();
-    if (!pid) {
-        /* Reload configuration server instance. */
-        setsighandler(SIGUSR1, SIG_DFL);
-        rlflag = 1;
-        rlwait(argv);
-        exit(EXIT_SUCCESS);
-    }
-#endif
     startnet();
     return 0;
 }
