@@ -5,7 +5,7 @@
 #define NET_H
 
 /* IPC PIPE to avoid child zombie. */
-int zfd[2];
+extern int zfd[2];
 
 /* Start network listening and client dispatcher into forked process */
 void startnet(void);

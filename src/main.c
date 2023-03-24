@@ -31,7 +31,7 @@ int main(int argc, char **argv)
         wrlog(ELOGDARG, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
-    int rc = init(*(argv + 1));
+    int rc = init((const char **) argv, &tfproto);
     if (rc) {
         wrlog(ELOGDINIT, LGC_CRITICAL);
         exit(EXIT_FAILURE);
@@ -45,11 +45,12 @@ int main(int argc, char **argv)
         wrlog(ELOGSTACKSIZE, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
-    sigset_t mask;
     sigfillset(&mask);
     sigdelset(&mask, SIGINT);
+    sigdelset(&mask, SIGUSR1);
     pthread_sigmask(SIG_SETMASK, &mask, NULL);
     setsighandler(SIGINT, sigint);
+    setsighandler(SIGUSR1, sigusr1);
     chdir(tfproto.dbdir);
 #ifndef DEBUG
     if (argc >= 3)
@@ -59,6 +60,16 @@ int main(int argc, char **argv)
         udp_debug = 1;
 #endif
     wrlog(SLOGDRUNNING, LGC_INFO);
+#ifndef DEBUG
+    pid_t pid = fork();
+    if (!pid) {
+        /* Reload configuration server instance. */
+        setsighandler(SIGUSR1, SIG_DFL);
+        rlflag = 1;
+        rlwait(argv);
+        exit(EXIT_SUCCESS);
+    }
+#endif
     startnet();
     return 0;
 }

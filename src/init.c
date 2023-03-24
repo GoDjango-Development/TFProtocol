@@ -65,15 +65,17 @@ static void freeres(FILE *fs, char *buf);
 /* Set database directory normalized. */
 static void stddbpath(void);
 
-int init(const char *conf)
+int init(const char **argv, struct tfproto *tfproto)
 {
     char ln[LINE_MAX];
-    strcpy(tfproto.conf, conf);
-    FILE *fs = fopen(conf, "r");
+    strcpy(tfproto->bin, *argv);
+    strcpy(tfproto->conf, *(argv + 1));
+    tfproto->argv = argv;
+    FILE *fs = fopen(tfproto->conf, "r");
     if (fs == NULL)
         return -1;
     struct stat st;
-    stat(conf, &st);
+    stat(tfproto->conf, &st);
     buf = malloc(st.st_size + 1);
     *buf = '\0';
     memset(buf, 0, st.st_size + 1);
@@ -92,8 +94,8 @@ int init(const char *conf)
     pt += strlen(PROTOVER);
     int i = 0;
     while (*pt != '\n' && *pt != '\0' && i < PROTOLEN - 1)
-        tfproto.proto[i++] = *pt++;
-    if (!strlen(tfproto.proto)) {
+        tfproto->proto[i++] = *pt++;
+    if (!strlen(tfproto->proto)) {
         freeres(fs, buf);
         return -1;
     }
@@ -105,8 +107,8 @@ int init(const char *conf)
     pt += strlen(HASH);
     i = 0;
     while (*pt != '\n' && *pt != '\0' && i < HASHLEN - 1)
-        tfproto.hash[i++] = *pt++;
-    if (!strlen(tfproto.hash)) {
+        tfproto->hash[i++] = *pt++;
+    if (!strlen(tfproto->hash)) {
         freeres(fs, buf);
         return -1;
     }
@@ -118,12 +120,12 @@ int init(const char *conf)
     pt += strlen(DBDIR);
     i = 0;
     while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
-        tfproto.dbdir[i++] = *pt++;
-    if (!strlen(tfproto.dbdir)) {
+        tfproto->dbdir[i++] = *pt++;
+    if (!strlen(tfproto->dbdir)) {
         freeres(fs, buf);
         return -1;
     }
-    tfproto.dbdir[strlen(tfproto.dbdir)] = '/';
+    tfproto->dbdir[strlen(tfproto->dbdir)] = '/';
     pt = strstr(buf, PORT);
     if (!pt) {
         freeres(fs, buf);
@@ -132,8 +134,8 @@ int init(const char *conf)
     pt += strlen(PORT);
     i = 0;
     while (*pt != '\n' && *pt != '\0' && i < PORTLEN - 1)
-        tfproto.port[i++] = *pt++;
-    if (!strlen(tfproto.port)) {
+        tfproto->port[i++] = *pt++;
+    if (!strlen(tfproto->port)) {
         freeres(fs, buf);
         return -1;
     }
@@ -145,54 +147,54 @@ int init(const char *conf)
     pt += strlen(PRIVKEY);
     i = 0;
     while (*pt != '\0' && *pt != PRIVKEY_ENDTOK)
-        tfproto.priv[i++] = *pt++;
+        tfproto->priv[i++] = *pt++;
     pt = strstr(buf, DEFUSR);
     if (pt) {
         pt += strlen(DEFUSR);
         i = 0;
         while (*pt != '\n' && *pt != '\0' && i < DEFUSRLEN - 1)
-            tfproto.defusr[i++] = *pt++;
+            tfproto->defusr[i++] = *pt++;
     }
     pt = strstr(buf, USERDB);
     if (pt) {
         pt += strlen(USERDB);
         i = 0;
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
-            tfproto.userdb[i++] = *pt++;
+            tfproto->userdb[i++] = *pt++;
     }
     pt = strstr(buf, RPCPROXY);
     if (pt) {
         pt += strlen(RPCPROXY);
         i = 0;
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
-            tfproto.rpcproxy[i++] = *pt++;
+            tfproto->rpcproxy[i++] = *pt++;
     }
     pt = strstr(buf, XSNTMEX);
     if (pt) {
         pt += strlen(XSNTMEX);
         i = 0;
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
-            tfproto.xsntmex[i++] = *pt++;
+            tfproto->xsntmex[i++] = *pt++;
     }
     pt = strstr(buf, XSACE);
     if (pt) {
         pt += strlen(XSACE);
         i = 0;
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
-            tfproto.xsace[i++] = *pt++;
+            tfproto->xsace[i++] = *pt++;
     }
     pt = strstr(buf, INJAIL);
     if (pt)
-        tfproto.injail = 1;
+        tfproto->injail = 1;
     pt = strstr(buf, LOCKSYS);
     if (pt)
-        tfproto.locksys = 1;
+        tfproto->locksys = 1;
     pt = strstr(buf, TLB);
     i = 0;
     if (pt) {
         pt += strlen(TLB);
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
-            tfproto.tlb[i++] = *pt++;
+            tfproto->tlb[i++] = *pt++;
     }
     pt = strstr(buf, NPROCMAX);
     if (pt) {
@@ -201,33 +203,33 @@ int init(const char *conf)
         while (*pt != '\n' && *pt != '\0' && i < LINE_MAX - 1)
             ln[i++] = *pt++;
         ln[i] = '\0';
-        tfproto.nprocmax = atoll(ln);
+        tfproto->nprocmax = atoll(ln);
     }
     pt = strstr(buf, PUBKEY);
     if (pt) {
         i = 0;
         pt += strlen(PUBKEY);
         while (*pt != '\0' && *pt != PUBKEY_ENDTOK)
-            tfproto.pub[i++] = *pt++;
+            tfproto->pub[i++] = *pt++;
     }
     i = 0;
     if (pt = strstr(buf, TRP_DNSTOK)) {
-        tfproto.trp_tp = TRP_DNS;
+        tfproto->trp_tp = TRP_DNS;
         pt += strlen(TRP_DNSTOK);
     } else if (pt = strstr(buf, TRP_IPV4TOK)) {
-        tfproto.trp_tp = TRP_IPV4;
+        tfproto->trp_tp = TRP_IPV4;
         pt += strlen(TRP_IPV4TOK);
     } else if (pt = strstr(buf, TRP_IPV6TOK)) {
-        tfproto.trp_tp = TRP_IPV6;
+        tfproto->trp_tp = TRP_IPV6;
         pt += strlen(TRP_IPV6TOK);
     } else
-        tfproto.trp_tp = TRP_NONE;
+        tfproto->trp_tp = TRP_NONE;
     if (pt) 
         while (*pt != '\n' && *pt != '\0' && i < TRPLEN - 1)
-            tfproto.trp[i++] = *pt++;
+            tfproto->trp[i++] = *pt++;
     freeres(fs, buf);
     stddbpath();
-    setmaxchilds(tfproto.nprocmax);
+    setmaxchilds(tfproto->nprocmax);
     return 0;
 }
 

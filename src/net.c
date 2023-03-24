@@ -16,6 +16,7 @@
 #include <util.h>
 #include <errno.h>
 #include <udp_keep.h>
+#include <sig.h>
 
 /* Idle time -in seconds- after probes begins. */
 #define KEEPALIVE_TIME 3600
@@ -26,6 +27,9 @@
 
 /* IPv6 any address initialization */
 extern const struct in6_addr in6addr_any;
+
+/* IPC PIPE to avoid child zombie. */
+int zfd[2];
 
 static int srvsock;
 /* Set standard tcp keepalive timeouts. */
@@ -43,10 +47,9 @@ void startnet(void)
         wrlog(ELOGDCSOCK, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
-#ifdef DEBUG
     int optval = 1;
+    /* This socket option allows fast config reload and re-binding. */
     setsockopt(srvsock, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
-#endif
     int st = bind(srvsock, (struct sockaddr *) &addr, sizeof addr);
     if (st == -1) {
         wrlog(ELOGDBSOCK, LGC_CRITICAL);
@@ -91,6 +94,8 @@ void startnet(void)
 #ifndef DEBUG
         pid_t pid = fork();
         if (!pid) {
+            sigaddset(&mask, SIGUSR1);
+            pthread_sigmask(SIG_SETMASK, &mask, NULL);
             if (pipe(zfd) == -1) {
                 wrlog(EZOMBIECREAT, LGC_WARNING);
                 zfd[0] = -1;
@@ -105,19 +110,19 @@ void startnet(void)
                 /* A bit extra protection for terminating child process in
                     case of error. */
                 exit(EXIT_SUCCESS);
-            } else (pid == -1)
+            } else if (pid == -1)
                 wrlog(ELOGDFORK, LGC_WARNING);
             if (zfd[0] != -1)
                 close(zfd[0]);
             exit(EXIT_SUCCESS);
-        } else (pid == -1)
+        } else if (pid == -1)
             wrlog(ELOGDFORK, LGC_WARNING);
         close(sockcomm);
         waitpid(pid, NULL, 0);
 #else
-    close(srvsock);
-    setkeepalive(sockcomm);
-    begincomm(sockcomm, &rmaddr, &rmaddrsz);
+        close(srvsock);
+        setkeepalive(sockcomm);
+        begincomm(sockcomm, &rmaddr, &rmaddrsz);
 #endif
     }
     close(srvsock);

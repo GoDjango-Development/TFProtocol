@@ -88,10 +88,18 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
         trp();
     genkeepkey();
     initcrypto(&cryp_rx);
+#ifndef DEBUG
     mainloop();
     cleanup();
     avoidz();
     exit(EXIT_SUCCESS);
+#else
+    mainloop();
+    cleanup();
+    execv(*tfproto.argv, (char *const *) tfproto.argv);
+    /* Extra protection bit in case execv fails. */
+    exit(EXIT_SUCCESS);
+#endif
 }
 
 int chkproto(void)

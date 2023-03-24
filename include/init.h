@@ -44,6 +44,8 @@ struct tfproto {
     char defusr[DEFUSRLEN];
     /* TFProtocol conf path. */
     char conf[PATH_MAX];
+    /* TFProtocol binary. */
+    char bin[PATH_MAX];
     /* TFProtocol path to users database. */
     char userdb[PATH_MAX];
     /* eXtended subsystem Native Module Execution (NTMEX) conf path. */
@@ -66,9 +68,11 @@ struct tfproto {
     char rpcproxy[PATH_MAX];
     /* Maximun number of child processes. */
     int64_t nprocmax;
+    /* Exec arguments vector copy. */
+    const char **argv;
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */
-int init(const char *conf);
+int init(const char **argv, struct tfproto *tfproto);
 
 #endif
