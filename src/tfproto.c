@@ -21,6 +21,8 @@
 #include <pwd.h>
 #include <trp.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <net.h>
 
 /* Tha header that indicates the size of the expected messages. */
 #pragma pack(push, 1)
@@ -79,15 +81,25 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
     int r = pthread_create(&oobth, NULL, oobthread, NULL);
     if (r != 0) {
         wrlog(ELOGOOBTHREAD, LGC_CRITICAL);
+        avoidz();
         exit(EXIT_FAILURE);
     }
     if (tfproto.trp_tp != TRP_NONE)
         trp();
     genkeepkey();
     initcrypto(&cryp_rx);
+#ifndef DEBUG
     mainloop();
     cleanup();
+    avoidz();
     exit(EXIT_SUCCESS);
+#else
+    mainloop();
+    cleanup();
+    execv(*tfproto.argv, (char *const *) tfproto.argv);
+    /* Extra protection bit in case execv fails. */
+    exit(EXIT_SUCCESS);
+#endif
 }
 
 int chkproto(void)

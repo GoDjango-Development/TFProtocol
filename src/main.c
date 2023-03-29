@@ -31,7 +31,7 @@ int main(int argc, char **argv)
         wrlog(ELOGDARG, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
-    int rc = init(*(argv + 1));
+    int rc = init((const char **) argv, &tfproto);
     if (rc) {
         wrlog(ELOGDINIT, LGC_CRITICAL);
         exit(EXIT_FAILURE);
@@ -45,15 +45,25 @@ int main(int argc, char **argv)
         wrlog(ELOGSTACKSIZE, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
-    sigset_t mask;
     sigfillset(&mask);
     sigdelset(&mask, SIGINT);
-    pthread_sigmask(SIG_SETMASK, &mask, NULL);
     setsighandler(SIGINT, sigint);
+    pthread_sigmask(SIG_SETMASK, &mask, NULL);
     chdir(tfproto.dbdir);
 #ifndef DEBUG
     if (argc >= 3)
         mkdaemon();
+    pid_t pid = fork();
+    if (pid) {
+        /* Reload configuration server instance. */
+        rlwait(argv, pid);
+    } else if (pid == -1) {
+        wrlog(ELOGDFORK, LGC_CRITICAL);
+        exit(EXIT_FAILURE);
+    }
+    setsighandler(SIGUSR1, sigusr1);
+    sigdelset(&mask, SIGUSR1);
+    pthread_sigmask(SIG_SETMASK, &mask, NULL);
 #else
     if (argc >= 3 && !strcmp(*(argv + 2), UDPARGVNAM))
         udp_debug = 1;

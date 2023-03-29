@@ -9,6 +9,13 @@
 #include <net.h>
 #include <tfproto.h>
 #include <errno.h>
+#include <init.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <wait.h>
+
+sigset_t mask;
 
 void setsighandler(int signo, void (*handler)(int))
 {
@@ -25,4 +32,27 @@ void sigint(int signo)
     endnet();
     wrlog(SLOGSIGINT, LGC_INFO);
     exit(EXIT_SUCCESS);
+}
+
+void sigusr1(int signo)
+{
+    endnet();
+    wrlog(SLOGSIGUSR1, LGC_INFO);
+    exit(EXIT_SUCCESS);
+}
+
+void rlwait(char *const *argv, pid_t pid)
+{
+    int signop;
+    sigset_t waitmask;
+    sigemptyset(&waitmask);
+    sigaddset(&waitmask, SIGUSR1);
+    while (1) {
+        sigwait(&waitmask, &signop);
+        if (signop == SIGUSR1) {
+            /* Avoid zombies. */
+            waitpid(pid, NULL, 0);
+            execv(*argv, argv);
+        }
+    }
 }

@@ -22,6 +22,8 @@
 #define ELOGDCSOCKDGRAM "TF Protocol daemon failed to create DATAGRAM socket."
 #define ELOGINITFLAGS "TF Protocol daemon invalid flags."
 #define ELOGSTACKSIZE "TF Protocol daemon failed to set stack size."
+#define EZOMBIECREAT "TF Protocol child process may become zombie"
+#define SLOGSIGUSR1 "TF Protocol daemon reloads config due to SIGUSR1 received."
 
 /* Enum to indicate the category of the log action */
 enum logcat { LGC_CRITICAL, LGC_INFO, LGC_WARNING };
