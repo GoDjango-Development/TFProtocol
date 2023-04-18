@@ -124,24 +124,48 @@ debug/tfd debug/file.conf udp_debug
 
 this runs tfprotocol binary in interactive mode but it only runs the udp server.
 
+SIGNALS
+
+ -SIGINT
+    Will gracefully close TFProtocol daemon disconnectinig it from the network.
+
 ########################################
 Release mode (interactive)
 ########################################
 
-release/tfd release/file.conf
+/absolute/path/release/tfd /absolute/path/release/file.conf
 
 this runs tfprotocol binary in interactive mode (you may press ctrl+c to stop
 it)
+
+SIGNALS
+
+ -SIGINT
+    Will gracefully close TFProtocol daemon disconnectinig it from the network.
+
+ -SIGUSR1
+    Will reload TFProtocol daemon with the same configuration that start it.
 
 ############################################
 Release mode (daemon: canonical)
 ############################################
 
-release/tfd release/file.conf x
+/absolute/path/release/tfd /absolute/path/release/file.conf x
 
 this runs tfprotocol binary as intended for production environment. It does a
 double fork and stay running in background.
 
+SIGNALS
+
+ -SIGINT
+    Will gracefully close TFProtocol daemon disconnectinig it from the network.
+
+ -SIGUSR1
+    Will reload TFProtocol daemon with the same configuration that start it.
+    
+In release mode, interactive or canonical, the exec and config path both must be
+absolute path to allow hot-reload on SIGUSR1 signal.
+    
 ---------------------------------------
 TFProtocol Configuration file.
 ---------------------------------------
@@ -338,6 +362,10 @@ that makes this number useless. This option in Solaris will no have effect.
 In Linux if this number is above kernel.threads-max and/or kernel.pid_max the
 number become kernel.threads-max implicitly.
 
+securefs
+
+This parameter is optional and if is present the TFProtocol daemon will enforce
+TFProtocol Secure Filesystem.
 
 ------------------
     Mantainers
