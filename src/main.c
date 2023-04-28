@@ -23,6 +23,9 @@
 /* Function to become daemon */
 static void mkdaemon(void);
 
+/* Public PID for reload config instance. */
+pid_t rlwait_pid = -1;
+
 int main(int argc, char **argv)
 {
     if (argc >= 3)
@@ -53,11 +56,11 @@ int main(int argc, char **argv)
 #ifndef DEBUG
     if (argc >= 3)
         mkdaemon();
-    pid_t pid = fork();
-    if (pid) {
+    rlwait_pid = fork();
+    if (rlwait_pid) {
         /* Reload configuration server instance. */
-        rlwait(argv, pid);
-    } else if (pid == -1) {
+        rlwait(argv, rlwait_pid);
+    } else if (rlwait_pid == -1) {
         wrlog(ELOGDFORK, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }

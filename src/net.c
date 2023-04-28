@@ -28,6 +28,9 @@
 /* IPv6 any address initialization */
 extern const struct in6_addr in6addr_any;
 
+/* PID value for reload config instance. */
+extern pid_t rlwait_pid;
+
 /* IPC PIPE to avoid child zombie. */
 int zfd[2];
 
@@ -53,11 +56,13 @@ void startnet(void)
     int st = bind(srvsock, (struct sockaddr *) &addr, sizeof addr);
     if (st == -1) {
         wrlog(ELOGDBSOCK, LGC_CRITICAL);
+        kill(rlwait_pid, SIGINT);
         exit(EXIT_FAILURE);
     }
     st = listen(srvsock, SOMAXCONN);
     if (st == -1) {
         wrlog(ELOGDLSOCK, LGC_CRITICAL);
+        kill(rlwait_pid, SIGINT);
         exit(EXIT_FAILURE);
     }
     struct sockaddr_in6 rmaddr;
