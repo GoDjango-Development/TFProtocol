@@ -379,6 +379,14 @@ void cmd_parse(void)
             cmd_tasfs();
     else if (!strcmp(cmd, CMD_RMKDIR))
             cmd_rmkdir();
+    else if (!strcmp(cmd, CMD_GETTZ))
+        cmd_gettz();
+    else if (!strcmp(cmd, CMD_SETTZ))
+        cmd_settz();
+    else if (!strcmp(cmd, CMD_LOCALTIME))
+        cmd_localtime();
+    else if (!strcmp(cmd, CMD_DATEFTZ))
+        cmd_dateftz();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -1200,7 +1208,6 @@ void cmd_dtof(void)
         return;
     }
     time_t t = atoll(date);
-    
     if (gettmf(&t, date) == -1) {
         cmd_fail(CMD_EBADDATE);
         return;
@@ -3582,4 +3589,64 @@ void cmd_rmkdir(void)
         return;
     }
     cmd_ok();
+}
+
+void cmd_gettz(void)
+{
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, getenv("TZ"));
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
+}
+
+void cmd_settz(void)
+{
+    char *pt = comm.buf + strlen(CMD_SETTZ) + 1;
+    setenv("TZ", pt, 1);
+    tzset();
+    cmd_ok();
+}
+
+void cmd_localtime(void)
+{
+    char date[HTIMELEN] = "";
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    if (tm)
+        strftime(date, HTIMELEN, "%Y-%m-%d %H:%M:%S %Z", tm);
+    else { 
+        cmd_fail(CMD_EBADDATE);
+        return;
+    }
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, date);
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
+}
+
+void cmd_dateftz(void)
+{
+    char *pt = comm.buf + strlen(CMD_DATEFTZ) + 1;
+    char oldtz[LINE_MAX];
+    strcpy(oldtz, getenv("TZ"));
+    setenv("TZ", pt, 1);
+    tzset();
+    char date[HTIMELEN] = "";
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    if (tm)
+        strftime(date, HTIMELEN, "%Y-%m-%d %H:%M:%S %Z", tm);
+    else { 
+        cmd_fail(CMD_EBADDATE);
+        return;
+    }
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, date);
+    setenv("TZ", oldtz, 1);
+    tzset();
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
 }

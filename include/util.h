@@ -11,7 +11,7 @@
 /* Buffer for unix time in timestamp format. */
 #define UXTIMELEN 22
 /* Buffer for time in human readble format. */
-#define HTIMELEN 32
+#define HTIMELEN 64
 /* Number of decimal digits for long long type, including the sign and the
     traling 0. */
 #define LLDIGITS sizeof(long long) / 2 * 3 + sizeof(long long) + 2
