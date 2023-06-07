@@ -175,6 +175,8 @@
 #define CMD_SETTZ "SETTZ"
 /* Get time of tfprotocol instance at current time-zone. */
 #define CMD_LOCALTIME "LOCALTIME"
+/* Get time of a particular time-zone. */
+#define CMD_DATEFTZ "DATEFTZ"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -341,5 +343,7 @@ void cmd_gettz(void);
 void cmd_settz(void);
 /* Get time of tfprotocol instance at current time-zone. */
 void cmd_localtime(void);
+/* Get time of a particular time-zone. */
+void cmd_dateftz(void);
 
 #endif
