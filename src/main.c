@@ -34,6 +34,8 @@ int main(int argc, char **argv)
         wrlog(ELOGDARG, LGC_CRITICAL);
         exit(EXIT_FAILURE);
     }
+    setenv("TZ", "UTC", 1);
+    tzset();
     int rc = init((const char **) argv, &tfproto);
     if (rc) {
         wrlog(ELOGDINIT, LGC_CRITICAL);

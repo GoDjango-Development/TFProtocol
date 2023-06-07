@@ -169,6 +169,12 @@
 #define CMD_TASFS "TASFS"
 /* Makes a new directory recursively. */
 #define CMD_RMKDIR "RMKDIR"
+/* Get tfprotocol instance current time-zone. */
+#define CMD_GETTZ "GETTZ"
+/* Set tfprotocol instance current time-zone. */
+#define CMD_SETTZ "SETTZ"
+/* Get time of tfprotocol instance at current time-zone. */
+#define CMD_LOCALTIME "LOCALTIME"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -329,5 +335,11 @@ void cmd_locksys(void);
 void cmd_tasfs(void);
 /* Makes a new directory recursively. */
 void cmd_rmkdir(void);
+/* Get tfprotocol instance current time-zone. */
+void cmd_gettz(void);
+/* Set tfprotocol instance current time-zone. */
+void cmd_settz(void);
+/* Get time of tfprotocol instance at current time-zone. */
+void cmd_localtime(void);
 
 #endif
