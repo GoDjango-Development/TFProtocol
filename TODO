@@ -1,0 +1,3 @@
+- sha256 deprecated functions to openssl version 3.0
+	- rsa deprecated functions to openssl version 3.0
+	- remove from utils.c and crypto.c the macro OPENSSL_API_COMPAT
