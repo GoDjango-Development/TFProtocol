@@ -1,6 +1,8 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
+#define OPENSSL_API_COMPAT 0x10000000L
+
 #include <crypto.h>
 #include <stdlib.h>
 #include <stdio.h>
