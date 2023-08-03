@@ -1,3 +1,6 @@
+/*  programmer: luis miguel
+    email: lmdelbahia@gmail.com  */
+
 #ifndef CORE_H
 #define CORE_H
 
