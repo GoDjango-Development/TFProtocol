@@ -100,6 +100,10 @@
 #define NETLOCK_LEN 8
 /* Standard string length. */
 #define STDSTR 255
+/* LSV2DOWN success header value. */
+#define LSV2DOWN_HDR_SUCCESS -10
+/* LSV2DOWN failed header value. */
+#define LSV2DOWN_HDR_FAILED -11
 
 /* Hi-Performance file operations structure. */
 struct hpfile {
@@ -170,6 +174,8 @@ static void lsr_callback(const char *root, const char *filename, int isdir);
 static void netlock_switch(int s);
 /* NETLOCK Timeout watchdog thread. */
 static void *netlock_wdg(void *prms);
+/* LSRDOWN_ITER callback. */
+static void lsrdown_callback(const char *root, const char *filename, int isdir);
 
 void cmd_echo(void)
 {
@@ -387,6 +393,10 @@ void cmd_parse(void)
         cmd_localtime();
     else if (!strcmp(cmd, CMD_DATEFTZ))
         cmd_dateftz();
+    else if (!strcmp(cmd, CMD_LSV2DOWN))
+            cmd_lsrv2down(LSRITER_NONR);
+    else if (!strcmp(cmd, CMD_LSRV2DOWN))
+            cmd_lsrv2down(LSRITER_R);
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3649,4 +3659,82 @@ void cmd_dateftz(void)
     tzset();
     if (writebuf(comm.buf, strlen(comm.buf)) == -1)
         endcomm();
+}
+
+void cmd_lsrv2down(int mode)
+{
+    char *pt;
+    if (mode == LSRITER_NONR)
+        pt = comm.buf + strlen(CMD_LSV2DOWN) + 1;
+    else if (mode == LSRITER_R)
+        pt = comm.buf + strlen(CMD_LSRV2DOWN) + 1;
+    char path[PATH_MAX];
+    *path = '\0';
+    if (mode == LSRITER_NONR)
+        fsop = SECFS_LDIR;
+    else if (mode == LSRITER_R)
+        fsop = SECFS_LRDIR;
+    if (jaildir(pt, path)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    if (!trylck(path, lcknam, 0)) {
+        cmd_fail(CMD_ELOCKED);
+        return;
+    }
+    struct stat st = { 0 };
+    if (stat(path, &st) == -1) {
+        cmd_fail(CMD_ELSRV2);
+        return;
+    }
+    if (!S_ISDIR(st.st_mode)) {
+        cmd_fail(CMD_ESRCNODIR);
+        return;
+    }
+    if (path[strlen(path) - 1] != '/')
+        strcat(path, "/");
+    char root[PATH_MAX];
+    normpath(path, root);
+    cmd_ok();
+    int32_t hdr;
+    if (lsr_iter(root, mode, lsrdown_callback)) {
+        hdr = LSV2DOWN_HDR_FAILED;
+        if (!isbigendian())
+            swapbo32(hdr);
+        if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
+            endcomm();
+            return;
+        }
+    } else {
+        hdr = LSV2DOWN_HDR_SUCCESS;
+        if (!isbigendian())
+            swapbo32(hdr);
+        if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) {
+            endcomm();
+            return;
+        }
+    }
+}
+
+static void lsrdown_callback(const char *root, const char *filename, int isdir)
+{
+    char stdpath[PATH_MAX];
+    normpath(filename, stdpath);
+    if (strstr(stdpath, FSMETA))
+        return;
+    char *pt = stdpath + strlen(tfproto.dbdir); 
+    if (isdir)
+        strcat(stdpath, "/");
+    if (!strstr(stdpath + strlen(root), SDEXT)) {
+        char line[LINE_MAX];
+        strcat(stdpath, "\n");
+        strcpy(line, pt);
+        int32_t hdr = strlen(line);
+        if (!isbigendian())
+            swapbo32(hdr);
+        if (writebuf_ex((char *) &hdr, sizeof hdr) == -1) 
+            return;
+        if (writebuf_ex(line, strlen(line)) == -1) 
+            return;
+    }
 }

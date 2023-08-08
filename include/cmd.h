@@ -177,6 +177,10 @@
 #define CMD_LOCALTIME "LOCALTIME"
 /* Get time of a particular time-zone. */
 #define CMD_DATEFTZ "DATEFTZ"
+/* List directory content version 2 and download. */
+#define CMD_LSV2DOWN "LSV2DOWN"
+/* List directory content recursively version 2 and download. */
+#define CMD_LSRV2DOWN "LSRV2DOWN"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -345,5 +349,7 @@ void cmd_settz(void);
 void cmd_localtime(void);
 /* Get time of a particular time-zone. */
 void cmd_dateftz(void);
+/* List directory version 2 and download the list. */
+void cmd_lsrv2down(int mode);
 
 #endif
