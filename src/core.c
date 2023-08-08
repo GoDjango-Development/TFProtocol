@@ -1,3 +1,6 @@
+/*  programmer: luis miguel
+    email: lmdelbahia@gmail.com  */
+
 #include <core.h>
 
 #define STACK_SIZE 16 * 1024 * 1024
