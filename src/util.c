@@ -1,8 +1,6 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-#define OPENSSL_API_COMPAT 0x10000000L
-
 #include <util.h>
 #include <init.h>
 #include <string.h>
@@ -529,6 +527,8 @@ void rdnull(int fd, int64_t sz)
         free(buf);
 }
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+
 int sha256sum(const char *path, char *sha256_str)
 {
     int fd = open(path, O_RDONLY);
@@ -560,6 +560,45 @@ int sha256sum(const char *path, char *sha256_str)
     bytetohex(hash, SHA256_DIGEST_LENGTH, sha256_str);
     return 0;
 }
+
+#else
+
+int sha256sum(const char *path, char *sha256_str)
+{
+    int fd = open(path, O_RDONLY);
+    if (fd == -1)
+        return -1;
+    unsigned char hash[EVP_MAX_MD_SIZE];
+    EVP_MD_CTX *mdctx;
+    mdctx = EVP_MD_CTX_new();
+    EVP_DigestInit_ex(mdctx, EVP_sha256(), NULL);  
+    struct stat fi;
+    stat(path, &fi);
+    int bufsz = fi.st_blksize * BLKSZFAC;
+    unsigned char *buf = malloc(bufsz);
+    if (!buf) {
+        close(fd);
+        return -1;
+    }
+    int rd;
+    while ((rd = readchunk(fd, buf, bufsz))) {
+        if (rd == -1) {
+            close(fd);
+            free(buf);
+            return -1;
+        }
+        EVP_DigestUpdate(mdctx, buf, rd);
+    }
+    close(fd);
+    free(buf);
+    int len;
+    EVP_DigestFinal_ex(mdctx, hash, &len);
+    EVP_MD_CTX_free(mdctx);
+    bytetohex(hash, SHA256_DIGEST_LENGTH, sha256_str);
+    return 0;
+}
+
+#endif
 
 int resolvhn(const char *host, char *ip, int v6, int timeout)
 {
