@@ -43,7 +43,7 @@ static void encrypt(struct crypto *cryp, char *data, int len)
 }
 
 /* This function it's not used in this version */
-int enrankey(struct crypto *crypt, char *pubrsa) 
+/* int enrankey(struct crypto *crypt, char *pubrsa) 
 {    
     BIO *keybio = NULL;
     keybio = BIO_new_mem_buf(pubrsa, -1);
@@ -55,7 +55,7 @@ int enrankey(struct crypto *crypt, char *pubrsa)
     RSA_free(rsa);
     BIO_free(keybio);
     return enbyt;
-}
+} */
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 
