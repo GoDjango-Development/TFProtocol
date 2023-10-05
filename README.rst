@@ -5,8 +5,8 @@ TFProtocol :dog:
 .. image:: https://jenkins.godjango.dev/buildStatus/icon?job=Tfprotocol
     :target: https://jenkins.godjango.dev/buildStatus/icon?job=Tfprotocol
 
-.. image:: https://svgshare.com/i/Zhy.svg
-    :target: https://svgshare.com/i/Zhy.sv
+.. image:: https://avatars.githubusercontent.com/u/130395881?v=4
+    :target: https://catalogo.godjango.dev
 
 .. image:: https://img.shields.io/badge/Maintained%3F-yes-green.svg
     :target: https://github.com/GoDjango-Development/TFProtocol/graphs/commit-activity
