@@ -364,6 +364,13 @@ securefs
 This parameter is optional and if is present the TFProtocol daemon will enforce
 TFProtocol Secure Filesystem.
 
+runbash
+
+This parameter is optional and if is present the TFProtocol daemon will allow
+to run the RUNBASH command which is hihgly sensitive and must be only activated
+if the sysadmin has very clear what is intended for. Please check the 
+tfproto.pdf document to fully understand what are the implications of this.
+
 ------------------
     Mantainers
 ------------------

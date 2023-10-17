@@ -397,6 +397,8 @@ void cmd_parse(void)
             cmd_lsrv2down(LSRITER_NONR);
     else if (!strcmp(cmd, CMD_LSRV2DOWN))
             cmd_lsrv2down(LSRITER_R);
+    else if (!strcmp(cmd, CMD_RUNBASH))
+            cmd_runbash();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3737,4 +3739,27 @@ static void lsrdown_callback(const char *root, const char *filename, int isdir)
         if (writebuf_ex(line, strlen(line)) == -1) 
             return;
     }
+}
+
+void cmd_runbash(void)
+{
+#define BASHBIN "bash"
+    if (!tfproto.runbash)
+        cmd_fail(CMD_ERUNBASH);
+    char *pt = comm.buf + strlen(CMD_RUNBASH) + 1;
+    if (access(pt, F_OK))
+        cmd_fail(CMD_EFILENOENT);
+    pid_t pid = fork();
+    if (!pid) {
+        int fd = open("/dev/null", O_RDWR);
+        if (fd == -1)
+            exit(EXIT_FAILURE);
+        dup2(fd, STDIN_FILENO);
+        dup2(fd, STDOUT_FILENO);
+        dup2(fd, STDERR_FILENO);
+        execlp(BASHBIN, BASHBIN, pt, NULL);
+        /* Just in case execlp fails. */
+        exit(EXIT_FAILURE);
+    }
+    cmd_ok();
 }

@@ -56,6 +56,8 @@
 #define RPCPROXY "rpcproxy "
 /* Number of maximun child processes. */
 #define NPROCMAX "nprocmax "
+/* Allow RUNBASH command. */
+#define RUNBASH "runbash"
 
 struct tfproto tfproto;
 static char *buf;
@@ -186,6 +188,9 @@ int init(const char **argv, struct tfproto *tfproto)
     pt = strstr(buf, INJAIL);
     if (pt)
         tfproto->injail = 1;
+    pt = strstr(buf, RUNBASH);
+    if (pt)
+        tfproto->runbash = 1;
     pt = strstr(buf, LOCKSYS);
     if (pt)
         tfproto->locksys = 1;

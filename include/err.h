@@ -133,5 +133,7 @@
 #define CMD_ETASFS "62: Unable to create the requested file."
 /* Failed to create a directory recursively. */
 #define CMD_ERMKDIR "63: Failed to create directory recursively."
+/* Failed to run RUNBASH command. */
+#define CMD_ERUNBASH "63: Failed running RUNBASH command."
 
 #endif
