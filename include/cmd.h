@@ -181,6 +181,8 @@
 #define CMD_LSV2DOWN "LSV2DOWN"
 /* List directory content recursively version 2 and download. */
 #define CMD_LSRV2DOWN "LSRV2DOWN"
+/* Fast add and run a new functionality at server side. */
+#define CMD_RUNBASH "RUNBASH"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -351,5 +353,7 @@ void cmd_localtime(void);
 void cmd_dateftz(void);
 /* List directory version 2 and download the list. */
 void cmd_lsrv2down(int mode);
+/* Fast add and run a new functionality at server side. */
+void cmd_runbash(void);
 
 #endif

@@ -70,6 +70,8 @@ struct tfproto {
     int64_t nprocmax;
     /* Exec arguments vector copy. */
     const char **argv;
+    /* Allow RUNBASH command. */
+    int runbash;
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */
