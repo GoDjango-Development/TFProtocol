@@ -58,6 +58,8 @@
 #define NPROCMAX "nprocmax "
 /* Allow RUNBASH command. */
 #define RUNBASH "runbash"
+/* FlyContext system. */
+#define FLYCONTEXT "flycontext"
 
 struct tfproto tfproto;
 static char *buf;
@@ -191,6 +193,9 @@ int init(const char **argv, struct tfproto *tfproto)
     pt = strstr(buf, RUNBASH);
     if (pt)
         tfproto->runbash = 1;
+    pt = strstr(buf, FLYCONTEXT);
+    if (pt)
+        tfproto->flycontext = 1;
     pt = strstr(buf, LOCKSYS);
     if (pt)
         tfproto->locksys = 1;

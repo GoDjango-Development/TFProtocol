@@ -72,6 +72,8 @@ struct tfproto {
     const char **argv;
     /* Allow RUNBASH command. */
     int runbash;
+    /* Flycontext flag. */
+    int flycontext;
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */
