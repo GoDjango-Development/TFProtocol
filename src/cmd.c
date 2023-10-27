@@ -255,6 +255,15 @@ void cmd_parse(void)
             return;
         }
     }
+    if (tfproto.flycontext) {
+        if (!strcmp(cmd, CMD_FLYCONTEXT)) {
+            cmd_flycontext();
+            return;
+        } else {
+            cmd_fail(CMD_EFLYCONTEXT);
+            return;
+        }
+    } 
     if (!strcmp(cmd, CMD_ECHO))
         cmd_echo();
     else if (!strcmp(cmd, CMD_MKDIR))
@@ -336,55 +345,55 @@ void cmd_parse(void)
     else if (!strcmp(cmd, CMD_RMSECDIR))
         cmd_rmsecdir();
     else if (!strcmp(cmd, CMD_INJAIL))
-            cmd_injail();
+        cmd_injail();
     else if (!strcmp(cmd, CMD_TLB))
-            cmd_tlb();
+        cmd_tlb();
     else if (!strcmp(cmd, CMD_SDOWN))
-            cmd_sdown();
+        cmd_sdown();
     else if (!strcmp(cmd, CMD_SUP))
-            cmd_sup();
+        cmd_sup();
     else if (!strcmp(cmd, CMD_FSIZE))
-            cmd_fsize();
+        cmd_fsize();
     else if (!strcmp(cmd, CMD_FSIZELS))
-            cmd_fsizels();
+        cmd_fsizels();
     else if (!strcmp(cmd, CMD_LSV2))
-            cmd_lsrv2(LSRITER_NONR);
+        cmd_lsrv2(LSRITER_NONR);
     else if (!strcmp(cmd, CMD_LSRV2))
-            cmd_lsrv2(LSRITER_R);
+        cmd_lsrv2(LSRITER_R);
     else if (!strcmp(cmd, CMD_FTYPE))
-            cmd_ftype();
+        cmd_ftype();
     else if (!strcmp(cmd, CMD_FTYPELS))
-            cmd_ftypels();
+        cmd_ftypels();
     else if (!strcmp(cmd, CMD_FSTATLS))
-            cmd_fstatls();
+        cmd_fstatls();
     else if (!strcmp(cmd, CMD_INTREAD))
-            cmd_intread();
+        cmd_intread();
     else if (!strcmp(cmd, CMD_INTWRITE))
-            cmd_intwrite();
+        cmd_intwrite();
     else if (!strcmp(cmd, CMD_NETLOCK))
-            cmd_netlock();
+        cmd_netlock();
     else if (!strcmp(cmd, CMD_NETUNLOCK))
-            cmd_netunlock();
+        cmd_netunlock();
     else if (!strcmp(cmd, CMD_NETLOCKTRY))
-            cmd_netlocktry();
+        cmd_netlocktry();
     else if (!strcmp(cmd, CMD_NETMUTACQ_TRY))
-            cmd_netmutacqtry();
+        cmd_netmutacqtry();
     else if (!strcmp(cmd, CMD_NETMUTREL))
-            cmd_netmutrel();
+        cmd_netmutrel();
     else if (!strcmp(cmd, CMD_SETFSID))
-            cmd_setfsid();
+        cmd_setfsid();
     else if (!strcmp(cmd, CMD_SETFSPERM))
-            cmd_setfsperm();
+        cmd_setfsperm();
     else if (!strcmp(cmd, CMD_REMFSPERM))
-            cmd_remfsperm();
+        cmd_remfsperm();
     else if (!strcmp(cmd, CMD_GETFSPERM))
-            cmd_getfsperm();
+        cmd_getfsperm();
     else if (!strcmp(cmd, CMD_ISSECFS))
-            cmd_issecfs();
+        cmd_issecfs();
     else if (!strcmp(cmd, CMD_TASFS))
-            cmd_tasfs();
+        cmd_tasfs();
     else if (!strcmp(cmd, CMD_RMKDIR))
-            cmd_rmkdir();
+        cmd_rmkdir();
     else if (!strcmp(cmd, CMD_GETTZ))
         cmd_gettz();
     else if (!strcmp(cmd, CMD_SETTZ))
@@ -394,11 +403,13 @@ void cmd_parse(void)
     else if (!strcmp(cmd, CMD_DATEFTZ))
         cmd_dateftz();
     else if (!strcmp(cmd, CMD_LSV2DOWN))
-            cmd_lsrv2down(LSRITER_NONR);
+        cmd_lsrv2down(LSRITER_NONR);
     else if (!strcmp(cmd, CMD_LSRV2DOWN))
-            cmd_lsrv2down(LSRITER_R);
+        cmd_lsrv2down(LSRITER_R);
     else if (!strcmp(cmd, CMD_RUNBASH))
-            cmd_runbash();
+        cmd_runbash();
+    else if (!strcmp(cmd, CMD_FLYCONTEXT))
+        cmd_flycontext();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3744,11 +3755,15 @@ static void lsrdown_callback(const char *root, const char *filename, int isdir)
 void cmd_runbash(void)
 {
 #define BASHBIN "bash"
-    if (!tfproto.runbash)
+    if (!tfproto.runbash) {
         cmd_fail(CMD_ERUNBASH);
+        return;
+    }
     char *pt = comm.buf + strlen(CMD_RUNBASH) + 1;
-    if (access(pt, F_OK))
+    if (access(pt, F_OK)) {
         cmd_fail(CMD_EFILENOENT);
+        return;
+    }
     pid_t pid = fork();
     if (!pid) {
         int fd = open("/dev/null", O_RDWR);
@@ -3761,5 +3776,32 @@ void cmd_runbash(void)
         /* Just in case execlp fails. */
         exit(EXIT_FAILURE);
     }
+    cmd_ok();
+}
+
+void cmd_flycontext(void)
+{
+    char *pt = comm.buf + strlen(CMD_FLYCONTEXT) + 1;
+    char path[PATH_MAX];
+    if (jaildir(pt, path)) {
+        cmd_fail(CMD_EACCESS);
+        return;
+    }
+    pt = strtok(path, "/");
+    char dir[PATH_MAX];
+    strcpy(dir, "/");
+    while (pt) {
+        strcat(dir, "/");
+        strcat(dir, pt);
+        mkdir(dir, DEFDIR_PERM);
+        pt = strtok(NULL, "/");
+    }
+    strcat(dir, "/");
+    if (access(dir, F_OK)) {
+        cmd_fail(CMD_EFLYCONTEXT);
+        return;
+    }
+    strcpy(tfproto.dbdir, dir);
+    tfproto.flycontext = 0;
     cmd_ok();
 }

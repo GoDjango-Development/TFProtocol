@@ -134,6 +134,8 @@
 /* Failed to create a directory recursively. */
 #define CMD_ERMKDIR "63: Failed to create directory recursively."
 /* Failed to run RUNBASH command. */
-#define CMD_ERUNBASH "63: Failed running RUNBASH command."
+#define CMD_ERUNBASH "64: Failed running RUNBASH command."
+/* Unable to use the FlyContext System. */
+#define CMD_EFLYCONTEXT "65: Unable to use the FlyContext System."
 
 #endif

@@ -371,6 +371,11 @@ to run the RUNBASH command which is hihgly sensitive and must be only activated
 if the sysadmin has very clear what is intended for. Please check the 
 tfproto.pdf document to fully understand what are the implications of this.
 
+flycontext
+
+This parameter is optional and if is present the TFProtocol daemon will create
+the specified directory recursively and injail the daemon in that directory.
+
 ------------------
     Mantainers
 ------------------

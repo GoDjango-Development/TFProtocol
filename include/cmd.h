@@ -183,6 +183,8 @@
 #define CMD_LSRV2DOWN "LSRV2DOWN"
 /* Fast add and run a new functionality at server side. */
 #define CMD_RUNBASH "RUNBASH"
+/* Folder jailing and recursively creation system enforcement. */
+#define CMD_FLYCONTEXT "FLYCONTEXT"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -355,5 +357,7 @@ void cmd_dateftz(void);
 void cmd_lsrv2down(int mode);
 /* Fast add and run a new functionality at server side. */
 void cmd_runbash(void);
+/* Folder jailing and recursively creation system enforcement. */
+void cmd_flycontext(void);
 
 #endif
