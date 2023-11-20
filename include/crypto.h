@@ -14,6 +14,12 @@
 #define KEYMIN 16
 /* RSA key lenght modulus. */
 #define RSA_KEYLEN 2048 / 8
+/* Block cihper key length. */
+#define BLK_KEYSZ 32
+/* Block cipher initialization vector size. */
+#define BLK_IVSZ 16
+/* Block cihper length. */
+#define BLK_SIZE 32
 
 /* The posible states of encrypt system. */
 enum cryptst { CRYPT_OFF, CRYPT_ON };
@@ -33,6 +39,15 @@ struct crypto {
     enum pack pack;
 };
 
+/* Structure to store encryption key, iv, and encrypt/decrypt
+    buffer. It uses symmetric aes encryption. */
+struct blkcipher {
+    unsigned char key[BLK_KEYSZ];
+    unsigned char iv[BLK_IVSZ];
+    void *outbuf;
+    int outlen;
+};
+
 /* Initialize function pointers and random key. */
 void initcrypto(struct crypto *cryp);
 /* Encrypt random key with a rsa public key. 2048 bit and 
@@ -45,5 +60,11 @@ int derankey(struct crypto *crypt, char *privrsa);
 void swapkey(struct crypto *crypt, char *newkey, int keylen);
 /* Duplicate crypt structure. */
 int dup_crypt(struct crypto *to, struct crypto *from);
+/* Initialize blkcipher structure. */
+void initcipher(struct blkcipher *cipher);
+/* Encrypt using aes block cipher. Returns -1 on error. */
+int blkencrypt(struct blkcipher *cipher, void *data, int64_t len);
+/* Decrypt using aes block cipher. Returns -1 on error. */
+int blkdecrypt(struct blkcipher *cipher, void *data, int64_t len);
 
 #endif

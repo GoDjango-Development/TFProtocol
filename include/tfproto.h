@@ -71,6 +71,9 @@ struct comm {
 extern struct crypto cryp_rx;
 extern struct crypto cryp_tx;
 extern struct crypto cryp_org;
+/* Cryptography structures for aes cipher block crypt and decrypt. */
+extern struct blkcipher cihper_rx;
+extern struct blkcipher cihper_tx;
 /* Secure FileSystem identity token. */
 extern char fsid[LINE_MAX];
 

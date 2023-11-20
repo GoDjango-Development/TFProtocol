@@ -39,6 +39,9 @@ static int loop = 1;
 struct crypto cryp_org;
 struct crypto cryp_rx;
 struct crypto cryp_tx;
+/* Cryptography structures for aes cipher block crypt and decrypt. */
+struct blkcipher cipher_rx;
+struct blkcipher cipher_tx;
 /* Logged flag. */
 extern int logged;
 /* Secure FileSystem identity token. */
@@ -88,6 +91,8 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
         trp();
     genkeepkey();
     initcrypto(&cryp_rx);
+    initcipher(&cipher_rx);
+    initcipher(&cipher_tx);
 #ifndef DEBUG
     mainloop();
     cleanup();

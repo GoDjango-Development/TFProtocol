@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <malloc.h>
 
 #define MOD_VALUE 256
 
@@ -142,5 +143,43 @@ int dup_crypt(struct crypto *to, struct crypto *from)
     if (!to->rndkey)
         return -1;
     memcpy(to->rndkey, from->rndkey, from->rndlen);
+    return 0;
+}
+
+void initcipher(struct blkcipher *cipher)
+{
+    memset(cipher, 0, sizeof(struct blkcipher));
+}
+
+int blkencrypt(struct blkcipher *cipher, void *data, int64_t len)
+{
+    if (!cipher->outbuf) {
+        int64_t outlen = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE (len %
+            BLK_SIZE);
+        cipher->outbuf = malloc(outlen);
+        cipher->outlen = outlen;
+        if (!cipher->outbuf)
+            return -1;
+    } else {
+        int64_t tmplen = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE(len %
+            BLK_SIZE);
+        void *tmpbuf = realloc(cipher->outbuf, tmplen);
+        if (!tmpbuf)
+            return -1;
+        cipher->outbuf = tmpbuf;
+        cipher->outlen = tmplen;
+    }
+    
+    return 0;
+}
+
+int blkdecrypt(struct blkcipher *cipher, void *data, int64_t len)
+{
+    if (!cipher->outbuf) {
+        cipher->outbuf = malloc(len);
+        if (!cipher->outbuf)
+            return -1;
+    }
+    
     return 0;
 }
