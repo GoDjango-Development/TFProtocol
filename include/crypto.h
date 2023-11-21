@@ -39,8 +39,8 @@ struct crypto {
     enum pack pack;
 };
 
-/* Structure to store encryption key, iv, and encrypt/decrypt
-    buffer. It uses symmetric aes encryption. */
+/* Structure to store block encryption key and iv. 
+    It uses symmetric encryption. */
 struct blkcipher {
     /* Encryption key. */
     unsigned char key[BLK_KEYSZ];
@@ -48,8 +48,8 @@ struct blkcipher {
     unsigned char iv[BLK_IVSZ];
 };
 
-/* Define if aes block cipher should be used. */
-extern int aestatus;
+/* Define if block cipher should be used. */
+extern int blkstatus;
 
 /* Initialize function pointers and random key. */
 void initcrypto(struct crypto *cryp);
@@ -65,10 +65,10 @@ void swapkey(struct crypto *crypt, char *newkey, int keylen);
 int dup_crypt(struct crypto *to, struct crypto *from);
 /* Initialize blkcipher structure. */
 void initcipher(struct blkcipher *cipher);
-/* Encrypt using aes block cipher. Returns -1 on error. */
+/* Encrypt using block cipher. Returns -1 on error. */
 int blkencrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata, 
     int outlen);
-/* Decrypt using aes block cipher. Returns -1 on error. */
+/* Decrypt using block cipher. Returns -1 on error. */
 int blkdecrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata,
     int outlen);
 

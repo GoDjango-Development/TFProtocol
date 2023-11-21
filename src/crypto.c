@@ -11,7 +11,7 @@
 
 #define MOD_VALUE 256
 
-int aestatus = 0;
+int blkstatus = 0;
 
 /* Encrypt/Decrypt function. */
 static void encrypt(struct crypto *cryp, char *data, int len);

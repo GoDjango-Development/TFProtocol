@@ -39,7 +39,7 @@ static int loop = 1;
 struct crypto cryp_org;
 struct crypto cryp_rx;
 struct crypto cryp_tx;
-/* Cryptography structures for aes cipher block crypt and decrypt. */
+/* Cryptography structures for block cipher crypt and decrypt. */
 struct blkcipher cipher_rx;
 struct blkcipher cipher_tx;
 /* Logged flag. */
@@ -74,10 +74,10 @@ static int64_t rcvbuf(int fd, char *buf, int64_t len, int enc);
 static void *oobthread(void *prms);
 /* Generete unique key for keepalive mechanism */
 static void genkeepkey(void);
-/* AES block cipher sender. */ 
-static int aes_sndbuf(int fd, char *buf, int64_t len, int enc);
-/* AES block cipher receiver. */
-static int aes_rcvbuf(int fd, char *buf, int64_t len, int enc);
+/* Block cipher sender function. */ 
+static int blk_sndbuf(int fd, char *buf, int64_t len, int enc);
+/* Block cipher receiver function. */
+static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc);
 
 void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
 {
@@ -256,8 +256,8 @@ static int32_t hdrgetsz(struct tfhdr *hdr)
 
 static int64_t sndbuf(int fd, char *buf, int64_t len, int enc)
 {
-    if (aestatus)
-        return aes_sndbuf(fd, buf, len, enc);
+    if (blkstatus)
+        return blk_sndbuf(fd, buf, len, enc);
 #ifdef DEBUG
     static int64_t dc = 0;
     int c = 0;
@@ -304,8 +304,8 @@ static int64_t sndbuf(int fd, char *buf, int64_t len, int enc)
 
 static int64_t rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
-    if (aestatus)
-        return aes_rcvbuf(fd, buf, len, enc);
+    if (blkstatus)
+        return blk_rcvbuf(fd, buf, len, enc);
     int64_t rb = 0;
     int64_t readed = 0;
     while (len > 0) {
@@ -461,7 +461,7 @@ unsigned int getfsidperm(const char *path, const char *id)
     return 0;
 }
 
-static int aes_sndbuf(int fd, char *buf, int64_t len, int enc)
+static int blk_sndbuf(int fd, char *buf, int64_t len, int enc)
 {
     int64_t bufsz = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE - (len %
         BLK_SIZE);
@@ -474,7 +474,7 @@ static int aes_sndbuf(int fd, char *buf, int64_t len, int enc)
     return 0;
 }
 
-static int aes_rcvbuf(int fd, char *buf, int64_t len, int enc)
+static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
     int64_t bufsz = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE - (len %
         BLK_SIZE);
