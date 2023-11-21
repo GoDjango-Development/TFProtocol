@@ -46,9 +46,9 @@ struct blkcipher {
     unsigned char key[BLK_KEYSZ];
     /* Initialization vector. */
     unsigned char iv[BLK_IVSZ];
-    /* Input/Output buffer. */
+    /* Encrypt/Decrypt buffer. */
     void *buf;
-    /* Actual encrypted/decrypted data. */
+    /* Actual encrypted/decrypted data length. */
     int buflen;
     /* Buffer size in memory. */
     int bufsz;
