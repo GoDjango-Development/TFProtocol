@@ -153,24 +153,9 @@ void initcipher(struct blkcipher *cipher)
     memset(cipher, 0, sizeof(struct blkcipher));
 }
 
-int blkencrypt(struct blkcipher *cipher, void *data, int64_t len)
+int blkencrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata, 
+    int outlen)
 {
-    if (!cipher->buf) {
-        int64_t bufsz = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE - (len %
-            BLK_SIZE);
-        cipher->buf = malloc(bufsz);
-        cipher->bufsz = bufsz;
-        if (!cipher->buf)
-            return -1;
-    } else {
-        int64_t bufsz = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE - (len %
-            BLK_SIZE);
-        void *tmpbuf = realloc(cipher->buf, bufsz);
-        if (!tmpbuf)
-            return -1;
-        cipher->buf = tmpbuf;
-        cipher->bufsz = bufsz;
-    }
     EVP_CIPHER_CTX *ctx;
     if (!(ctx = EVP_CIPHER_CTX_new()))
         return -1;
@@ -179,34 +164,23 @@ int blkencrypt(struct blkcipher *cipher, void *data, int64_t len)
         EVP_CIPHER_CTX_free(ctx);
         return -1;
     }
-    if (EVP_EncryptUpdate(ctx, cipher->buf, &cipher->buflen, data, len) != 1) {
+    if (EVP_EncryptUpdate(ctx, outdata, &outlen, indata, inlen) != 1) {
         EVP_CIPHER_CTX_free(ctx);
         return -1;
     }
     int exlen = 0;
-    if (EVP_EncryptFinal_ex(ctx, cipher->buf + cipher->buflen, &exlen) != 1) {
+    if (EVP_EncryptFinal_ex(ctx, outdata + outlen, &exlen) != 1) {
         EVP_CIPHER_CTX_free(ctx);
         return -1;
     }
-    cipher->buflen += exlen;
+    outlen += exlen;
     EVP_CIPHER_CTX_free(ctx);
-    return 0;
+    return outlen;
 }
 
-int blkdecrypt(struct blkcipher *cipher, void *data, int64_t len)
+int blkdecrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata,
+    int outlen)
 {
-    if (!cipher->buf) {
-        cipher->buf = malloc(len);
-        cipher->bufsz = len;
-        if (!cipher->buf)
-            return -1;
-    } else {
-        void *tmpbuf = realloc(cipher->buf, len);
-        if (!tmpbuf)
-            return -1;
-        cipher->buf = tmpbuf;
-        cipher->bufsz = len;
-    }
     EVP_CIPHER_CTX *ctx;
     if (!(ctx = EVP_CIPHER_CTX_new()))
         return -1;
@@ -215,17 +189,17 @@ int blkdecrypt(struct blkcipher *cipher, void *data, int64_t len)
         EVP_CIPHER_CTX_free(ctx);
         return -1;
     }
-    if (EVP_DecryptUpdate(ctx, cipher->buf, &cipher->buflen, data, len) != 1) {
+    if (EVP_DecryptUpdate(ctx, outdata, &outlen, indata, inlen) != 1) {
         EVP_CIPHER_CTX_free(ctx);
         return -1;
     }
     int exlen = 0;
-    if (EVP_DecryptFinal_ex(ctx, cipher->buf + cipher->buflen, &exlen) != 1) {
+    if (EVP_DecryptFinal_ex(ctx, outdata + outlen, &exlen) != 1) {
         EVP_CIPHER_CTX_free(ctx);
         return -1;
     }
-    cipher->buflen += len;
+    outlen += exlen;
     EVP_CIPHER_CTX_free(ctx);
-    return 0;
+    return outlen;
 }
 

@@ -46,12 +46,6 @@ struct blkcipher {
     unsigned char key[BLK_KEYSZ];
     /* Initialization vector. */
     unsigned char iv[BLK_IVSZ];
-    /* Encrypt/Decrypt buffer. */
-    void *buf;
-    /* Actual encrypted/decrypted data length. */
-    int buflen;
-    /* Buffer size in memory. */
-    int bufsz;
 };
 
 /* Define if aes block cipher should be used. */
@@ -72,8 +66,10 @@ int dup_crypt(struct crypto *to, struct crypto *from);
 /* Initialize blkcipher structure. */
 void initcipher(struct blkcipher *cipher);
 /* Encrypt using aes block cipher. Returns -1 on error. */
-int blkencrypt(struct blkcipher *cipher, void *data, int64_t len);
+int blkencrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata, 
+    int outlen);
 /* Decrypt using aes block cipher. Returns -1 on error. */
-int blkdecrypt(struct blkcipher *cipher, void *data, int64_t len);
+int blkdecrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata,
+    int outlen);
 
 #endif

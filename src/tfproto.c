@@ -463,10 +463,26 @@ unsigned int getfsidperm(const char *path, const char *id)
 
 static int aes_sndbuf(int fd, char *buf, int64_t len, int enc)
 {
+    int64_t bufsz = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE - (len %
+        BLK_SIZE);
+    void *outbuf = malloc(bufsz);
+    if (!outbuf)
+        return -1;
+    
+    
+    free(outbuf);
     return 0;
 }
 
 static int aes_rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
+    int64_t bufsz = len <= BLK_SIZE ? BLK_SIZE : len + BLK_SIZE - (len %
+        BLK_SIZE);
+    void *outbuf = malloc(bufsz);
+    if (!outbuf)
+        return -1;
+    
+    
+    free(outbuf);
     return 0;
 }
