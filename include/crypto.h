@@ -42,11 +42,20 @@ struct crypto {
 /* Structure to store encryption key, iv, and encrypt/decrypt
     buffer. It uses symmetric aes encryption. */
 struct blkcipher {
+    /* Encryption key. */
     unsigned char key[BLK_KEYSZ];
+    /* Initialization vector. */
     unsigned char iv[BLK_IVSZ];
-    void *outbuf;
-    int outlen;
+    /* Input/Output buffer. */
+    void *buf;
+    /* Actual encrypted/decrypted data. */
+    int buflen;
+    /* Buffer size in memory. */
+    int bufsz;
 };
+
+/* Define if aes block cipher should be used. */
+extern int aestatus;
 
 /* Initialize function pointers and random key. */
 void initcrypto(struct crypto *cryp);
