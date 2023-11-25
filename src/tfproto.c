@@ -39,6 +39,9 @@ static int loop = 1;
 struct crypto cryp_org;
 struct crypto cryp_rx;
 struct crypto cryp_tx;
+/* Cryptography structures for block cipher crypt and decrypt. */
+struct blkcipher cipher_rx;
+struct blkcipher cipher_tx;
 /* Logged flag. */
 extern int logged;
 /* Secure FileSystem identity token. */
@@ -48,6 +51,8 @@ static pthread_t oobth;
 /* Secure FileSystem current operation. */
 unsigned int volatile fsop;
 volatile int fsop_ovrr;
+/* Define if block cipher should be used. */
+int blkstatus;
 
 /* Validate protocol version. non-zero return for ok. */
 static int chkproto(void);
@@ -71,6 +76,14 @@ static int64_t rcvbuf(int fd, char *buf, int64_t len, int enc);
 static void *oobthread(void *prms);
 /* Generete unique key for keepalive mechanism */
 static void genkeepkey(void);
+/* Block cipher sender function. */ 
+static int blk_sndbuf(int fd, char *buf, int64_t len, int enc);
+/* Block cipher receiver function. */
+static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc);
+/* Write data to file descriptor. */
+static int wrfd(int fd, char *buf, int64_t len);
+/* Read data to file descriptor. */
+static int rdfd(int fd, char *buf, int64_t len);
 
 void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
 {
@@ -182,7 +195,10 @@ static void cmdifce(void)
 {
     if (getcmd())
         return;
-    comm.buf[COMMBUFLEN - 1] = 0;
+    comm.buf[COMMBUFLEN - 1] = '\0';
+     if (blkstatus)
+        comm.buf[comm.buflen < COMMBUFLEN - 1 ? comm.buflen:
+            COMMBUFLEN -1] = '\0';
     cmd_parse();
 }
 
@@ -247,6 +263,8 @@ static int32_t hdrgetsz(struct tfhdr *hdr)
 
 static int64_t sndbuf(int fd, char *buf, int64_t len, int enc)
 {
+    if (blkstatus)
+        return blk_sndbuf(fd, buf, len, enc);
 #ifdef DEBUG
     static int64_t dc = 0;
     int c = 0;
@@ -276,35 +294,16 @@ static int64_t sndbuf(int fd, char *buf, int64_t len, int enc)
     dc++;
     printf("\n");
 #endif
-    int64_t wb = 0;
-    int64_t written = 0;
-    while (len > 0) {
-        do {
-            wb = write(fd, buf + written, len);
-            comm.act++;
-        } while (wb == -1 && errno == EINTR);
-        if (wb == -1)
-            return -1;
-        len -= wb;
-        written += wb;
-    }
-    return written;
+    return wrfd(fd, buf, len);
 }
 
 static int64_t rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
-    int64_t rb = 0;
-    int64_t readed = 0;
-    while (len > 0) {
-        do {
-            rb = read(fd, buf + readed, len);
-            comm.act++;
-        } while (rb == -1 && errno == EINTR);
-        if (rb == 0 || rb == -1)
-            return -1;
-        len -= rb;
-        readed += rb;
-    }
+    if (blkstatus)
+        return blk_rcvbuf(fd, buf, len, enc);
+    int64_t readed = rdfd(fd, buf, len);
+    if (readed == -1)
+        return -1;
 #ifdef DEBUG
     static int64_t dc = 0;
     int c = 0;
@@ -446,4 +445,121 @@ unsigned int getfsidperm(const char *path, const char *id)
     if (found)
         return atoi(++pt);
     return 0;
+}
+
+static int blk_sndbuf(int fd, char *buf, int64_t len, int enc)
+{
+    if (len <= 0)
+        return 0;
+    int64_t stps =  len / BLK_SIZE;
+    int64_t i = 0;
+    if (stps > 0) {
+        for (; i < stps; i++) {
+            memcpy(cipher_tx.data, buf + i * BLK_SIZE, BLK_SIZE);
+            if (blkencrypt(&cipher_tx, buf + i * BLK_SIZE, cipher_tx.data,
+                BLK_SIZE) == -1)
+                return -1;
+        }
+        if (wrfd(fd, buf, stps * BLK_SIZE) == -1)
+            return -1;
+    }
+    if (len % BLK_SIZE) {
+        int rc;
+        if ((rc = blkencrypt(&cipher_tx, cipher_tx.data, buf + i * BLK_SIZE,
+            len % BLK_SIZE)) == -1)
+            return -1;
+        if (blkend_en(&cipher_tx, cipher_tx.data, rc) == -1)
+            return -1;
+        if (wrfd(fd, cipher_tx.data, BLK_SIZE) == -1)
+            return -1;
+    }  
+    return len;
+}      
+
+static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc)
+{
+    if (len <= 0)
+        return 0;
+    int64_t stps = len / BLK_SIZE;
+    int64_t i = 0;
+    if (stps > 0) {
+        if (rdfd(fd, buf, stps * BLK_SIZE) == -1)
+            return -1;
+        for (; i < stps; i++) {    
+            memcpy(cipher_rx.data, buf + i * BLK_SIZE, BLK_SIZE);
+            if (blkdecrypt(&cipher_rx, buf + i * BLK_SIZE, cipher_rx.data,
+                BLK_SIZE) == -1)
+                return -1;
+        }
+    }
+    if (len % BLK_SIZE) {
+        if (rdfd(fd, cipher_rx.data, BLK_SIZE) == -1)
+            return -1;
+        int rc;
+        if ((rc = blkdecrypt(&cipher_rx, cipher_rx.tmpbuf, cipher_rx.data,
+            BLK_SIZE)) == -1)
+            return -1;
+        if (blkend_de(&cipher_rx, cipher_rx.tmpbuf, rc) == -1)
+            return -1;
+        memcpy(buf + i * BLK_SIZE, cipher_rx.tmpbuf, len % BLK_SIZE);
+        
+    }
+    return len;
+}
+
+int setblkon(void)
+{
+    if (blkinit_en(&cipher_tx))
+        return -1;
+    if (blkinit_de(&cipher_rx)) {
+        blkfin(&cipher_tx);
+        return -1;
+    }
+    return 0;
+}
+
+void setblkoff(void)
+{
+    blkstatus = 0;
+    blkfin(&cipher_tx);
+    blkfin(&cipher_rx);
+}
+
+void startblk(void)
+{
+    blkstatus = 1;
+}
+
+static int wrfd(int fd, char *buf, int64_t len)
+{
+    int64_t wb = 0;
+    int64_t written = 0;
+    while (len > 0) {
+        do {
+            wb = write(fd, buf + written, len);
+            comm.act++;
+        } while (wb == -1 && errno == EINTR);
+        if (wb == -1)
+            return -1;
+        len -= wb;
+        written += wb;
+    }
+    return written;
+}
+
+static int rdfd(int fd, char *buf, int64_t len)
+{
+    int64_t rb = 0;
+    int64_t readed = 0;
+    while (len > 0) {
+        do {
+            rb = read(fd, buf + readed, len);
+            comm.act++;
+        } while (rb == -1 && errno == EINTR);
+        if (rb == 0 || rb == -1)
+            return -1;
+        len -= rb;
+        readed += rb;
+    }
+    return readed;
 }

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
+#include <malloc.h>
 
 #define MOD_VALUE 256
 
@@ -98,7 +99,7 @@ int derankey(struct crypto *crypt, char *privrsa)
     if (!rsa)
         return -1;
     pevpkey = EVP_PKEY_new();
-    if ( !pevpkey)
+    if (!pevpkey)
         return -1;
     if (!EVP_PKEY_assign_RSA(pevpkey, rsa))
         return -1;
@@ -143,4 +144,67 @@ int dup_crypt(struct crypto *to, struct crypto *from)
         return -1;
     memcpy(to->rndkey, from->rndkey, from->rndlen);
     return 0;
+}
+
+int blkinit_en(struct blkcipher *cipher)
+{
+    memset(cipher, 0, sizeof(struct blkcipher));
+    if (!(cipher->ctx = EVP_CIPHER_CTX_new()))
+        return -1;
+    if (EVP_EncryptInit_ex(cipher->ctx, EVP_aes_256_cbc(), NULL, cipher->key,
+        cipher->iv) != 1)
+        return -1;
+    return 0;
+}
+
+int blkinit_de(struct blkcipher *cipher)
+{
+    memset(cipher, 0, sizeof(struct blkcipher));
+    if (!(cipher->ctx = EVP_CIPHER_CTX_new()))
+        return -1;
+    if (EVP_DecryptInit_ex(cipher->ctx, EVP_aes_256_cbc(), NULL, cipher->key,
+        cipher->iv) != 1)
+        return -1;
+    return 0;
+}
+
+void blkfin(struct blkcipher *cipher)
+{
+    EVP_CIPHER_CTX_free(cipher->ctx);
+}
+
+int blkencrypt(struct blkcipher *cipher, void *cidata, void *pldata, int pllen)
+{
+    int cilen = 0;
+    if (EVP_EncryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
+        return -1;
+    if (EVP_EncryptUpdate(cipher->ctx, cidata, &cilen, pldata, pllen) != 1)
+        return -1;
+    return cilen;
+}
+
+int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen)
+{
+    int pllen = 0;
+    if (EVP_DecryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
+        return -1;
+    if (EVP_DecryptUpdate(cipher->ctx, pldata, &pllen, cidata, cilen) != 1)
+        return -1;
+    return pllen;
+}
+
+int blkend_de(struct blkcipher *cipher, void *pldata, int pllen)
+{
+    int exlen = 0;
+    if (EVP_DecryptFinal_ex(cipher->ctx, pldata + pllen, &exlen) != 1)
+        return -1;
+    return pllen + exlen;
+}
+
+int blkend_en(struct blkcipher *cipher, void *cidata, int cilen)
+{
+    int exlen = 0;
+    if (EVP_EncryptFinal_ex(cipher->ctx, cidata + cilen, &exlen) != 1)
+        return -1;
+    return cilen + exlen;
 }

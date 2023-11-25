@@ -6,6 +6,7 @@
 
 #include <openssl/ssl.h>
 #include <inttypes.h>
+#include <openssl/aes.h>
 
 /* Session key max length in bytes. Must be less than the RSA key length
     modulus minus used padding. In this case is 2048 / 8 - 42 = 214 bytes. */
@@ -14,6 +15,12 @@
 #define KEYMIN 16
 /* RSA key lenght modulus. */
 #define RSA_KEYLEN 2048 / 8
+/* Block cihper key length. */
+#define BLK_KEYSZ 32
+/* Block cipher initialization vector size. */
+#define BLK_IVSZ 16
+/* Block cihper key length. */
+#define BLK_SIZE 16
 
 /* The posible states of encrypt system. */
 enum cryptst { CRYPT_OFF, CRYPT_ON };
@@ -33,6 +40,21 @@ struct crypto {
     enum pack pack;
 };
 
+/* Structure to store block encryption key and iv. 
+    It uses symmetric encryption. */
+struct blkcipher {
+    /* Encryption key. */
+    unsigned char key[BLK_KEYSZ];
+    /* Initialization vector. */
+    unsigned char iv[BLK_IVSZ];
+    /* Encrypted/Decrypted data. */
+    unsigned char data[BLK_SIZE];
+    /* Encrypted/Decrypted data tmp. */
+    unsigned char tmpbuf[BLK_SIZE];
+    /* Cipher Context */
+    EVP_CIPHER_CTX *ctx;
+};
+
 /* Initialize function pointers and random key. */
 void initcrypto(struct crypto *cryp);
 /* Encrypt random key with a rsa public key. 2048 bit and 
@@ -45,5 +67,16 @@ int derankey(struct crypto *crypt, char *privrsa);
 void swapkey(struct crypto *crypt, char *newkey, int keylen);
 /* Duplicate crypt structure. */
 int dup_crypt(struct crypto *to, struct crypto *from);
+/* Initialize blkcipher structure. */
+int blkinit_en(struct blkcipher *cipher);
+int blkinit_de(struct blkcipher *cipher);
+/* Finalize Block Cipher structure. */
+void blkfin(struct blkcipher *cipher);
+/* Block Cipher encryption function. */
+int blkencrypt(struct blkcipher *cipher, void *cidata, void *pldata, int pllen);
+int blkend_en(struct blkcipher *cipher, void *cidata, int cilen);
+/* Block Cipher decryption function. */
+int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen);
+int blkend_de(struct blkcipher *cipher, void *pldata, int pllen);
 
 #endif

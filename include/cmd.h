@@ -185,6 +185,10 @@
 #define CMD_RUNBASH "RUNBASH"
 /* Folder jailing and recursively creation system enforcement. */
 #define CMD_FLYCONTEXT "FLYCONTEXT"
+/* Turn ON AES Encryption. */
+#define CMD_GOAES "GOAES"
+/* Turn ON TFProtocol default encryption. */
+#define CMD_TFPCRYPTO "TFPCRYPTO"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -359,5 +363,9 @@ void cmd_lsrv2down(int mode);
 void cmd_runbash(void);
 /* Folder jailing and recursively creation system enforcement. */
 void cmd_flycontext(void);
+/* Turn ON AES Encryption. */
+void cmd_goaes(void);
+/* Turn ON TFProtocol default encryption. */
+void cmd_tfpcrypto(void);
 
 #endif

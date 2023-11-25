@@ -71,8 +71,13 @@ struct comm {
 extern struct crypto cryp_rx;
 extern struct crypto cryp_tx;
 extern struct crypto cryp_org;
+/* Cryptography structures for aes cipher block crypt and decrypt. */
+extern struct blkcipher cipher_rx;
+extern struct blkcipher cipher_tx;
 /* Secure FileSystem identity token. */
 extern char fsid[LINE_MAX];
+/* Define if block cipher should be used. */
+extern int blkstatus;
 
 /* Initialize internal data and run mainloop function */
 void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz);
@@ -100,5 +105,11 @@ int64_t writebuf_exfd(int fd, char *buf, int64_t len, int enc);
 int secfs_proc(const char *src);
 /* Get identity permission. */
 unsigned int getfsidperm(const char *path, const char *id);
+/* Enable Block Cipher layer. */
+int setblkon(void);
+/* Disable Block Cipher layer. */
+void setblkoff(void);
+/* Actually starts AES cipher. */
+void startblk(void);
 
 #endif
