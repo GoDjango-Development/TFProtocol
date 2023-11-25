@@ -11,8 +11,6 @@
 
 #define MOD_VALUE 256
 
-int blkstatus = 0;
-
 /* Encrypt/Decrypt function. */
 static void encrypt(struct crypto *cryp, char *data, int len);
 
@@ -148,58 +146,65 @@ int dup_crypt(struct crypto *to, struct crypto *from)
     return 0;
 }
 
-void initcipher(struct blkcipher *cipher)
+int blkinit_en(struct blkcipher *cipher)
 {
     memset(cipher, 0, sizeof(struct blkcipher));
+    if (!(cipher->ctx = EVP_CIPHER_CTX_new()))
+        return -1;
+    if (EVP_EncryptInit_ex(cipher->ctx, EVP_aes_256_cbc(), NULL, cipher->key,
+        cipher->iv) != 1)
+        return -1;
+    return 0;
 }
 
-int blkencrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata, 
-    int outlen)
+int blkinit_de(struct blkcipher *cipher)
 {
-    EVP_CIPHER_CTX *ctx;
-    if (!(ctx = EVP_CIPHER_CTX_new()))
+    memset(cipher, 0, sizeof(struct blkcipher));
+    if (!(cipher->ctx = EVP_CIPHER_CTX_new()))
         return -1;
-    if (EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, cipher->key,
-        cipher->iv) != 1) {
-        EVP_CIPHER_CTX_free(ctx);
+    if (EVP_DecryptInit_ex(cipher->ctx, EVP_aes_256_cbc(), NULL, cipher->key,
+        cipher->iv) != 1)
         return -1;
-    }
-    if (EVP_EncryptUpdate(ctx, outdata, &outlen, indata, inlen) != 1) {
-        EVP_CIPHER_CTX_free(ctx);
-        return -1;
-    }
-    int exlen = 0;
-    if (EVP_EncryptFinal_ex(ctx, outdata + outlen, &exlen) != 1) {
-        EVP_CIPHER_CTX_free(ctx);
-        return -1;
-    }
-    outlen += exlen;
-    EVP_CIPHER_CTX_free(ctx);
-    return outlen;
+    return 0;
 }
 
-int blkdecrypt(struct blkcipher *cipher, void *indata, int inlen, void *outdata,
-    int outlen)
+void blkfin(struct blkcipher *cipher)
 {
-    EVP_CIPHER_CTX *ctx;
-    if (!(ctx = EVP_CIPHER_CTX_new()))
-        return -1;
-    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, cipher->key,
-        cipher->iv) != 1) {
-        EVP_CIPHER_CTX_free(ctx);
-        return -1;
-    }
-    if (EVP_DecryptUpdate(ctx, outdata, &outlen, indata, inlen) != 1) {
-        EVP_CIPHER_CTX_free(ctx);
-        return -1;
-    }
-    int exlen = 0;
-    if (EVP_DecryptFinal_ex(ctx, outdata + outlen, &exlen) != 1) {
-        EVP_CIPHER_CTX_free(ctx);
-        return -1;
-    }
-    outlen += exlen;
-    EVP_CIPHER_CTX_free(ctx);
-    return outlen;
+    EVP_CIPHER_CTX_free(cipher->ctx);
 }
 
+int blkencrypt(struct blkcipher *cipher, void *cidata, void *pldata, int pllen)
+{
+    int cilen = 0;
+    if (EVP_EncryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
+        return -1;
+    if (EVP_EncryptUpdate(cipher->ctx, cidata, &cilen, pldata, pllen) != 1)
+        return -1;
+    return cilen;
+}
+
+int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen)
+{
+    int pllen = 0;
+    if (EVP_DecryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
+        return -1;
+    if (EVP_DecryptUpdate(cipher->ctx, pldata, &pllen, cidata, cilen) != 1)
+        return -1;
+    return pllen;
+}
+
+int blkend_de(struct blkcipher *cipher, void *pldata, int pllen)
+{
+    int exlen = 0;
+    if (EVP_DecryptFinal_ex(cipher->ctx, pldata + pllen, &exlen) != 1)
+        return -1;
+    return pllen + exlen;
+}
+
+int blkend_en(struct blkcipher *cipher, void *cidata, int cilen)
+{
+    int exlen = 0;
+    if (EVP_EncryptFinal_ex(cipher->ctx, cidata + cilen, &exlen) != 1)
+        return -1;
+    return cilen + exlen;
+}

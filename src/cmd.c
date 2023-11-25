@@ -21,6 +21,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <sys/time.h>
+#include <tfproto.h>
 
 /* H-P command signal for command operation release. */
 #define HPFFIN -127
@@ -410,6 +411,10 @@ void cmd_parse(void)
         cmd_runbash();
     else if (!strcmp(cmd, CMD_FLYCONTEXT))
         cmd_flycontext();
+    else if (!strcmp(cmd, CMD_GOAES))
+        cmd_goaes();
+    else if (!strcmp(cmd, CMD_TFPCRYPTO))
+        cmd_tfpcrypto();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3804,4 +3809,22 @@ void cmd_flycontext(void)
     strcpy(tfproto.dbdir, dir);
     tfproto.flycontext = 0;
     cmd_ok();
+}
+
+void cmd_goaes(void)
+{
+    cmd_ok();
+    if (readbuf_ex(cipher_tx.key, sizeof cipher_tx.key) == -1)
+        return;
+    if (readbuf_ex(cipher_tx.iv, sizeof cipher_tx.iv) == -1)
+        return;
+    memcpy(cipher_rx.key, cipher_tx.key, sizeof cipher_tx.key);
+    memcpy(cipher_rx.iv, cipher_tx.iv, sizeof cipher_tx.iv);
+    setblkon();
+}
+
+void cmd_tfpcrypto(void)
+{
+    cmd_ok();
+    setblkoff();
 }

@@ -27,7 +27,7 @@ static void mkdaemon(void);
 pid_t rlwait_pid = -1;
 
 int main(int argc, char **argv)
-{
+{ 
     if (argc >= 3)
         dmode = 1;
     if (argc < 2) {
