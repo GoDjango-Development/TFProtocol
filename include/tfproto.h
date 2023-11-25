@@ -106,8 +106,10 @@ int secfs_proc(const char *src);
 /* Get identity permission. */
 unsigned int getfsidperm(const char *path, const char *id);
 /* Enable Block Cipher layer. */
-void setblkon(void);
+int setblkon(void);
 /* Disable Block Cipher layer. */
 void setblkoff(void);
+/* Actually starts AES cipher. */
+void startblk(void);
 
 #endif

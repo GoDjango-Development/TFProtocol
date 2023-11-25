@@ -101,8 +101,6 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
         trp();
     genkeepkey();
     initcrypto(&cryp_rx);
-    blkinit_de(&cipher_rx);
-    blkinit_en(&cipher_tx);
 #ifndef DEBUG
     mainloop();
     cleanup();
@@ -509,14 +507,27 @@ static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc)
     return len;
 }
 
-void setblkon(void)
+int setblkon(void)
 {
-    blkstatus = 1;
+    if (blkinit_en(&cipher_tx))
+        return -1;
+    if (blkinit_de(&cipher_rx)) {
+        blkfin(&cipher_tx);
+        return -1;
+    }
+    return 0;
 }
 
 void setblkoff(void)
 {
     blkstatus = 0;
+    blkfin(&cipher_tx);
+    blkfin(&cipher_rx);
+}
+
+void startblk(void)
+{
+    blkstatus = 1;
 }
 
 static int wrfd(int fd, char *buf, int64_t len)

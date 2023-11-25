@@ -3813,14 +3813,17 @@ void cmd_flycontext(void)
 
 void cmd_goaes(void)
 {
-    cmd_ok();
     if (readbuf_ex(cipher_tx.key, sizeof cipher_tx.key) == -1)
         return;
     if (readbuf_ex(cipher_tx.iv, sizeof cipher_tx.iv) == -1)
         return;
     memcpy(cipher_rx.key, cipher_tx.key, sizeof cipher_tx.key);
     memcpy(cipher_rx.iv, cipher_tx.iv, sizeof cipher_tx.iv);
-    setblkon();
+    if (!setblkon()) {
+        cmd_ok();
+        startblk();
+    } else
+        cmd_fail(CMD_EAES);
 }
 
 void cmd_tfpcrypto(void)
