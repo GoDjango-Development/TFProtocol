@@ -8,7 +8,6 @@
 #include <time.h>
 #include <string.h>
 #include <malloc.h>
-#include <openssl/decoder.h>
 
 #define MOD_VALUE 256
 
@@ -129,6 +128,8 @@ int derankey(struct crypto *crypt, char *privrsa)
 }
 
 #else
+
+#include <openssl/decoder.h>
 
 int derankey(struct crypto *crypt, char *privrsa)
 {
