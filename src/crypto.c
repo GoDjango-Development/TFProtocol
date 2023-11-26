@@ -145,9 +145,9 @@ int derankey(struct crypto *crypt, char *privrsa)
     OSSL_DECODER_CTX *ossl_ctx= OSSL_DECODER_CTX_new_for_pkey(&pevpkey,
 	NULL, NULL, NULL, 0, NULL, NULL);
     if (!ossl_ctx)
-	return -1;
+        return -1;
     if (OSSL_DECODER_from_bio(ossl_ctx, keybio) != 1)
-	return -1;
+        return -1;
     ctx = EVP_PKEY_CTX_new(pevpkey, NULL);
     if (!ctx)
         return -1;
