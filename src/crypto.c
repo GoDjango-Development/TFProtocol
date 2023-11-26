@@ -8,6 +8,7 @@
 #include <time.h>
 #include <string.h>
 #include <malloc.h>
+#include <openssl/decoder.h>
 
 #define MOD_VALUE 256
 
@@ -84,7 +85,7 @@ int derankey(struct crypto *crypt, char *privrsa)
     return enbyt;
 }
 
-#else
+#elif OPENSSL_VERSION_NUMBER < 0x30000000L
 
 int derankey(struct crypto *crypt, char *privrsa)
 {
@@ -103,6 +104,49 @@ int derankey(struct crypto *crypt, char *privrsa)
         return -1;
     if (!EVP_PKEY_assign_RSA(pevpkey, rsa))
         return -1;
+    ctx = EVP_PKEY_CTX_new(pevpkey, NULL);
+    if (!ctx)
+        return -1;
+    if (EVP_PKEY_decrypt_init(ctx) <= 0)
+        return -1;
+    if (EVP_PKEY_CTX_set_rsa_padding(ctx, RSA_PKCS1_OAEP_PADDING) <= 0)
+        return -1;
+    if (EVP_PKEY_decrypt(ctx, NULL, &enbyt, crypt->enkey, 
+        sizeof crypt->enkey) <= 0)
+        return -1;
+    if (EVP_PKEY_decrypt(ctx, crypt->rndkey, &enbyt, crypt->enkey,
+        sizeof crypt->enkey) <= 0)
+        return -1;
+    EVP_PKEY_CTX_free(ctx);
+    EVP_PKEY_free(pevpkey);
+    BIO_free(keybio);
+    crypt->rndlen = enbyt;
+    if (enbyt >= KEYMIN)
+        crypt->seed = *(int64_t *) crypt->rndkey;
+    else
+        return -1;
+    return enbyt;
+}
+
+#else
+
+int derankey(struct crypto *crypt, char *privrsa)
+{
+    EVP_PKEY* pevpkey = NULL;
+    EVP_PKEY_CTX *ctx = NULL;
+    size_t enbyt;
+    BIO *keybio = BIO_new_mem_buf(privrsa, -1);
+    if (!keybio)
+        return -1;
+    pevpkey = EVP_PKEY_new();
+    if (!pevpkey)
+        return -1;
+    OSSL_DECODER_CTX *ossl_ctx= OSSL_DECODER_CTX_new_for_pkey(&pevpkey,
+	NULL, NULL, NULL, 0, NULL, NULL);
+    if (!ossl_ctx)
+	return -1;
+    if (OSSL_DECODER_from_bio(ossl_ctx, keybio) != 1)
+	return -1;
     ctx = EVP_PKEY_CTX_new(pevpkey, NULL);
     if (!ctx)
         return -1;
