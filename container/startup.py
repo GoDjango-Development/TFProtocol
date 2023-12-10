@@ -52,40 +52,26 @@ def generate():
     release_file = os.path.join(conf_folder, "release.conf")
     privkey_file = open(os.path.join(conf_folder, "private.pem"), "r")
     pubkey_file = open(os.path.join(conf_folder, "public.pem"), "r")
+    disable_all = os.getenv("DISABLE_SUBMODULES")
     try:
         with open(release_file, "w") as file:
             conf_path = file.name
-            file.write("""
-proto %s
-hash %s
-dbdir %s
-port %s
-privkey {%s}
-xsntmex %s
-userdb %s
-xsace %s
-defusr %s
-tlb %s
-pubkey {%s}
-%s securefs
-%s locksys
-rpcproxy %s
-"""%(
-        os.getenv("PROTO"),
-        os.getenv("HASH"),
-        os.getenv("DBDIR"),
-        os.getenv("PORT"),
-        privkey_file.read(),
-        os.getenv("XSNTMEX"),
-        os.getenv("USERDB"),
-        os.getenv("XSACE"),
-        os.getenv("DEFUSER"),
-        os.getenv("TLB"),
-        pubkey_file.read(),
-        os.getenv("SECUREFS") if "" else "#",
-        os.getenv("LOCKSYS") if "" else "#",
-        os.getenv("RPCPROXY")
-    ))
+            file.write(f"""
+proto {os.getenv("PROTO")}
+hash {os.getenv("HASH")}
+dbdir {os.getenv("DBDIR")}
+port {os.getenv("PORT")}
+privkey \{{privkey_file.read()}\}
+{'#' if disable_all else ''}xsntmex {os.getenv("XSNTMEX")}
+{'#' if disable_all else ''}userdb {os.getenv("USERDB")}
+{'#' if disable_all else ''}xsace {os.getenv("XSACE")}
+defusr {os.getenv("DEFUSER")}
+{'#' if disable_all else ''}tlb {os.getenv("TLB")}
+pubkey \{pubkey_file.read()\}
+{os.getenv("SECUREFS") if "" else "#"} securefs
+{os.getenv("LOCKSYS") if "" else "#"} locksys
+{'#' if disable_all else ''}rpcproxy {os.getenv("RPCPROXY")}
+""")
     except FileExistsError:
         pass
     privkey_file.close()
