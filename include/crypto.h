@@ -6,7 +6,6 @@
 
 #include <openssl/ssl.h>
 #include <inttypes.h>
-#include <openssl/aes.h>
 
 /* Session key max length in bytes. Must be less than the RSA key length
     modulus minus used padding. In this case is 2048 / 8 - 42 = 214 bytes. */
