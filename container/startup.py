@@ -21,10 +21,10 @@ def generate_keypair():
     if os.path.exists("/run/secrets/"):
         files = os.listdir("/run/secrets")
         for file in files:
-            with open(file, "r") as opened_file:
+            with open(f"/run/secrets/{file}", "r") as opened_file:
                 first_line = opened_file.readline()
                 if first_line.startswith("#") and "key_pair" in first_line:
-                    data = opened_file.readall().split("\n\n")
+                    data = opened_file.read().split("\n\n")
                     data = list(filter(lambda elem: len(elem.strip()) > 0, data))
                     key_pair = {
                         "public_key": None,
@@ -92,6 +92,7 @@ rpcproxy %s
     pubkey_file.close()
 
 if __name__ == "__main__":
+    generate_keypair()
     generate()
     if os.getenv("DEBUG") == "true":
         os.system("/usr/local/bin/tfd_debug %s"%conf_path)
