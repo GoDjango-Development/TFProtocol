@@ -191,6 +191,8 @@
 #define CMD_TFPCRYPTO "TFPCRYPTO"
 /* Generate UUID */
 #define CMD_GENUUID "GENUUID"
+/* Get a Fast Access Interface Token. */
+#define CMD_FAITOK "FAITOK"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -371,5 +373,7 @@ void cmd_goaes(void);
 void cmd_tfpcrypto(void);
 /* Generate UUID. */
 void cmd_genuuid(void);
+/* Get a Fast Access Interface Token. */
+void cmd_faitok(void);
 
 #endif

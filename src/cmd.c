@@ -105,6 +105,9 @@
 #define LSV2DOWN_HDR_SUCCESS -10
 /* LSV2DOWN failed header value. */
 #define LSV2DOWN_HDR_FAILED -11
+/* Max and Min session key lengths for FAITOK interface. */
+#define MAX_KEYLEN 256
+#define MIN_KEYLEN 64
 
 /* Hi-Performance file operations structure. */
 struct hpfile {
@@ -417,6 +420,8 @@ void cmd_parse(void)
         cmd_genuuid();
     else if (!strcmp(cmd, CMD_TFPCRYPTO))
         cmd_tfpcrypto();
+    else if (!strcmp(cmd, CMD_FAITOK))
+        cmd_faitok();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3841,6 +3846,32 @@ void cmd_genuuid(void)
     strcpy(comm.buf, CMD_OK);
     strcat(comm.buf, CMD_SEPSTR);
     strcat(comm.buf, uuid);
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
+}
+
+void cmd_faitok(void)
+{
+    char uuid[UUIDCHAR_LEN];
+    uuidgen(uuid);
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, uuid);
+    strcat(comm.buf, CMD_SEPSTR);
+    int keysz = random() % (MAX_KEYLEN - MIN_KEYLEN + 1) + MIN_KEYLEN;
+    char *key = genkey(keysz);
+    if (key == NULL) {
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
+    char *b64 = base64en(key, keysz);
+    free(key);
+    if (!b64) {
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
+    strcat(comm.buf, b64);
+    free(b64);
     if (writebuf(comm.buf, strlen(comm.buf)) == -1)
         endcomm();
 }

@@ -139,5 +139,7 @@
 #define CMD_EFLYCONTEXT "65: Unable to use the FlyContext System."
 /* Unable to start AES encryption system. */
 #define CMD_EAES "66: Unable to start AES encryption system."
+/* Unable to initialize FAI interface. */
+#define CMD_EFAITOK "67: Falied initializing FAI interface."
 
 #endif
