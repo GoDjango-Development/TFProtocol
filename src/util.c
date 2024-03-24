@@ -19,6 +19,7 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 #include <wait.h>
+#include <uuid/uuid.h>
 
 #define SECDIR_TOK ".sd/"
 #define RDNULLBUF 64 * 1024
@@ -798,4 +799,11 @@ int sec_waitpid(int pid)
         rs = waitpid(pid, &es, 0);
     while (rs == -1 && errno == EINTR);
     return es;
+}
+
+void uuidgen(char *uuid)
+{
+    uuid_t binuuid;
+    uuid_generate_random(binuuid);
+    uuid_unparse_lower(binuuid, uuid);
 }
