@@ -1,0 +1,5 @@
+Create the FAI -Fast Access Interface-
+	This interface will allows clients to access tfprotocol
+	servers through a very simple steps with a symmetric
+	pre-shared key. This avoid the extra overhead or RSA and
+	key sharing in each connection.
