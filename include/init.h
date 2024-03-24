@@ -74,6 +74,8 @@ struct tfproto {
     int runbash;
     /* Flycontext flag. */
     int flycontext;
+    /* Maximun number of minutes for FAI token expiration. */
+    int faimax_exp;
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */
