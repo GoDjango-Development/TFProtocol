@@ -3852,9 +3852,21 @@ void cmd_genuuid(void)
 
 void cmd_faitok(void)
 {
+    if (comm.faiuse) {
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
+    char *pt = comm.buf + strlen(CMD_FAITOK) + 1;
+    uint64_t exp = atoll(pt);
+    if (exp > tfproto.faimax_exp || exp <= 0)
+        exp = tfproto.faimax_exp;
+    char expstr[LLDIGITS];
+    sprintf(expstr, "%llu", (unsigned long long) exp);
     char uuid[UUIDCHAR_LEN];
     uuidgen(uuid);
     strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, expstr);
     strcat(comm.buf, CMD_SEPSTR);
     strcat(comm.buf, uuid);
     strcat(comm.buf, CMD_SEPSTR);
