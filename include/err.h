@@ -119,27 +119,27 @@
 /* Failed setting an alias. */
 #define CMD_ESETALIAS "56 : Failed setting an alias."
 /* Failed setting secure FileSystem security token. */
-#define CMD_ESETFSPERM "57: Failed setting secure FS permission."
+#define CMD_ESETFSPERM "57 : Failed setting secure FS permission."
 /* Failed removing secure FileSystem security token. */
-#define CMD_EREMFSPERM "58: Failed removing secure FS permission."
+#define CMD_EREMFSPERM "58 : Failed removing secure FS permission."
 /* Failed getting secure FileSystem current permission identity. */
-#define CMD_EGETFSPERM "59: Failed getting secure FS permission identity."
+#define CMD_EGETFSPERM "59 : Failed getting secure FS permission identity."
 /* The directory does not belongs to the secure filesystem. */
-#define CMD_EISSECFS "60: The directory does not belongs to secure FS."
+#define CMD_EISSECFS "60 : The directory does not belongs to secure FS."
 /* Unable to use the Folder Locking System. */
-#define EPROTO_ELOCKSYS "61: Unable to use Folder Locking System."
+#define EPROTO_ELOCKSYS "61 : Unable to use Folder Locking System."
 /* TestAndSet failed to create the file. This is equivalent to False in the
     classic TestAndSet processor instruction. */
-#define CMD_ETASFS "62: Unable to create the requested file."
+#define CMD_ETASFS "62 : Unable to create the requested file."
 /* Failed to create a directory recursively. */
-#define CMD_ERMKDIR "63: Failed to create directory recursively."
+#define CMD_ERMKDIR "63 : Failed to create directory recursively."
 /* Failed to run RUNBASH command. */
-#define CMD_ERUNBASH "64: Failed running RUNBASH command."
+#define CMD_ERUNBASH "64 : Failed running RUNBASH command."
 /* Unable to use the FlyContext System. */
-#define CMD_EFLYCONTEXT "65: Unable to use the FlyContext System."
+#define CMD_EFLYCONTEXT "65 : Unable to use the FlyContext System."
 /* Unable to start AES encryption system. */
-#define CMD_EAES "66: Unable to start AES encryption system."
+#define CMD_EAES "66 : Unable to start AES encryption system."
 /* Unable to initialize FAI interface. */
-#define CMD_EFAITOK "67: Falied initializing FAI interface."
+#define CMD_EFAITOK "67 : Failed initializing FAI interface."
 
 #endif
