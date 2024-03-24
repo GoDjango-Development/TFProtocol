@@ -189,6 +189,8 @@
 #define CMD_GOAES "GOAES"
 /* Turn ON TFProtocol default encryption. */
 #define CMD_TFPCRYPTO "TFPCRYPTO"
+/* Generate UUID */
+#define CMD_GENUUID "GENUUID"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -367,5 +369,7 @@ void cmd_flycontext(void);
 void cmd_goaes(void);
 /* Turn ON TFProtocol default encryption. */
 void cmd_tfpcrypto(void);
+/* Generate UUID. */
+void cmd_genuuid(void);
 
 #endif

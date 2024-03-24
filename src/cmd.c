@@ -413,6 +413,8 @@ void cmd_parse(void)
         cmd_flycontext();
     else if (!strcmp(cmd, CMD_GOAES))
         cmd_goaes();
+    else if (!strcmp(cmd, CMD_GENUUID))
+        cmd_genuuid();
     else if (!strcmp(cmd, CMD_TFPCRYPTO))
         cmd_tfpcrypto();
     else if (strstr(cmd, CMD_XS))
@@ -3830,4 +3832,15 @@ void cmd_tfpcrypto(void)
 {
     cmd_ok();
     setblkoff();
+}
+
+void cmd_genuuid(void)
+{
+    char uuid[UUIDCHAR_LEN];
+    uuidgen(uuid);
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, uuid);
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
 }
