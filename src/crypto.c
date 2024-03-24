@@ -253,3 +253,43 @@ int blkend_en(struct blkcipher *cipher, void *cidata, int cilen)
         return -1;
     return cilen + exlen;
 }
+
+char *base64en(void *in, int len)
+{
+    const int explen = 4 * ((len + 2) /3);
+    char *out = malloc(explen + 1);
+    if (!out)
+        return NULL;
+    const int outlen = EVP_EncodeBlock(out, in, len);
+    if (explen != outlen) {
+        free(out);
+        return NULL;
+    }
+    return out;
+}
+
+char *genkey(int len)
+{
+    int i = 0;
+    char *key = malloc(len);
+    if (!key)
+        return NULL;
+    srand(time(NULL));
+    for (; i < len; i++)
+        *(key + i) = random();
+    return key;
+}
+
+void *base64dec(char *in, int len)
+{
+    const int explen = 3 * len / 4;
+    char *out = malloc(explen);
+    if (!out)
+        return NULL;
+    const int outlen = EVP_DecodeBlock(out, in, len);
+    if (explen != outlen) {
+        free(out);
+        return NULL;
+    }
+    return out;
+}
