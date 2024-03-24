@@ -60,6 +60,8 @@
 #define RUNBASH "runbash"
 /* FlyContext system. */
 #define FLYCONTEXT "flycontext"
+/* Default maximun expiration time for FAI token. */
+#define FAIMAX_EXPDEF 360
 
 struct tfproto tfproto;
 static char *buf;
@@ -72,6 +74,7 @@ static void stddbpath(void);
 int init(const char **argv, struct tfproto *tfproto)
 {
     char ln[LINE_MAX];
+    tfproto->faimax_exp = FAIMAX_EXPDEF;
     strcpy(tfproto->bin, *argv);
     strcpy(tfproto->conf, *(argv + 1));
     tfproto->argv = argv;
