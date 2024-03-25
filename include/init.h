@@ -76,6 +76,8 @@ struct tfproto {
     int flycontext;
     /* Maximun number of minutes for FAI token expiration. */
     int faimax_exp;
+    /* FAI directory path. */
+    char faipath[PATH_MAX];
 } extern tfproto;
 
 /* This function initialize the "struct tfproto" from file "*conf". */

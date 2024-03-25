@@ -159,5 +159,7 @@ int cpfile(const char *src, const char *dst);
 int sec_waitpid(int pid);
 /* Generate UUID. */
 void uuidgen(char *uuid);
+/* Save a file for the FAI infraestrucre. */
+int savefai(const char *uuid, int64_t exp, const char *tok);
 
 #endif

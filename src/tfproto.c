@@ -24,6 +24,15 @@
 #include <sys/wait.h>
 #include <net.h>
 
+/* FAI token sustitute for TFProtocol version. */
+#define FAIACCESS_TOK "FAI://"
+/* Return value of checkproto for OK version number. */
+#define OKPROTO_VER 1
+/* Return value of checkproto for FAI granted. */
+#define FAIPROTO_GRANTED 2
+/* Return value of checkproto for FAI denial. */
+#define FAIPROTO_DENIED 3
+
 /* Tha header that indicates the size of the expected messages. */
 #pragma pack(push, 1)
 struct tfhdr {
@@ -53,6 +62,8 @@ unsigned int volatile fsop;
 volatile int fsop_ovrr;
 /* Define if block cipher should be used. */
 int blkstatus;
+/* Check FAI token validity. */
+static int chkfaitok(const char *path);
 
 /* Validate protocol version. non-zero return for ok. */
 static int chkproto(void);
@@ -120,7 +131,12 @@ int chkproto(void)
     if (readbuf(comm.buf, sizeof comm.buf) == -1)
         return 0;
     else if (!strcmp(comm.buf, tfproto.proto))
-        return 1;
+        return OKPROTO_VER;
+    if (strstr(comm.buf, FAIACCESS_TOK))
+        if (!chkfaitok(comm.buf + strlen(FAIACCESS_TOK)))
+            return FAIPROTO_GRANTED;
+        else
+            return FAIPROTO_DENIED;
     return 0;
 }
 
@@ -149,9 +165,17 @@ int64_t readbuf(char *buf, int64_t len)
 
 static void mainloop(void)
 {
-    if (chkproto())
+    int rc;
+    if ((rc = chkproto()) == OKPROTO_VER)
         cmd_ok();
-    else {
+    else if (rc == FAIPROTO_GRANTED) {
+        ; // add code for FAI granted 
+        
+        comm.faiuse = 1;
+    } else if (rc == FAIPROTO_DENIED) {
+        cmd_fail(EPROTO_TOKEXPIRED);
+        return;
+    } else {
         cmd_fail(EPROTO_BADVER);
         return;
     }
@@ -562,4 +586,13 @@ static int rdfd(int fd, char *buf, int64_t len)
         readed += rb;
     }
     return readed;
+}
+
+static int chkfaitok(const char *path)
+{
+    char file[PATH_MAX];
+    strcpy(file, tfproto.faipath);
+    strcat(file, path);
+    
+    return 0;
 }

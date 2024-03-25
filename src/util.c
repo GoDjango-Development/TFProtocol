@@ -807,3 +807,19 @@ void uuidgen(char *uuid)
     uuid_generate_random(binuuid);
     uuid_unparse_lower(binuuid, uuid);
 }
+
+int savefai(const char *uuid, int64_t exp, const char *tok)
+{
+    char path[PATH_MAX];
+    strcpy(path, tfproto.faipath);
+    strcat(path, uuid);
+    FILE *fs = fopen(path, "w+");
+    if (!fs)
+        return -1;
+    if (fprintf(fs, "%llu %s\n", (unsigned long long) exp, tok) < 0) {
+        fclose(fs);
+        return -1;
+    }
+    fclose(fs);
+    return 0;
+}
