@@ -141,7 +141,7 @@
 #define CMD_EAES "66 : Unable to start AES encryption system."
 /* Unable to initialize FAI interface. */
 #define CMD_EFAITOK "67 : Failed initializing FAI interface."
-/* Unable to set FAI token expire time. */
-#define CMD_EFAIEXP "68 : Failed to set FAI expire time."
+/* Token expired for the FAI facility. */
+#define EPROTO_TOKEXPIRED "68 : Token expired for FAI access."
 
 #endif

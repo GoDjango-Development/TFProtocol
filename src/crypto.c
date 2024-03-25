@@ -256,7 +256,7 @@ int blkend_en(struct blkcipher *cipher, void *cidata, int cilen)
 
 char *base64en(void *in, int len)
 {
-    const int explen = 4 * ((len + 2) /3);
+    const int explen = (len + 2) / 3 * 4;
     char *out = malloc(explen + 1);
     if (!out)
         return NULL;
@@ -274,7 +274,7 @@ char *genkey(int len)
     char *key = malloc(len);
     if (!key)
         return NULL;
-    srand(time(NULL));
+    srand(time(0));
     for (; i < len; i++)
         *(key + i) = random();
     return key;
@@ -282,7 +282,7 @@ char *genkey(int len)
 
 void *base64dec(char *in, int len)
 {
-    const int explen = 3 * len / 4;
+    const int explen = len * 3 / 4;
     char *out = malloc(explen);
     if (!out)
         return NULL;
