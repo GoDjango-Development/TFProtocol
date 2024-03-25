@@ -107,7 +107,9 @@
 #define LSV2DOWN_HDR_FAILED -11
 /* Max and Min session key lengths for FAITOK interface. */
 #define MAX_KEYLEN 256
-#define MIN_KEYLEN 64
+#define MIN_KEYLEN 128
+/* Seconds per minute. */
+#define SPM 60
 
 /* Hi-Performance file operations structure. */
 struct hpfile {
@@ -3860,6 +3862,7 @@ void cmd_faitok(void)
     uint64_t exp = atoll(pt);
     if (exp > tfproto.faimax_exp || exp <= 0)
         exp = tfproto.faimax_exp;
+    exp = time(0) + exp * SPM;
     char expstr[LLDIGITS];
     sprintf(expstr, "%llu", (unsigned long long) exp);
     char uuid[UUIDCHAR_LEN];
@@ -3883,7 +3886,13 @@ void cmd_faitok(void)
         return;
     }
     strcat(comm.buf, b64);
+    if (savefai(uuid, exp, b64) == -1) {
+        free(b64);
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
     free(b64);
+    comm.faiuse = 1;
     if (writebuf(comm.buf, strlen(comm.buf)) == -1)
         endcomm();
 }
