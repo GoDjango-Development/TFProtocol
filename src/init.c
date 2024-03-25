@@ -62,6 +62,8 @@
 #define FLYCONTEXT "flycontext"
 /* Default maximun expiration time for FAI token. */
 #define FAIMAX_EXPDEF 360
+/* FAI directory path. */
+#define FAIPATH "faipath"
 
 struct tfproto tfproto;
 static char *buf;
@@ -169,6 +171,8 @@ int init(const char **argv, struct tfproto *tfproto)
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
             tfproto->userdb[i++] = *pt++;
     }
+    
+    
     pt = strstr(buf, RPCPROXY);
     if (pt) {
         pt += strlen(RPCPROXY);
@@ -176,6 +180,16 @@ int init(const char **argv, struct tfproto *tfproto)
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
             tfproto->rpcproxy[i++] = *pt++;
     }
+    pt = strstr(buf, FAIPATH);
+    if (pt) {
+        pt += strlen(FAIPATH);
+        i = 0;
+        while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
+            tfproto->faipath[i++] = *pt++;
+        strcat(tfproto->faipath, "/");
+        
+    } else 
+        return -1;
     pt = strstr(buf, XSNTMEX);
     if (pt) {
         pt += strlen(XSNTMEX);
