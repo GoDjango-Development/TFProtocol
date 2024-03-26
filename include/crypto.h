@@ -82,6 +82,6 @@ char *base64en(void *in, int len);
 /* Generate random key */
 char *genkey(int len);
 /* Decode base64 data into binary. */
-void *base64dec(char *in, int len);
+void *base64dec(char *in, int len, int *binlen);
 
 #endif
