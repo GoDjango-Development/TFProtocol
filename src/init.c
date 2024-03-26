@@ -171,8 +171,6 @@ int init(const char **argv, struct tfproto *tfproto)
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
             tfproto->userdb[i++] = *pt++;
     }
-    
-    
     pt = strstr(buf, RPCPROXY);
     if (pt) {
         pt += strlen(RPCPROXY);
@@ -182,7 +180,7 @@ int init(const char **argv, struct tfproto *tfproto)
     }
     pt = strstr(buf, FAIPATH);
     if (pt) {
-        pt += strlen(FAIPATH);
+        pt += strlen(FAIPATH) + 1;
         i = 0;
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
             tfproto->faipath[i++] = *pt++;
