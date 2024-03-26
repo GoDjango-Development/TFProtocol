@@ -74,8 +74,8 @@ struct tfproto {
     int runbash;
     /* Flycontext flag. */
     int flycontext;
-    /* Maximun number of minutes for FAI token expiration. */
-    int faimax_exp;
+    /* FAI token maximun expiration quanta. */
+    int64_t faitok_mq;
     /* FAI directory path. */
     char faipath[PATH_MAX];
 } extern tfproto;

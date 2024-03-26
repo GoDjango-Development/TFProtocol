@@ -3860,8 +3860,8 @@ void cmd_faitok(void)
     }
     char *pt = comm.buf + strlen(CMD_FAITOK) + 1;
     uint64_t exp = atoll(pt);
-    if (exp > tfproto.faimax_exp || exp <= 0)
-        exp = tfproto.faimax_exp;
+    if (exp > tfproto.faitok_mq || exp <= 0)
+        exp = tfproto.faitok_mq;
     exp = time(0) + exp * SPM;
     char expstr[LLDIGITS];
     sprintf(expstr, "%llu", (unsigned long long) exp);
