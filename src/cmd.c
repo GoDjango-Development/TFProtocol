@@ -421,6 +421,8 @@ void cmd_parse(void)
         cmd_tfpcrypto();
     else if (!strcmp(cmd, CMD_FAITOK))
         cmd_faitok();
+    else if (!strcmp(cmd, CMD_FAIMQ))
+        cmd_faimq();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3890,6 +3892,13 @@ void cmd_faitok(void)
     }
     free(b64);
     comm.faiuse = 1;
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
+}
+
+void cmd_faimq(void)
+{
+    sprintf(comm.buf, "%s %lld", CMD_OK, (long long) tfproto.faitok_mq);
     if (writebuf(comm.buf, strlen(comm.buf)) == -1)
         endcomm();
 }

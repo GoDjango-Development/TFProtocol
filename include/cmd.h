@@ -193,6 +193,8 @@
 #define CMD_GENUUID "GENUUID"
 /* Get a Fast Access Interface Token. */
 #define CMD_FAITOK "FAITOK"
+/* Get a FAI token maximun quanta. */
+#define CMD_FAIMQ "FAIMQ"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -375,5 +377,7 @@ void cmd_tfpcrypto(void);
 void cmd_genuuid(void);
 /* Get a Fast Access Interface Token. */
 void cmd_faitok(void);
+/* Get a FAI token maximun quanta. */
+void cmd_faimq(void);
 
 #endif
