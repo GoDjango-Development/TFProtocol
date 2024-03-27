@@ -105,9 +105,6 @@
 #define LSV2DOWN_HDR_SUCCESS -10
 /* LSV2DOWN failed header value. */
 #define LSV2DOWN_HDR_FAILED -11
-/* Max and Min session key lengths for FAITOK interface. */
-#define MAX_KEYLEN 256
-#define MIN_KEYLEN 128
 /* Seconds per minute. */
 #define SPM 60
 
@@ -3873,7 +3870,7 @@ void cmd_faitok(void)
     strcat(comm.buf, CMD_SEPSTR);
     strcat(comm.buf, uuid);
     strcat(comm.buf, CMD_SEPSTR);
-    int keysz = random() % (MAX_KEYLEN - MIN_KEYLEN + 1) + MIN_KEYLEN;
+    int keysz = random() % (FAIMAX_KEYLEN - FAIMIN_KEYLEN + 1) + FAIMIN_KEYLEN;
     char *key = genkey(keysz);
     if (key == NULL) {
         cmd_fail(CMD_EFAITOK);

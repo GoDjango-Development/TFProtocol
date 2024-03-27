@@ -20,6 +20,9 @@
 #define BLK_IVSZ 16
 /* Block cihper key length. */
 #define BLK_SIZE 16
+/* Max and Min session key lengths for FAITOK interface. */
+#define FAIMAX_KEYLEN KEYMAX
+#define FAIMIN_KEYLEN 128
 
 /* The posible states of encrypt system. */
 enum cryptst { CRYPT_OFF, CRYPT_ON };
