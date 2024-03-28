@@ -677,9 +677,9 @@ static int renewfaikey(void)
     if (!b64) {
         fclose(fs);
         return -1;
-    }
+    }    
     strcpy(comm.buf, b64);
-    fprintf(fs, "%lld %s", (long long) faitexp, b64);
+    fprintf(fs, "%lld %s\n", (long long) faitexp, b64);
     free(b64);
     fclose(fs);
     if (writebuf(comm.buf, strlen(comm.buf)) == -1)
