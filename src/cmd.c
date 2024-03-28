@@ -3874,7 +3874,7 @@ void cmd_faitok(void)
     strcat(comm.buf, CMD_SEPSTR);
     int keysz = random() % (FAIMAX_KEYLEN - FAIMIN_KEYLEN + 1) + FAIMIN_KEYLEN;
     char *key = genkey(keysz);
-    if (key == NULL) {
+    if (!key) {
         cmd_fail(CMD_EFAITOK);
         return;
     }
