@@ -58,6 +58,8 @@
 #define DEFFILE_PERM S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 /* Default creation directory permission: 0755. */
 #define DEFDIR_PERM S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
+/* UUID length in character format. */
+#define UUIDCHAR_LEN 37
 
 /* FApi operation codes. */
 enum fapiopc { FAPI_READ, FAPI_WRITE, FAPI_OVERWRITE};
@@ -155,5 +157,9 @@ int lsr_iter(const char *path, int rec, lsr_iter_callback callback);
 int cpfile(const char *src, const char *dst);
 /* Securely wait for process exit status. */
 int sec_waitpid(int pid);
+/* Generate UUID. */
+void uuidgen(char *uuid);
+/* Save a file for the FAI infraestrucre. */
+int savefai(const char *uuid, int64_t exp, const char *tok);
 
 #endif

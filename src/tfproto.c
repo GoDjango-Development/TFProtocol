@@ -24,6 +24,15 @@
 #include <sys/wait.h>
 #include <net.h>
 
+/* FAI token sustitute for TFProtocol version. */
+#define FAIACCESS_TOK "FAI://"
+/* Return value of checkproto for OK version number. */
+#define OKPROTO_VER 1
+/* Return value of checkproto for FAI granted. */
+#define FAIPROTO_GRANTED 2
+/* Return value of checkproto for FAI denial. */
+#define FAIPROTO_DENIED 3
+
 /* Tha header that indicates the size of the expected messages. */
 #pragma pack(push, 1)
 struct tfhdr {
@@ -53,6 +62,13 @@ unsigned int volatile fsop;
 volatile int fsop_ovrr;
 /* Define if block cipher should be used. */
 int blkstatus;
+/* FAI key and key length. */
+static void *faikey;
+static int faikeylen;
+/* FAI token time expiration. */
+static int64_t faitexp;
+/* FAI file token. */
+static char faifile[PATH_MAX];
 
 /* Validate protocol version. non-zero return for ok. */
 static int chkproto(void);
@@ -84,6 +100,12 @@ static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc);
 static int wrfd(int fd, char *buf, int64_t len);
 /* Read data to file descriptor. */
 static int rdfd(int fd, char *buf, int64_t len);
+/* Check FAI token validity. */
+static int chkfaitok(const char *path);
+/* Main loop for FAI entrance. */
+static void mainloop_fai(void);
+/* Generate new symmetric encryptio key for the next FAI access. */
+static int renewfaikey(void);
 
 void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
 {
@@ -119,8 +141,13 @@ int chkproto(void)
 {
     if (readbuf(comm.buf, sizeof comm.buf) == -1)
         return 0;
-    else if (!strcmp(comm.buf, tfproto.proto))
-        return 1;
+    if (!strcmp(comm.buf, tfproto.proto))
+        return OKPROTO_VER;
+    if (strstr(comm.buf, FAIACCESS_TOK) && !chkfaitok(comm.buf + 
+        strlen(FAIACCESS_TOK)))
+        return FAIPROTO_GRANTED;
+    else
+        return FAIPROTO_DENIED;
     return 0;
 }
 
@@ -149,15 +176,23 @@ int64_t readbuf(char *buf, int64_t len)
 
 static void mainloop(void)
 {
-    if (chkproto())
+    int rc;
+    if ((rc = chkproto()) == OKPROTO_VER)
         cmd_ok();
-    else {
+    else if (rc == FAIPROTO_GRANTED) {
+        /* Run the mainloop for FAI entrance version. */
+        //cmd_ok();
+        mainloop_fai();
+        return;
+    } else if (rc == FAIPROTO_DENIED) {
+        cmd_fail(EPROTO_FAITOKEXPIRED);
+        return;
+    } else {
         cmd_fail(EPROTO_BADVER);
         return;
     }
     if (getkey()) {
-        int rs;
-        if ((rs = derankey(&cryp_rx, tfproto.priv)) == -1) {
+        if (derankey(&cryp_rx, tfproto.priv) == -1) {
             cmd_fail(EPROTO_BADKEY);
             return;
         }
@@ -562,4 +597,94 @@ static int rdfd(int fd, char *buf, int64_t len)
         readed += rb;
     }
     return readed;
+}
+
+static int chkfaitok(const char *path)
+{
+    strcpy(faifile, tfproto.faipath);
+    strcat(faifile, path);
+    FILE *fs = fopen(faifile, "r");
+    if (!fs)
+        return -1;
+    char line[LINE_MAX];
+    if (!fgets(line, sizeof line, fs)) {
+        fclose(fs);
+        return -1;
+    }
+    fclose(fs);
+    char *pt = strchr(line, ' ');
+    if (!pt)
+        return -1;
+    *pt++ = '\0';
+    faitexp = atoll(line);
+    if (time(0) >= faitexp) {
+        unlink(faifile);
+        return -1;
+    }
+    char *nl = strchr(pt, '\n');
+    if (nl)
+        *nl = '\0';
+    faikey = base64dec(pt, strlen(pt), &faikeylen);
+    if (!faikey)
+        return -1;
+    return 0;
+}
+
+static void mainloop_fai(void)
+{
+    /* Main loop version for FAI entrance. */
+    cryp_rx.rndlen = faikeylen;
+    cryp_rx.rndkey = faikey;
+    if (faikeylen >= KEYMIN)
+        cryp_rx.seed = *(int64_t *) cryp_rx.rndkey;
+    else {
+        cmd_fail(EPROTO_FAIKEYINVALID);
+        return;
+    }
+    if (dup_crypt(&cryp_tx, &cryp_rx)) {
+        cmd_fail(EPROTO_FAIKEYINVALID);
+        return;
+    }
+    if (dup_crypt(&cryp_org, &cryp_rx)) {
+        cmd_fail(EPROTO_FAIKEYINVALID);
+        return;
+    }
+    cmd_ok();
+    cryp_rx.st = CRYPT_ON;
+    cryp_tx.st = CRYPT_ON;
+    cryp_rx.pack = CRYPT_UNPACK;
+    cryp_tx.pack = CRYPT_PACK;
+    if (renewfaikey() == -1)
+        return;
+    struct passwd *usr = getpwnam(tfproto.defusr);
+    if (usr && !setgid(usr->pw_gid) && !setuid(usr->pw_uid))
+        logged = 1;
+    while (loop)
+        cmdifce();
+}
+
+static int renewfaikey(void)
+{
+    FILE *fs = fopen(faifile, "w");
+    if (!fs)
+        return -1;
+    int keysz = random() % (FAIMAX_KEYLEN - FAIMIN_KEYLEN + 1) + FAIMIN_KEYLEN;
+    char *key = genkey(keysz);
+    if (!key) {
+        fclose(fs);
+        return -1;
+    }
+    char *b64 = base64en(key, keysz);
+    free(key);
+    if (!b64) {
+        fclose(fs);
+        return -1;
+    }    
+    strcpy(comm.buf, b64);
+    fprintf(fs, "%lld %s\n", (long long) faitexp, b64);
+    free(b64);
+    fclose(fs);
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        return -1;
+    return 0;
 }

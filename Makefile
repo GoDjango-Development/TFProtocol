@@ -1,6 +1,6 @@
 cflags = -D_FILE_OFFSET_BITS=64 -I ./include -I /usr/include/mysql -Wall \
 	-I /usr/include/postgresql -Wno-parentheses -Wno-pointer-sign
-libs = -lpthread -lcrypto -lrt -ldl -lsqlite3 -lmysqlclient -lpq
+libs = -lpthread -lcrypto -lrt -ldl -lsqlite3 -lmysqlclient -lpq -luuid
 
 #Release profile
 

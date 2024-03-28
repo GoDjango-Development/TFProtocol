@@ -65,6 +65,7 @@ struct comm {
     struct shm_obj *shmobj;
     int buflen;
     volatile char act;
+    int faiuse;
 } extern comm; 
 
 /* Cryptography structures containing crypt and decrypt functions. */
