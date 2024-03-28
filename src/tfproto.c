@@ -617,8 +617,10 @@ static int chkfaitok(const char *path)
         return -1;
     *pt++ = '\0';
     faitexp = atoll(line);
-    if (time(0) >= faitexp)
+    if (time(0) >= faitexp) {
+        unlink(faifile);
         return -1;
+    }
     char *nl = strchr(pt, '\n');
     if (nl)
         *nl = '\0';
