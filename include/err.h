@@ -142,6 +142,8 @@
 /* Unable to initialize FAI interface. */
 #define CMD_EFAITOK "67 : Failed initializing FAI interface."
 /* Token expired for the FAI facility. */
-#define EPROTO_TOKEXPIRED "68 : Token expired for FAI access."
+#define EPROTO_FAITOKEXPIRED "68 : Token expired for FAI access."
+/* Use of an invalid FAI. */
+#define EPROTO_FAIKEYINVALID "69 : FAI key is invalid."
 
 #endif
