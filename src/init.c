@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <core.h>
+#include <util.h>
 
 /* Protocol version text in the config file. */
 #define PROTOVER "proto "
@@ -60,6 +61,12 @@
 #define RUNBASH "runbash"
 /* FlyContext system. */
 #define FLYCONTEXT "flycontext"
+/* Default maximun expiration quanta for FAI token. */
+#define FAIMAX_QDEF 360
+/* FAI directory path. */
+#define FAIPATH "faipath"
+/* FAI token maximun expiration quanta. */
+#define FAITOK_MQ "faitok_mq"
 
 struct tfproto tfproto;
 static char *buf;
@@ -173,6 +180,27 @@ int init(const char **argv, struct tfproto *tfproto)
         while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
             tfproto->rpcproxy[i++] = *pt++;
     }
+    pt = strstr(buf, FAIPATH);
+    if (pt) {
+        pt += strlen(FAIPATH) + 1;
+        i = 0;
+        while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
+            tfproto->faipath[i++] = *pt++;
+        strcat(tfproto->faipath, "/");
+        
+    } else 
+        return -1;
+    pt = strstr(buf, FAITOK_MQ);
+    if (pt) {
+        pt += strlen(FAITOK_MQ) + 1;
+        i = 0;
+        char faiq[LLDIGITS];
+        while (*pt != '\n' && *pt != '\0' && i < PATH_MAX - 1)
+            faiq[i++] = *pt++;
+        faiq[i] = '\0';
+        tfproto->faitok_mq = atoll(faiq);
+    } else 
+        tfproto->faitok_mq = FAIMAX_QDEF;
     pt = strstr(buf, XSNTMEX);
     if (pt) {
         pt += strlen(XSNTMEX);

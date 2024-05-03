@@ -189,6 +189,16 @@ provides another access control level to clients.
 This parameter is required and sets the directory in which TFprotocol and most 
 of its extended subsystems will be locked.
 
+`faipath /var/run/tfproto_fai`
+
+This parameter is required and sets the directory in which TFprotocol implemetns
+the Fast Access Interface. In this directory FAI tokens will be stored.
+
+`faitok_mq 500`
+
+This parameter is optional and sets the maximun quanta for a token to remain
+valid. If not set, a default value will be used instead.
+
 `port 10345`
 
 This parameter is required and sets the port in which TFProtocol will listen for

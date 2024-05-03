@@ -20,6 +20,9 @@
 #define BLK_IVSZ 16
 /* Block cihper key length. */
 #define BLK_SIZE 16
+/* Max and Min session key lengths for FAITOK interface. */
+#define FAIMAX_KEYLEN KEYMAX
+#define FAIMIN_KEYLEN 128
 
 /* The posible states of encrypt system. */
 enum cryptst { CRYPT_OFF, CRYPT_ON };
@@ -77,5 +80,11 @@ int blkend_en(struct blkcipher *cipher, void *cidata, int cilen);
 /* Block Cipher decryption function. */
 int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen);
 int blkend_de(struct blkcipher *cipher, void *pldata, int pllen);
+/* Encode binary data into base64 format. */
+char *base64en(void *in, int len);
+/* Generate random key */
+char *genkey(int len);
+/* Decode base64 data into binary. */
+void *base64dec(char *in, int len, int *binlen);
 
 #endif

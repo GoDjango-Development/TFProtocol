@@ -105,6 +105,8 @@
 #define LSV2DOWN_HDR_SUCCESS -10
 /* LSV2DOWN failed header value. */
 #define LSV2DOWN_HDR_FAILED -11
+/* Seconds per minute. */
+#define SPM 60
 
 /* Hi-Performance file operations structure. */
 struct hpfile {
@@ -413,8 +415,14 @@ void cmd_parse(void)
         cmd_flycontext();
     else if (!strcmp(cmd, CMD_GOAES))
         cmd_goaes();
+    else if (!strcmp(cmd, CMD_GENUUID))
+        cmd_genuuid();
     else if (!strcmp(cmd, CMD_TFPCRYPTO))
         cmd_tfpcrypto();
+    else if (!strcmp(cmd, CMD_FAITOK))
+        cmd_faitok();
+    else if (!strcmp(cmd, CMD_FAIMQ))
+        cmd_faimq();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3830,4 +3838,67 @@ void cmd_tfpcrypto(void)
 {
     cmd_ok();
     setblkoff();
+}
+
+void cmd_genuuid(void)
+{
+    char uuid[UUIDCHAR_LEN];
+    uuidgen(uuid);
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, uuid);
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
+}
+
+void cmd_faitok(void)
+{
+    if (comm.faiuse) {
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
+    char *pt = comm.buf + strlen(CMD_FAITOK) + 1;
+    uint64_t exp = atoll(pt);
+    if (exp > tfproto.faitok_mq || exp <= 0)
+        exp = tfproto.faitok_mq;
+    exp = time(0) + exp * SPM;
+    char expstr[LLDIGITS];
+    sprintf(expstr, "%llu", (unsigned long long) exp);
+    char uuid[UUIDCHAR_LEN];
+    uuidgen(uuid);
+    strcpy(comm.buf, CMD_OK);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, expstr);
+    strcat(comm.buf, CMD_SEPSTR);
+    strcat(comm.buf, uuid);
+    strcat(comm.buf, CMD_SEPSTR);
+    int keysz = random() % (FAIMAX_KEYLEN - FAIMIN_KEYLEN + 1) + FAIMIN_KEYLEN;
+    char *key = genkey(keysz);
+    if (!key) {
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
+    char *b64 = base64en(key, keysz);
+    free(key);
+    if (!b64) {
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
+    strcat(comm.buf, b64);
+    if (savefai(uuid, exp, b64) == -1) {
+        free(b64);
+        cmd_fail(CMD_EFAITOK);
+        return;
+    }
+    free(b64);
+    comm.faiuse = 1;
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
+}
+
+void cmd_faimq(void)
+{
+    sprintf(comm.buf, "%s %lld", CMD_OK, (long long) tfproto.faitok_mq);
+    if (writebuf(comm.buf, strlen(comm.buf)) == -1)
+        endcomm();
 }
