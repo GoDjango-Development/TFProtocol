@@ -824,8 +824,8 @@ int savefai(const char *uuid, int64_t exp, const char *tok)
     return 0;
 }
 
- int hextobyte(const char *hexstr, unsigned char *bytes, int64_t sz)
- {
+int hextobyte(const char *hexstr, unsigned char *bytes, int64_t sz)
+{
     int len = strlen(hexstr);
     if (len % 2)
         return -1;
@@ -836,4 +836,4 @@ int savefai(const char *uuid, int64_t exp, const char *tok)
     for (; i < len; i++)
         sscanf(hexstr + i * HEXDIG_LEN, "%2hhx", bytes + i);
     return 0;
- }
+}
