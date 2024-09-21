@@ -823,3 +823,17 @@ int savefai(const char *uuid, int64_t exp, const char *tok)
     fclose(fs);
     return 0;
 }
+
+ int hextobyte(const char *hexstr, unsigned char *bytes, int64_t sz)
+ {
+    int len = strlen(hexstr);
+    if (len % 2)
+        return -1;
+    len /= 2;
+    if (len != sz)
+        return -1;
+    int i = 0;
+    for (; i < len; i++)
+        sscanf(hexstr + i * HEXDIG_LEN, "%2hhx", bytes + i);
+    return 0;
+ }

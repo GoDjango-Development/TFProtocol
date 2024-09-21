@@ -161,5 +161,8 @@ int sec_waitpid(int pid);
 void uuidgen(char *uuid);
 /* Save a file for the FAI infraestrucre. */
 int savefai(const char *uuid, int64_t exp, const char *tok);
+/* Converts a hexadecimal string to byte array. The string must be multiple of
+    2. */
+int hextobyte(const char *hexstr, unsigned char *bytes, int64_t sz);
 
 #endif
