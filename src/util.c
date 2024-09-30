@@ -20,10 +20,12 @@
 #include <sys/time.h>
 #include <wait.h>
 #include <uuid/uuid.h>
+#include <openssl/ssl.h>
 
 #define SECDIR_TOK ".sd/"
 #define RDNULLBUF 64 * 1024
 #define CPFILEBUF 64 * 1024
+#define BASE64_PADCH '='
 
 /* Temp file internal structure */
 struct tmp {
@@ -822,4 +824,52 @@ int savefai(const char *uuid, int64_t exp, const char *tok)
     }
     fclose(fs);
     return 0;
+}
+
+int hextobyte(const char *hexstr, unsigned char *bytes, int64_t sz)
+{
+    int64_t len = strlen(hexstr);
+    if (len % 2)
+        return -1;
+    len /= 2;
+    if (len != sz)
+        return -1;
+    int64_t i = 0;
+    for (; i < len; i++)
+        sscanf(hexstr + i * HEXDIG_LEN, "%2hhx", bytes + i);
+    return 0;
+}
+
+char *base64en(void *in, int len)
+{
+    const int explen = (len + 2) / 3 * 4;
+    char *out = malloc(explen + 1);
+    if (!out)
+        return NULL;
+    const int outlen = EVP_EncodeBlock(out, in, len);
+    if (explen != outlen) {
+        free(out);
+        return NULL;
+    }
+    return out;
+}
+
+void *base64dec(char *in, int len, int *binlen)
+{
+    const int explen = len * 3 / 4;
+    char *out = malloc(explen);
+    if (!out)
+        return NULL;
+    const int outlen = EVP_DecodeBlock(out, in, len);
+    if (explen != outlen) {
+        free(out);
+        return NULL;
+    }
+    if (in[len - 1] == BASE64_PADCH && in[len - 2] == BASE64_PADCH)
+        *binlen = outlen - 2;
+    else if (in[len - 1] == BASE64_PADCH)
+        *binlen = outlen - 1;
+    else
+        *binlen = outlen;
+    return out;
 }

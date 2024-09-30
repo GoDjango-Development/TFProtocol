@@ -15,7 +15,6 @@
 #include <udp_keep.h>
 #include <string.h>
 #include <core.h>
-
 #include <sys/resource.h>
 
 #define MINARGS 2

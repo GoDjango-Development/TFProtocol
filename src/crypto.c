@@ -10,7 +10,6 @@
 #include <malloc.h>
 
 #define MOD_VALUE 256
-#define BASE64_PADCH '='
 
 /* Encrypt/Decrypt function. */
 static void encrypt(struct crypto *cryp, char *data, int len);
@@ -255,20 +254,6 @@ int blkend_en(struct blkcipher *cipher, void *cidata, int cilen)
     return cilen + exlen;
 }
 
-char *base64en(void *in, int len)
-{
-    const int explen = (len + 2) / 3 * 4;
-    char *out = malloc(explen + 1);
-    if (!out)
-        return NULL;
-    const int outlen = EVP_EncodeBlock(out, in, len);
-    if (explen != outlen) {
-        free(out);
-        return NULL;
-    }
-    return out;
-}
-
 char *genkey(int len)
 {
     int i = 0;
@@ -279,24 +264,4 @@ char *genkey(int len)
     for (; i < len; i++)
         *(key + i) = random();
     return key;
-}
-
-void *base64dec(char *in, int len, int *binlen)
-{
-    const int explen = len * 3 / 4;
-    char *out = malloc(explen);
-    if (!out)
-        return NULL;
-    const int outlen = EVP_DecodeBlock(out, in, len);
-    if (explen != outlen) {
-        free(out);
-        return NULL;
-    }
-    if (in[len - 1] == BASE64_PADCH && in[len - 2] == BASE64_PADCH)
-        *binlen = outlen - 2;
-    else if (in[len - 1] == BASE64_PADCH)
-        *binlen = outlen - 1;
-    else
-        *binlen = outlen;
-    return out;
 }

@@ -80,11 +80,7 @@ int blkend_en(struct blkcipher *cipher, void *cidata, int cilen);
 /* Block Cipher decryption function. */
 int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen);
 int blkend_de(struct blkcipher *cipher, void *pldata, int pllen);
-/* Encode binary data into base64 format. */
-char *base64en(void *in, int len);
 /* Generate random key */
 char *genkey(int len);
-/* Decode base64 data into binary. */
-void *base64dec(char *in, int len, int *binlen);
 
 #endif
