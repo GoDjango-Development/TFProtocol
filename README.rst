@@ -5,6 +5,7 @@ TFProtocol :dog:
 **We are still maintaining this software but we need some help with founds. Please help us and donate to our PayPal or BTC account.**
 
 PayPal: lmdelbahia@gmail.com
+
 Bitcoin Wallet: 129ziaFyteW1rGzTcjcPD644fn4RC9ayh9
 
 .. image:: https://jenkins.godjango.dev/buildStatus/icon?job=Tfprotocol
