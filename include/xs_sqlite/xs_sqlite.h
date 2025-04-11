@@ -6,11 +6,11 @@
     Email: lmdelbahia@gmail.com
 */
 
-#ifndef XS_MYSQL
-#define XS_MYSQL
+#ifndef XS_SQLITE
+#define XS_SQLITE
 
-#include "xs_mysql_glbdefs.h"
+#include <xs_sqlite_glbdefs.h>
 
-int xs_mysql(IO_R, IO_W, Jaildir);
+int xs_sqlite(IO_R, IO_W, Jaildir);
 
 #endif
