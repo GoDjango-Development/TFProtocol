@@ -12,7 +12,7 @@
 
 #include <string.h>
 
-#include "xs_postgresql.h"
+#include <xs_postgresql.h>
 
 /* infraestructure list.h/c here to avoid multiple-definitions */
 

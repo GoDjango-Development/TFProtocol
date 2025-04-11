@@ -12,7 +12,7 @@
 
 #include <string.h>
 
-#include "xs_sqlite.h"
+#include <xs_sqlite.h>
 
 /* infraestructure list.h/c here to avoid multiple-definitions */
 
