@@ -70,9 +70,9 @@ static int64_t faitexp;
 /* FAI file token. */
 static char faifile[PATH_MAX];
 /* UUID for client impersonation avoidance */
-static char cid[UUIDCHAR_LEN];
+static char cia[UUIDCHAR_LEN];
 /* Client impersonation avoidance state */
-static int cid_st;
+static int cia_st;
 
 /* Validate protocol version. non-zero return for ok. */
 static int chkproto(void);
@@ -344,15 +344,15 @@ static int64_t rcvbuf(int fd, char *buf, int64_t len, int enc)
 	if (blkstatus)
         return blk_rcvbuf(fd, buf, len, enc);
 	int64_t readed; 
-	if (cid_st) {
-		char cid_rcv[UUIDCHAR_LEN];
-		cid_rcv[UUIDCHAR_LEN - 1] = '\0';
-    	readed = rdfd(fd, cid_rcv, sizeof cid_rcv - 1);
+	if (cia_st) {
+		char cia_rcv[UUIDCHAR_LEN];
+		cia_rcv[UUIDCHAR_LEN - 1] = '\0';
+    	readed = rdfd(fd, cia_rcv, sizeof cia_rcv - 1);
 		if (readed == -1)
 			return -1;
 		if (enc && cryp_rx.encrypt)
-        	cryp_rx.encrypt(&cryp_rx, cid_rcv, readed);
-		if (strcmp(cid, cid_rcv))
+        	cryp_rx.encrypt(&cryp_rx, cia_rcv, readed);
+		if (strcmp(cia, cia_rcv))
 			return -1;	
 	}
     readed = rdfd(fd, buf, len);
@@ -710,14 +710,14 @@ static int renewfaikey(void)
 
 void genid(void)
 {
-	uuidgen(cid);
+	uuidgen(cia);
 }
 
-void setcid(int st)
+void setcia(int st)
 {
 	if (st)
-		cid_st = 1;
+		cia_st = 1;
 	else
-		cid_st = 0;
+		cia_st = 0;
 }
 

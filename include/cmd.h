@@ -195,6 +195,10 @@
 #define CMD_FAITOK "FAITOK"
 /* Get a FAI token maximun quanta. */
 #define CMD_FAIMQ "FAIMQ"
+/* Turn on Client Impersonation Avoidance */
+#define CMD_CIAON "CIAON"
+/* Turn off Client Impersonation Avoidance */
+#define CMD_CIAOFF "CIAOFF"
 
 /* Lock filename. */
 extern char lcknam[PATH_MAX];
@@ -379,5 +383,9 @@ void cmd_genuuid(void);
 void cmd_faitok(void);
 /* Get a FAI token maximun quanta. */
 void cmd_faimq(void);
+/* Turn on Client Impersonation Avoidance */
+void cmd_ciaon(void);
+/* Turn off Client Impersonation Avoidance */
+void cmd_ciaoff(void);
 
 #endif

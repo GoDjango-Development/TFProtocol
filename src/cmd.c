@@ -423,6 +423,10 @@ void cmd_parse(void)
         cmd_faitok();
     else if (!strcmp(cmd, CMD_FAIMQ))
         cmd_faimq();
+	else if (!strcmp(cmd, CMD_CIAON))
+		cmd_ciaon();
+	else if (!strcmp(cmd, CMD_CIAOFF))
+		cmd_ciaoff();
     else if (strstr(cmd, CMD_XS))
         run_xmods(cmd);
     else
@@ -3902,3 +3906,16 @@ void cmd_faimq(void)
     if (writebuf(comm.buf, strlen(comm.buf)) == -1)
         endcomm();
 }
+
+void cmd_ciaon(void)
+{
+	setcia(1);
+	cmd_ok();
+}
+
+void cmd_ciaoff(void)
+{
+	setcia(0);
+	cmd_ok();
+}
+
