@@ -69,6 +69,10 @@ static int faikeylen;
 static int64_t faitexp;
 /* FAI file token. */
 static char faifile[PATH_MAX];
+/* UUID for client impersonation avoidance */
+static char cid[UUIDCHAR_LEN];
+/* Client impersonation avoidance state */
+static int cid_st;
 
 /* Validate protocol version. non-zero return for ok. */
 static int chkproto(void);
@@ -106,6 +110,8 @@ static int chkfaitok(const char *path);
 static void mainloop_fai(void);
 /* Generate new symmetric encryptio key for the next FAI access. */
 static int renewfaikey(void);
+/* Generate UUID Identity for client impersonation avoidance */
+void genid(void);
 
 void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
 {
@@ -123,6 +129,7 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
         trp();
     genkeepkey();
     initcrypto(&cryp_rx);
+	genid();
 #ifndef DEBUG
     mainloop();
     cleanup();
@@ -334,9 +341,21 @@ static int64_t sndbuf(int fd, char *buf, int64_t len, int enc)
 
 static int64_t rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
-    if (blkstatus)
+	if (blkstatus)
         return blk_rcvbuf(fd, buf, len, enc);
-    int64_t readed = rdfd(fd, buf, len);
+	int64_t readed; 
+	if (cid_st) {
+		char cid_rcv[UUIDCHAR_LEN];
+		cid_rcv[UUIDCHAR_LEN - 1] = '\0';
+    	readed = rdfd(fd, cid_rcv, sizeof cid_rcv - 1);
+		if (readed == -1)
+			return -1;
+		if (enc && cryp_rx.encrypt)
+        	cryp_rx.encrypt(&cryp_rx, cid_rcv, readed);
+		if (strcmp(cid, cid_rcv))
+			return -1;	
+	}
+    readed = rdfd(fd, buf, len);
     if (readed == -1)
         return -1;
 #ifdef DEBUG
@@ -688,3 +707,17 @@ static int renewfaikey(void)
         return -1;
     return 0;
 }
+
+void genid(void)
+{
+	uuidgen(cid);
+}
+
+void setcid(int st)
+{
+	if (st)
+		cid_st = 1;
+	else
+		cid_st = 0;
+}
+

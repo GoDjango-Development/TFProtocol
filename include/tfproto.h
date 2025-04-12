@@ -112,5 +112,7 @@ int setblkon(void);
 void setblkoff(void);
 /* Actually starts AES cipher. */
 void startblk(void);
+/* Set client identity impersonation avoidance state */
+void setcid(int st);
 
 #endif
