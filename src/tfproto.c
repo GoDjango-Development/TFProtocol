@@ -112,6 +112,8 @@ static void mainloop_fai(void);
 static int renewfaikey(void);
 /* Generate UUID Identity for client impersonation avoidance */
 void genid(void);
+/* Return UUID identity for client impersonation avoidance */
+void getcia(char *ciabuf);
 
 void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
 {
@@ -341,20 +343,20 @@ static int64_t sndbuf(int fd, char *buf, int64_t len, int enc)
 
 static int64_t rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
-	if (blkstatus)
+    if (blkstatus)
         return blk_rcvbuf(fd, buf, len, enc);
-	int64_t readed; 
-	if (cia_st) {
-		char cia_rcv[UUIDCHAR_LEN];
-		cia_rcv[UUIDCHAR_LEN - 1] = '\0';
-    	readed = rdfd(fd, cia_rcv, sizeof cia_rcv - 1);
-		if (readed == -1)
-			return -1;
-		if (enc && cryp_rx.encrypt)
-        	cryp_rx.encrypt(&cryp_rx, cia_rcv, readed);
-		if (strcmp(cia, cia_rcv))
-			return -1;	
-	}
+    int64_t readed;
+    if (cia_st) {
+        char cia_rcv[UUIDCHAR_LEN];
+        cia_rcv[UUIDCHAR_LEN - 1] = '\0';
+        readed = rdfd(fd, cia_rcv, sizeof cia_rcv - 1);
+        if (readed == -1)
+            return -1;
+        if (enc && cryp_rx.encrypt)
+            cryp_rx.encrypt(&cryp_rx, cia_rcv, readed);
+        if (strcmp(cia, cia_rcv))
+            return -1;
+    }
     readed = rdfd(fd, buf, len);
     if (readed == -1)
         return -1;
@@ -710,14 +712,18 @@ static int renewfaikey(void)
 
 void genid(void)
 {
-	uuidgen(cia);
+    uuidgen(cia);
 }
 
 void setcia(int st)
 {
-	if (st)
-		cia_st = 1;
-	else
-		cia_st = 0;
+    if (st)
+        cia_st = 1;
+    else
+        cia_st = 0;
 }
 
+void getcia(char *ciabuf)
+{
+    strcpy(ciabuf, cia);
+}

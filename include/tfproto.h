@@ -114,5 +114,7 @@ void setblkoff(void);
 void startblk(void);
 /* Set client identity impersonation avoidance state */
 void setcia(int st);
+/* Get client identity impersonation avoidance token */
+void getcia(char *ciabuf);
 
 #endif
