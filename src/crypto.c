@@ -221,21 +221,27 @@ void blkfin(struct blkcipher *cipher)
 int blkencrypt(struct blkcipher *cipher, void *cidata, void *pldata, int pllen)
 {
     int cilen = 0;
+    int exlen = 0;
     if (EVP_EncryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
         return -1;
     if (EVP_EncryptUpdate(cipher->ctx, cidata, &cilen, pldata, pllen) != 1)
         return -1;
-    return cilen;
+   if (EVP_EncryptFinal_ex(cipher->ctx, cidata + cilen, &exlen) != 1)
+        return -1;
+    return cilen + exlen;
 }
 
 int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen)
 {
     int pllen = 0;
+    int exlen = 0;
     if (EVP_DecryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
         return -1;
     if (EVP_DecryptUpdate(cipher->ctx, pldata, &pllen, cidata, cilen) != 1)
         return -1;
-    return pllen;
+    if (EVP_DecryptFinal_ex(cipher->ctx, pldata + pllen, &exlen) != 1)
+        return -1;
+    return pllen + exlen;
 }
 
 int blkend_de(struct blkcipher *cipher, void *pldata, int pllen)
@@ -252,6 +258,20 @@ int blkend_en(struct blkcipher *cipher, void *cidata, int cilen)
     if (EVP_EncryptFinal_ex(cipher->ctx, cidata + cilen, &exlen) != 1)
         return -1;
     return cilen + exlen;
+}
+
+int blkreinit_en(struct blkcipher *cipher)
+{
+    if (EVP_EncryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
+        return -1;
+    return 0;
+}
+
+int blkreinit_de(struct blkcipher *cipher)
+{
+    if (EVP_DecryptInit_ex(cipher->ctx, NULL, NULL, NULL, NULL) != 1)
+        return -1;
+    return 0;
 }
 
 char *genkey(int len)
