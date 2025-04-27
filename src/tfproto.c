@@ -514,7 +514,7 @@ static int blk_sndbuf(int fd, char *buf, int64_t len, int enc)
         free(aes_buf);
         return -1;
     }
-    if (wrfd(fd, aes_buf, rc) == -1) {
+    if (wrfd(fd, aes_buf, aes_len) == -1) {
         free(aes_buf);
         return -1;
     }

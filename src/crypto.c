@@ -274,6 +274,22 @@ int blkreinit_de(struct blkcipher *cipher)
     return 0;
 }
 
+int blken_upd(struct blkcipher *cipher, void *cidata, void *pldata, int pllen)
+{
+    int cilen = 0;
+    if (EVP_EncryptUpdate(cipher->ctx, cidata, &cilen, pldata, pllen) != 1)
+        return -1;
+    return cilen;
+}
+
+int blkde_upd(struct blkcipher *cipher, void *pldata, void *cidata, int cilen)
+{
+    int pllen = 0;
+    if (EVP_DecryptUpdate(cipher->ctx, pldata, &pllen, cidata, cilen) != 1)
+        return -1;
+    return pllen;
+}
+
 char *genkey(int len)
 {
     int i = 0;

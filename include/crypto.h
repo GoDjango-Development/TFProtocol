@@ -75,10 +75,18 @@ int blkinit_de(struct blkcipher *cipher);
 /* Finalize Block Cipher structure. */
 void blkfin(struct blkcipher *cipher);
 /* Block Cipher encryption function. */
+/* Standlaone full decryption. */
 int blkencrypt(struct blkcipher *cipher, void *cidata, void *pldata, int pllen);
+/* Block cipher update encryption. */
+int blken_upd(struct blkcipher *cipher, void *cidata, void *pldata, int pllen);
+/* Block cipher finalize encryption. */
 int blkend_en(struct blkcipher *cipher, void *cidata, int cilen);
 /* Block Cipher decryption function. */
+/* Standlaone full decryption. */
 int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen);
+/* Block cipher update decryption. */
+int blkde_upd(struct blkcipher *cipher, void *pldata, void *cidata, int cilen);
+/* Block cipher finalize decryption. */
 int blkend_de(struct blkcipher *cipher, void *pldata, int pllen);
 /* Block cipher encryption/decryption re-initialization context. */
 int blkreinit_en(struct blkcipher *cipher);
