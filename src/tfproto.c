@@ -507,7 +507,7 @@ static int blk_sndbuf(int fd, char *buf, int64_t len, int enc)
 {
     if (len <= 0)
         return 0;
-    int64_t stps =  len / BLK_SIZE;
+   /* int64_t stps =  len / BLK_SIZE;
     int64_t i = 0;
     if (stps > 0) {
         for (; i < stps; i++) {
@@ -524,19 +524,28 @@ static int blk_sndbuf(int fd, char *buf, int64_t len, int enc)
         if ((rc = blkencrypt(&cipher_tx, cipher_tx.data, buf + i * BLK_SIZE,
             len % BLK_SIZE)) == -1)
             return -1;
-        if (blkend_en(&cipher_tx, cipher_tx.data, rc) == -1)
-            return -1;
         if (wrfd(fd, cipher_tx.data, BLK_SIZE) == -1)
             return -1;
-    }  
+    }*/
+    int64_t aes_len = (len / BLK_SIZE + 1) * BLK_SIZE;
+    char *aes_buf = malloc(aes_len);
+    int rc = blkencrypt(&cipher_tx, aes_buf, buf, len);
+    if (rc == -1) {
+        free(aes_buf);
+        return -1;
+    }
+    if (wrfd(fd, aes_buf, rc) == -1) {
+        free(aes_buf);
+        return -1;
+    }
     return len;
-}      
+}
 
 static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
     if (len <= 0)
         return 0;
-    int64_t stps = len / BLK_SIZE;
+    /*int64_t stps = len / BLK_SIZE;
     int64_t i = 0;
     if (stps > 0) {
         if (rdfd(fd, buf, stps * BLK_SIZE) == -1)
@@ -555,10 +564,19 @@ static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc)
         if ((rc = blkdecrypt(&cipher_rx, cipher_rx.tmpbuf, cipher_rx.data,
             BLK_SIZE)) == -1)
             return -1;
-        if (blkend_de(&cipher_rx, cipher_rx.tmpbuf, rc) == -1)
-            return -1;
-        memcpy(buf + i * BLK_SIZE, cipher_rx.tmpbuf, len % BLK_SIZE);
-        
+        memcpy(buf + i * BLK_SIZE, cipher_rx.tmpbuf, rc);
+    }*/
+    int64_t aes_len = (len / BLK_SIZE + 1) * BLK_SIZE;
+    char *aes_buf = malloc(aes_len);
+    if (!aes_buf)
+        return -1;
+    if (rdfd(fd, aes_buf, aes_len) == -1) {
+        free(aes_buf);
+        return -1;
+    }
+    if (blkdecrypt(&cipher_rx, buf, aes_buf, aes_len) == -1) {
+        free(aes_buf);
+        return -1;
     }
     return len;
 }
