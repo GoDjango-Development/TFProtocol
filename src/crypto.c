@@ -226,7 +226,7 @@ int blkencrypt(struct blkcipher *cipher, void *cidata, void *pldata, int pllen)
         return -1;
     if (EVP_EncryptUpdate(cipher->ctx, cidata, &cilen, pldata, pllen) != 1)
         return -1;
-   if (EVP_EncryptFinal_ex(cipher->ctx, cidata + cilen, &exlen) != 1)
+    if (EVP_EncryptFinal_ex(cipher->ctx, cidata + cilen, &exlen) != 1)
         return -1;
     return cilen + exlen;
 }
