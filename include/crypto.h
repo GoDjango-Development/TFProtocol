@@ -80,6 +80,9 @@ int blkend_en(struct blkcipher *cipher, void *cidata, int cilen);
 /* Block Cipher decryption function. */
 int blkdecrypt(struct blkcipher *cipher, void *pldata, void *cidata, int cilen);
 int blkend_de(struct blkcipher *cipher, void *pldata, int pllen);
+/* Block cipher encryption/decryption re-initialization context. */
+int blkreinit_en(struct blkcipher *cipher);
+int blkreinit_de(struct blkcipher *cipher);
 /* Generate random key */
 char *genkey(int len);
 
