@@ -116,5 +116,7 @@ void startblk(void);
 void setcia(int st);
 /* Get client identity impersonation avoidance token */
 void getcia(char *ciabuf);
+/* Generate UUID Identity for client impersonation avoidance */
+void genid(void);
 
 #endif
