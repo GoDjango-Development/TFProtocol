@@ -3909,6 +3909,7 @@ void cmd_faimq(void)
 
 void cmd_ciaon(void)
 {
+    genid();
     setcia(1);
     strcpy(comm.buf, CMD_OK);
     strcat(comm.buf, CMD_SEPSTR);

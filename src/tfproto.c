@@ -110,8 +110,6 @@ static int chkfaitok(const char *path);
 static void mainloop_fai(void);
 /* Generate new symmetric encryptio key for the next FAI access. */
 static int renewfaikey(void);
-/* Generate UUID Identity for client impersonation avoidance */
-void genid(void);
 /* Return UUID identity for client impersonation avoidance */
 void getcia(char *ciabuf);
 
@@ -131,7 +129,6 @@ void begincomm(int sock, struct sockaddr_in6 *rmaddr, socklen_t *rmaddrsz)
         trp();
     genkeepkey();
     initcrypto(&cryp_rx);
-	genid();
 #ifndef DEBUG
     mainloop();
     cleanup();
@@ -526,6 +523,19 @@ static int blk_rcvbuf(int fd, char *buf, int64_t len, int enc)
 {
     if (len <= 0)
         return 0;
+    if (cia_st) {
+        static int cia_send = 0;
+        if (!cia_send) {
+            char cia_rcv[UUIDCHAR_LEN];
+            cia_rcv[UUIDCHAR_LEN - 1] = '\0';
+            cia_send = 1;
+            if (blk_rcvbuf(fd, cia_rcv, sizeof cia_rcv - 1, enc) == -1)
+                return -1;
+            if (strcmp(cia, cia_rcv))
+                return -1;
+        } else
+            cia_send = 0;
+    }
     int64_t aes_len = (len / BLK_SIZE + 1) * BLK_SIZE;
     char *aes_buf = malloc(aes_len);
     if (!aes_buf)
