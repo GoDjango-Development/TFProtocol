@@ -187,7 +187,6 @@ static void mainloop(void)
         cmd_ok();
     else if (rc == FAIPROTO_GRANTED) {
         /* Run the mainloop for FAI entrance version. */
-        //cmd_ok();
         mainloop_fai();
         return;
     } else if (rc == FAIPROTO_DENIED) {
