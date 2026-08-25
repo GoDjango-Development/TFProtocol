@@ -32,6 +32,5 @@ void wrlog(const char *msg, enum logcat cat)
     syslog(LOG_INFO | LOG_DAEMON, "%s %d %s %s","PID: :", getpid(), msg, catpt);
     if (!dmode)
         printf("%s %s %s %d\n", catpt, msg, "PID: ", getpid());
-    closelog();
 }
 
