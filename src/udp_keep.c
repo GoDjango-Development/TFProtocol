@@ -1,6 +1,8 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
+#define _DEFAULT_SOURCE
+
 #include <udp_keep.h>
 #include <stdlib.h>
 #include <unistd.h>

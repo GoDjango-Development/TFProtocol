@@ -1,6 +1,8 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
+#define _DEFAULT_SOURCE
+
 #include <xs_gateway/xs_gateway.h>
 #include <cmd.h>
 #include <unistd.h>

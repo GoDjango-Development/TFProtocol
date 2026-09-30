@@ -1,6 +1,8 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
+#define _DEFAULT_SOURCE
+
 #include <ntfy.h>
 #include <tfproto.h>
 #include <string.h> 
