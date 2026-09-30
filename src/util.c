@@ -1,6 +1,8 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
+#define _DEFAULT_SOURCE
+
 #include <util.h>
 #include <init.h>
 #include <string.h>
@@ -49,7 +51,6 @@ struct rsvparams {
     volatile int done;
 };
 
-extern char *strptime(char *s, const char *fmt, struct tm *tp);
 static void *thresolv(void *pp);
 
 static const char *efapi;

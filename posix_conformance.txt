@@ -1,0 +1,12 @@
+This protocol is intended to conform to POSIX.1-2008 and the XSI option group.
+
+However, the following files currently use GNU-specific extensions. These extensions should be replaced with POSIX.1-2008/XSI-compatible alternatives so that `_DEFAULT_SOURCE` can be removed from those files and the code can remain portable across conforming implementations.
+
+The affected files are:
+
+* `src/net.c`
+* `src/ntfy.c`
+* `src/udp_keep.c`
+* `src/util.c`
+* `src/xs_gateway/xs_gateway.c`
+* `src/xs_ime/xs_imeopc1.c`
