@@ -1,7 +1,7 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-#define _DEFAULT_SOURCE
+//#define _DEFAULT_SOURCE
 
 #include <xs_ime/xs_imeopc1.h>
 #include <xs_ime/xs_ime.h>
@@ -327,7 +327,14 @@ void opc_sndmsg2(void)
 
 static int msgselect(const struct dirent *ent)
 {
-    if (ent->d_type == DT_REG)
+    struct stat st;
+    char epath[PATH_MAX];
+    strcpy(epath, usrmsg);
+    strcat(epath, "/");
+    strcat(epath, ent->d_name);
+    if (stat(epath, &st) == -1)
+        return 0;
+    if (S_ISREG(st.st_mode))
         return 1;
     else
         return 0;

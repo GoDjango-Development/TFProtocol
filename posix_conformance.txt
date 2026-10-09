@@ -9,4 +9,3 @@ The affected files are:
 * `src/udp_keep.c`
 * `src/util.c`
 * `src/xs_gateway/xs_gateway.c`
-* `src/xs_ime/xs_imeopc1.c`
