@@ -1,8 +1,6 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-//#define _DEFAULT_SOURCE
-
 #include <xs_ime/xs_imeopc1.h>
 #include <xs_ime/xs_ime.h>
 #include <string.h>
