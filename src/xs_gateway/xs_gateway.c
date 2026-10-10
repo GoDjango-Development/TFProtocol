@@ -1,8 +1,6 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-#define _DEFAULT_SOURCE
-
 #include <xs_gateway/xs_gateway.h>
 #include <cmd.h>
 #include <unistd.h>
@@ -15,6 +13,7 @@
 #include <stdlib.h>
 #include <libgen.h>
 #include <fcntl.h>
+#include <posix_xsily.h>
 
 /* XS_GATEWAY error codes. */
 
