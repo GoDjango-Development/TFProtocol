@@ -14,7 +14,7 @@ obj = release/obj/main.o release/obj/net.o release/obj/init.o \
 	release/obj/xs_imeopc1.o release/obj/udp_keep.o release/obj/xs_ntmex.o \
 	release/obj/xs_sqlite.o release/obj/xs_ace.o release/obj/xs_mysql.o \
 	release/obj/xs_postgresql.o release/obj/xs_gateway.o release/obj/trp.o \
-	release/obj/xs_rpcproxy.o release/obj/core.o
+	release/obj/xs_rpcproxy.o release/obj/core.o release/obj/posix_xsily.o
 
 hdr = include/net.h include/init.h include/log.h include/tfproto.h \
 	include/sig.h include/cmd.h include/util.h include/ntfy.h \
@@ -24,7 +24,8 @@ hdr = include/net.h include/init.h include/log.h include/tfproto.h \
 	include/xs_ntmex/xs_ntmex.h include/xs_sqlite/xs_sqlite.h \
 	include/xs_ace/xs_ace.h include/xs_mysql/xs_mysql.h \
 	include/xs_postgresql/xs_postgresql.h include/xs_gateway/xs_gateway.h \
-	include/trp.h include/xs_rpcproxy/xs_rpcproxy.h include/core.h
+	include/trp.h include/xs_rpcproxy/xs_rpcproxy.h include/core.h \
+	include/posix_xsily.h
 
 release_bin = release/tfd
 release_defargs = ./conf_test
@@ -117,6 +118,9 @@ release/obj/xs_rpcproxy.o: src/xs_rpcproxy/xs_rpcproxy.c \
 release/obj/core.o: src/core.c include/core.h
 	$(CC) src/core.c -o release/obj/core.o $(cflags)
 
+release/obj/posix_xsily.o: src/posix_xsily.c include/posix_xsily.h
+	$(CC) src/posix_xsily.c -o release/obj/posix_xsily.o $(cflags)
+
 run: release
 ifneq ("$(wildcard $(release_bin))","")
 	$(release_bin) $(release_defargs)
@@ -141,7 +145,8 @@ dbg = debug/obj/main.o debug/obj/net.o debug/obj/init.o debug/obj/log.o \
 	debug/obj/xs_ime.o debug/obj/xs_imeopc1.o debug/obj/udp_keep.o \
 	debug/obj/xs_ntmex.o debug/obj/xs_sqlite.o debug/obj/xs_ace.o \
 	debug/obj/xs_mysql.o debug/obj/xs_postgresql.o debug/obj/xs_gateway.o \
-	debug/obj/trp.o debug/obj/xs_rpcproxy.o debug/obj/core.o
+	debug/obj/trp.o debug/obj/xs_rpcproxy.o debug/obj/core.o \
+	debug/obj/posix_xsily.o
 
 debug_bin = debug/tfd
 debug_defargs = ./conf_test
@@ -231,9 +236,11 @@ debug/obj/xs_rpcproxy.o: src/xs_rpcproxy/xs_rpcproxy.c \
 	include/xs_rpcproxy/xs_rpcproxy.h
 	$(CCG) src/xs_rpcproxy/xs_rpcproxy.c -o debug/obj/xs_rpcproxy.o $(cflags)
 
-
 debug/obj/core.o: src/core.c include/core.h
 	$(CCG) src/core.c -o debug/obj/core.o $(cflags)
+
+debug/obj/posix_xsily.o: src/posix_xsily.c include/posix_xsily.h
+	$(CC) src/posix_xsily.c -o debug/obj/posix_xsily.o $(cflags)
 
 run_debug: debug
 ifneq ("$(wildcard $(debug_bin))","")
