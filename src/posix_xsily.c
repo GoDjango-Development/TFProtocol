@@ -18,9 +18,7 @@ int usleep(int usec)
 	ts.tv_sec = 0;
 	ts.tv_nsec = usec * 1000;
 	int rc = nanosleep(&ts, &rm);
-	if (rc == -1)
-		return -1;
-	if (rm.tv_sec | rm.tv_nsec)
+	if (rc == -1 || (rm.tv_sec | rm.tv_nsec))
 		return -1;
 	return 0;
 }
