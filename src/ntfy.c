@@ -1,8 +1,6 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-#define _DEFAULT_SOURCE
-
 #include <ntfy.h>
 #include <tfproto.h>
 #include <string.h> 
@@ -17,6 +15,7 @@
 #include <dirent.h>
 #include <sys/socket.h>
 #include <float.h>
+#include <sys/stat.h>
 
 /* 25 ms of default timeout to look for directory changes. */
 #define NTFY_TIMEOUT 25000000
@@ -166,8 +165,15 @@ static int findntfy(const char *path, const char *sym, char *flnam)
 {
     struct dirent *den;
     DIR *dir = opendir(path);
-    while ((den = readdir(dir)) != NULL)
-        if (den->d_type != DT_DIR && den->d_type != DT_LNK && 
+    char file[PATH_MAX];
+    struct stat st;
+    while ((den = readdir(dir)) != NULL) {
+        strcpy(file, path);
+        strcat(file, "/");
+        strcat(file, den->d_name);
+        if (stat(path, &st) == -1)
+            continue;
+        if (!S_ISREG(st.st_mode) && !S_ISLNK(st.st_mode) &&
             strcmp(den->d_name, ".") && strcmp(den->d_name, "..")) {
             char *pt = strstr(den->d_name, sym);
             if (pt && pt == den->d_name) {
@@ -175,6 +181,7 @@ static int findntfy(const char *path, const char *sym, char *flnam)
                 return 1;
             }
         }
+    }
     closedir(dir);
     return 0;
 }
