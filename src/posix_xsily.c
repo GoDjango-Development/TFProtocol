@@ -14,10 +14,13 @@ int usleep(int usec)
 	if (usec >= USLEEP_MAX)
 		return -1;
 	struct timespec ts;
+	struct timespec rm = { 0 };
 	ts.tv_sec = 0;
 	ts.tv_nsec = usec * 1000;
-	int rc = nanosleep(&ts, NULL);
-	if (rc == -1 && errno == EINTR)
+	int rc = nanosleep(&ts, &rm);
+	if (rc == -1)
+		return -1;
+	if (rm.tv_sec | rm.tv_nsec)
 		return -1;
 	return 0;
 }
