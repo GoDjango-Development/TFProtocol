@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <dirent.h>
+#include <posix_xsily.h>
 
 /* Message separator from users. */
 #define MSGSEPCH ' '
@@ -325,14 +326,10 @@ void opc_sndmsg2(void)
 
 static int msgselect(const struct dirent *ent)
 {
-    struct stat st;
-    char epath[PATH_MAX];
-    strcpy(epath, usrmsg);
-    strcat(epath, "/");
-    strcat(epath, ent->d_name);
-    if (stat(epath, &st) == -1)
+    enum DTYPE dt = gdt(usrmsg, ent->d_name);
+    if (dt == -1)
         return 0;
-    if (S_ISREG(st.st_mode))
+    if (dt == DT_REG)
         return 1;
     else
         return 0;

@@ -2,6 +2,8 @@
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
+#include <limits.h>
+#include <string.h>
 
 #define USLEEP_MAX 1000000
 
@@ -21,4 +23,30 @@ int usleep(int usec)
 	if (rc == -1 || (rm.tv_sec | rm.tv_nsec))
 		return -1;
 	return 0;
+}
+
+enum DTYPE gdt(const char *bname, const char *fname)
+{
+	char path[PATH_MAX];
+	strcpy(path, bname);
+	strcat(path, "/");
+	strcat(path, fname);
+	struct stat st;
+	if (stat(path, &st) == -1)
+		return -1;
+	if (S_ISDIR(st.st_mode))
+		return DT_DIR;
+	if (S_ISCHR(st.st_mode))
+		return DT_CHR;
+	if (S_ISBLK(st.st_mode))
+		return DT_BLK;
+	if (S_ISREG(st.st_mode))
+		return DT_REG;
+	if (S_ISFIFO(st.st_mode))
+		return DT_FIFO;
+	if (S_ISLNK(st.st_mode))
+		return DT_LNK;
+	if (S_ISSOCK(st.st_mode))
+		return DT_SOCK;
+	return DT_UNKNOWN;
 }
