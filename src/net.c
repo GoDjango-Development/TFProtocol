@@ -1,8 +1,6 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-#define _DEFAULT_SOURCE
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -53,8 +51,9 @@ void startnet(void)
         exit(EXIT_FAILURE);
     }
     int optval = 1;
-    /* This socket option allows fast config reload and re-binding. */
-    setsockopt(srvsock, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
+    /* This socket option allows fast config reload and re-binding on
+        TIME_WAIT socket status. */
+    setsockopt(srvsock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
     int st = bind(srvsock, (struct sockaddr *) &addr, sizeof addr);
     if (st == -1) {
         wrlog(ELOGDBSOCK, LGC_CRITICAL);

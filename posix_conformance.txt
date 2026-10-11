@@ -4,6 +4,5 @@ However, the following files currently use GNU-specific extensions. These extens
 
 The affected files are:
 
-* `src/net.c`
 * `src/udp_keep.c`
 * `src/util.c`
