@@ -1,8 +1,6 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-#define _DEFAULT_SOURCE
-
 #include <util.h>
 #include <init.h>
 #include <string.h>
@@ -23,6 +21,7 @@
 #include <wait.h>
 #include <uuid/uuid.h>
 #include <openssl/ssl.h>
+#include <posix_xsily.h>
 
 #define SECDIR_TOK ".sd/"
 #define RDNULLBUF 64 * 1024
@@ -144,7 +143,7 @@ Fapi fapinit(const char *path, void *buf, enum fapiopc code)
             efapi = CMD_EISDIR;
             return NULL;
         }
-        api->fd = open(path, O_RDONLY, S_IREAD | S_IWRITE);
+        api->fd = open(path, O_RDONLY, S_IRUSR | S_IWUSR);
         if (api->fd == -1) {
             if (errno == EACCES)
                 efapi = CMD_EACCESS;
@@ -236,7 +235,10 @@ void listdir(const char *path, struct mempool *dl, int recur)
     char *newp = malloc(PATH_MAX);
     static char file[PATH_MAX];
     while (den = readdir(dir)) {
-        if (den->d_type == DT_DIR && den->d_type != DT_LNK && 
+        enum DTYPE dt = gdt(path, den->d_name);
+        if (dt == -1)
+            continue;
+        if (dt == DT_DIR && dt != DT_LNK &&
             strcmp(den->d_name, ".") && strcmp(den->d_name, "..")) {
             strcpy(newp, path);
             strcat(newp, "/");
@@ -249,7 +251,7 @@ void listdir(const char *path, struct mempool *dl, int recur)
             strcpy(dl->data + (dl->count - 1) * dl->blksz, newp);
             if (recur)
                 listdir(newp, dl, recur);
-        } else if (den->d_type != DT_DIR) {
+        } else if (dt != DT_DIR) {
             strcpy(file, path);
             strcat(file, "/");
             strcat(file, den->d_name);
@@ -709,7 +711,10 @@ int lsr_iter(const char *path, int rec, lsr_iter_callback callback)
     }
     do {
         while (den = readdir(*(dir + lvl))) {
-            if (den->d_type == DT_DIR && den->d_type != DT_LNK && 
+            enum DTYPE dt = gdt(pathcp, den->d_name);
+            if (dt == -1)
+                continue;
+            if (dt == DT_DIR && dt != DT_LNK &&
                 strcmp(den->d_name, ".") && strcmp(den->d_name, "..")) {
                 if (rec) {
                     if (strcmp(pathcp, "/"))
@@ -745,7 +750,7 @@ int lsr_iter(const char *path, int rec, lsr_iter_callback callback)
                     if (callback)
                         callback(path, filename, 1);
                 }
-            } else if (den->d_type != DT_DIR) {
+            } else if (dt != DT_DIR) {
                 strcpy(filename, pathcp);
                 if (strcmp(filename, "/"))
                     strcat(filename, "/");
