@@ -6,8 +6,6 @@
 #ifndef POSIX_XSILY_H
 #define POSIX_XSILY_H
 
-#include <sys/stat.h>
-
 enum DTYPE {
 	DT_UNKNOWN, DT_REG, DT_DIR, DT_FIFO, DT_SOCK, DT_CHR, DT_BLK, DT_LNK
 };
