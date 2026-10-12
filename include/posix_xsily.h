@@ -1,3 +1,6 @@
+/*  programmer: luis miguel
+    email: lmdelbahia@gmail.com  */
+
 /* This header provides a POSIX-XSI compatibility layer for some unix
 	extensions used by TFProtocol. Definitions in this header may overlap
 	with system declarations unless _POSIX_C_SOURCE=200809L and
