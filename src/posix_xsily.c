@@ -1,3 +1,6 @@
+/*  programmer: luis miguel
+    email: lmdelbahia@gmail.com  */
+
 #include <posix_xsily.h>
 #include <unistd.h>
 #include <time.h>
