@@ -1,8 +1,6 @@
 /*  programmer: luis miguel
     email: lmdelbahia@gmail.com  */
 
-#define _DEFAULT_SOURCE
-
 #include <udp_keep.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -35,8 +33,8 @@ int udp_debug;
 static pthread_barrier_t barrier;
 /* Thread pool.*/
 static pthread_t threads[THREADCOUNT];
-/* Server inet address. */
-struct sockaddr_in6 addr;
+/* UDP socket descriptor */
+int sock;
 
 /* Start receiving udp datagrams with the pool of worker threads. */
 static void rcvdgram(void);
@@ -48,7 +46,20 @@ static void fillproxaddr(void);
 
 void udpkeep_start(struct sockaddr_in6 *srvaddr)
 {
-    addr = *srvaddr;
+    struct sockaddr_in6 addr = *srvaddr;
+    sock = socket(AF_INET6, SOCK_DGRAM, 0);
+    if (sock == -1) {
+        wrlog(ELOGDCSOCKDGRAM, LGC_CRITICAL);
+        return;
+    }
+    int optval = 1;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
+    int len = sizeof addr;
+    int st = bind(sock, (struct sockaddr *) &addr, len);
+    if (st == -1) {
+        wrlog(ELOGDBSOCKUDP, LGC_CRITICAL);
+        return;
+    }
 #ifndef DEBUG
     long nprocs = sysconf(_SC_NPROCESSORS_ONLN);
     if (nprocs <= 0)
@@ -76,23 +87,12 @@ static void rcvdgram(void)
 
 static void *thworker(void *prms)
 {
-    int sock = socket(AF_INET6, SOCK_DGRAM, 0);
-    if (sock == -1) {
-        wrlog(ELOGDCSOCKDGRAM, LGC_CRITICAL);
-        return NULL;
-    }
-    int optval = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof optval);
-    int len = sizeof addr;
-    int st = bind(sock, (struct sockaddr *) &addr, len);
-    if (st == -1) {
-        wrlog(ELOGDBSOCKUDP, LGC_CRITICAL);
-        return NULL;
-    }
     char msg[MSG_MAXLEN];
     int msglen = 0;
     int sock_prox = -1;
     int proxlen = sizeof comm.addr_prox;
+    struct sockaddr_in6 addr;
+    int len = sizeof addr;
     if (tfproto.trp_tp != TRP_NONE) {
         fillproxaddr();
         while (1) {
