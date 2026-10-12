@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #define USLEEP_MAX 1000000
 
